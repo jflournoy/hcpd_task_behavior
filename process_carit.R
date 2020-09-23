@@ -1,6 +1,25 @@
+#+ setup, include=FALSE
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+#https://www.instagram.com/p/CCQvy_BAkWv/
+apal <- paste0('#', c('005867', 'FFB335', 'F3F1EA', '2E383D', 'F34226'))
+library(showtext)
+#{.tabset}
+font_add_google("Didact Gothic", "Didact Gothic")
+showtext_auto()
+
+jftheme <- theme_minimal() +  
+  theme(text = element_text(family = 'Didact Gothic', size = 14),
+        panel.background = element_rect(fill = apal[[3]], size = 0, color = apal[[2]]),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        strip.background = element_rect(fill = apal[[2]], size = 0),
+        strip.text = element_text(color = '#222222'),
+        axis.text =  element_text(color = apal[[1]]), axis.title = element_text(color = apal[[1]]))
+
+#+stuff
 library(data.table)
 data.table::setDTthreads(2)
-data_path <- '/data/jflournoy/hcpd/CCF_HCD_STG_PsychoPy_files/'
+#data_path <- '/data/jflournoy/hcpd/CCF_HCD_STG_PsychoPy_files/'
 data_path <- '/ncf/hcp/data/CCF_HCD_STG_PsychoPy_files/'
 
 #List all of the CARIT task files in the data directory
@@ -44,10 +63,13 @@ demos <- data.table::fread('HCPD_COMBINED20200608.csv',
                            select = c('id', 'age', 'gender', 'site'))
 staged <- data.table::fread('ccf_hcd_stg_2020-06-09.csv', 
                             select = 'Subject')
+long <- data.table::fread('HCPD_LONGITUDINAL20200608.csv',
+                          select = c('id', 'LONG_AGE'))
 staged_dlmri <- data.table(sessionID = dir('/ncf/hcp/data/intradb_multiprocfix/', pattern = "HCD.*"))
 staged_dlmri[, sID := gsub('.*(HCD[A-Za-z0-9]+)_V1_MR.*', '\\1', sessionID)]
 setnames(demos, 'id', 'sID')
 setnames(staged, 'Subject', 'sID')
+setnames(long, 'id', 'sID')
 
 modal <- function(x){
   t <- table(unlist(x))
@@ -77,12 +99,29 @@ d[!staged, on = 'sID'][, .N]
 #List number of participants staged but no trial data
 staged[!d, on = 'sID'][, .N]
 staged[!d, on = 'sID']
+#            sID Checked in scan list:
+#  1: HCD0577358 No task fmri
+#  2: HCD0696265 Has "guessing" but not "carit"
+#  3: HCD1045128 No task data
+#  4: HCD1249649
+#  5: HCD1336341
+#  6: HCD1529756
+#  7: HCD1581455
+#  8: HCD1638862
+#  9: HCD1714852
+# 10: HCD1876272
+# 11: HCD1985378
+# 12: HCD2082341
+#
 
 #List number of participants with dl'd MRI but not in staging list
 staged_dlmri[!staged, on = 'sID'][, .N]
 #List number of participants in staging list without dl'd MRI
 staged[!staged_dlmri, on = 'sID'][, .N]
-staged[!staged_dlmri, on = 'sID']
+#Are they just the longitudinal folks?
+long[staged[!staged_dlmri, on = 'sID'], on = 'sID'][, list(long = !is.na(LONG_AGE)), by = 'sID'][long != TRUE]
+#Nope, there is a mix of longitudinal and non-long subs
+#But at least some longitudinal folks look like they have multifx data
 
 #Some columns should be factors
 factor_vars <- c('sessionID',
@@ -145,3 +184,17 @@ dcast(carit[, .N, keyby = c('sID', 'prepotency')],
                           `3go` != 16 |
                           `4go` != 12]
 #Some participants don't have both runs
+
+#Check reaction times
+library(ggplot2)
+ggplot(carit[RT.shape > 0], aes(x = RT.shape)) + 
+  stat_density(aes(group = sID), geom = "line", color = apal[[1]], alpha = 0.1, position = 'identity') + 
+  coord_cartesian(xlim = c(0, 1)) + 
+  jftheme
+
+ggplot(carit[sID %in% carit[RT.shape < 0, sID]], aes(x = RT.shape)) + 
+  stat_bin(aes(group = sID), geom = "line", color = apal[[1]], alpha = 0.5, position = 'dodge') + 
+  jftheme
+
+#A few participants have a single negative RT.
+carit[RT.shape < 0, list(N = .N, rt = mean(RT.shape)), by = sID]
