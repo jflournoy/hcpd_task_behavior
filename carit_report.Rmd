@@ -8,7 +8,6 @@ output:
     toc_float: true
     code_folding: hide
     self_contained: false
-knit: (function(inputFile, encoding) { rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'sea_rsfc-initial_icc_report-orig.html')) })
 ---
 
 ```{css, echo=FALSE}
@@ -399,6 +398,7 @@ Number of participants not pressing for at least 1 run: `r unique(accuracy_summa
 
 ```{r}
 setorder(accuracy_summary_trialtype, sID, runN) 
+nopress_id <- accuracy_summary_trialtype[go == 0 & nogo == 1, c('sID', 'runN')]
 dt_table(accuracy_summary_trialtype[go == 0 & nogo == 1, 
                                     lapply(.SD, function(x) sprintf(fmt = '%d%%', x*100)), 
                                     .SDcols = c('go', 'nogo'), 
@@ -414,10 +414,9 @@ ggplot(accuracy_summary, aes(x = age, y = mean_accuracy)) +
   geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .05)) + 
   scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
   geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
-  geom_point(data = accuracy_summary[(trialType == 'go' & mean_accuracy == 0) | 
-                                       (trialType == 'nogo' & mean_accuracy == 1)],
+  geom_point(data = accuracy_summary[nopress_id, on = c('sID', 'runN')],
              color = apal[[4]], size = 1,
-             position = position_jitter(w = .125, h = .025)) +
+             position = position_jitter(w = .0625, h = .0125)) +
   facet_grid(trialType ~ run_text) +
   jftheme + 
   labs(x = 'Age (years)', y = 'Proportion correct', fill = 'Count', color = 'Count')
