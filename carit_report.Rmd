@@ -1,0 +1,449 @@
+---
+title: "SEA rsfcMRI - Longitudinal Descriptives"
+author: "John Flournoy"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+    self_contained: false
+knit: (function(inputFile, encoding) { rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'sea_rsfc-initial_icc_report-orig.html')) })
+---
+
+```{css, echo=FALSE}
+@import url('https://fonts.googleapis.com/css?family=Didact+Gothic&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Fira+Code&display=swap');
+body{
+  font-family: 'Didact Gothic',  sans-serif;
+}
+pre code {
+  font-family: 'Fira Code',  monospace;
+}
+```
+
+```{r setup, include=FALSE}
+library(showtext)
+library(ggplot2)
+library(data.table)
+library(DT)
+data.table::setDTthreads(2)
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+#https://www.instagram.com/p/CCQvy_BAkWv/
+apal <- paste0('#', c('005867', 'FFB335', 'F3F1EA', '2E383D', 'F34226'))
+
+#{.tabset}
+font_add_google("Didact Gothic", "Didact Gothic")
+# showtext_auto()
+
+jftheme <- theme_minimal() +  
+  theme(text = element_text(family = 'Didact Gothic', size = 14),
+        panel.background = element_rect(fill = apal[[3]], size = 0, color = apal[[2]]),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        strip.background = element_rect(fill = apal[[2]], size = 0),
+        strip.text = element_text(color = '#222222'),
+        axis.text =  element_text(color = apal[[4]]), axis.title = element_text(color = apal[[4]]))
+
+dt_options <- list(rownames = FALSE,
+                   filter = 'top',
+                   class = 'cell-border stripe',
+                   extensions = 'Buttons', 
+                   options = list(dom = 'Bfrtip', buttons = c('csv')))
+
+dt_table <- function(data, caption, dt_options = NULL){
+  if(is.null(dt_options)){
+    dt_options <- list(rownames = FALSE,
+                   filter = 'top',
+                   class = 'cell-border stripe',
+                   extensions = 'Buttons', 
+                   options = list(dom = 'Bfrtip', buttons = c('csv')))
+  }
+  return(do.call(DT::datatable, 
+                 c(list(data,
+                        caption = caption), 
+                   dt_options)))
+}
+
+knitr::read_chunk('process_carit.R')
+```
+
+# Process data
+
+```{r process_carit}
+```
+
+# Data cross-check
+
+Total N with CARIT task behavior: `r length(unique(d$sID))`.
+
+Number of participants with CARIT task behavior but no demo info: `r d[!demos, on = 'sID'][, .N]`.
+
+Number of participants with demo info but no CARIT task behavior: `r demos[!d, on = 'sID'][, .N]`.
+
+Number of participants with CARIT task behavior but not staged: `r d[!staged, on = 'sID'][, .N]`.
+
+Number of participants staged but no CARIT task behavior: `r staged[!d, on = 'sID'][, .N]`. These participants likely did not complete the task, though other data is relevant for staging.
+
+```{r}
+do.call(DT::datatable, 
+        c(list(staged[!d, on = 'sID'],
+               caption = 'Pariticipants marked as staged, with no CARIT data.'), 
+          dt_options))
+```
+
+Number of participants with dl'd MRI but not in staging list: `r staged_dlmri[!staged, on = 'sID'][, .N]`.
+
+Number of participants in staging list without any dl'd MRI: `r staged[!staged_dlmri, on = 'sID'][, .N]`.
+
+Personal communication with Mike Hodge: 
+
+>Sometimes when we find issues with the staging sessions after they’re built, we’ll remove the sessions so they’re not inadvertently released.  We’ll often not remove the corresponding subject record because we’ll eventually rebuild that session.  I’m sure that’s what happened here.
+
+Number of participants with dowloaded task MRI, but no CARIT task behavior: `r staged_dlmri[has_task_scan == TRUE][!d, on = 'sID'][, .N]`.
+
+Number of participants with CARIT task behavior, but no dowloaded task MRI (on this task): `r unique(d[, 'sID'])[!staged_dlmri[has_task_scan == TRUE], on = 'sID'][, .N]`. This indicates that these participants had problems with their data in the multirun ica fix pipeline (it is possible that this session will eventually get rebuilt, it seems).
+
+```{r}
+missing_task_mri <- unique(d[, c('sessionID', 'sID')])[!staged_dlmri[has_task_scan == TRUE], on = 'sID']
+
+do.call(DT::datatable, 
+        c(list(demos[missing_task_mri, on = 'sID'],
+               caption = 'Participants with CARIT task behavior, but no dowloaded task MRI (on this task).'), 
+          dt_options))
+
+```
+
+
+# Check design
+
+CARIT has two rounds of 92 trials each, for a total of 184 trials per subject.
+
+Modal number of trials: `r d[, .N, by = 'sID'][, as.numeric(modal(N))]`.
+
+Number of participants without modal number: `r d[, .N, by = 'sID'][N != as.numeric(modal(N))][, .N]`.
+
+```{r}
+#List participants without the modal number of trials
+do.call(DT::datatable, 
+        c(list(d[, list(`N trials` = .N), by = 'sID'][`N trials` != as.numeric(modal(`N trials`))],
+               caption = 'Pariticipants without modal number of trials.'), 
+          dt_options))
+```
+
+Each round of the task has 68 go trials and 24 nogo trials. Each subject should have 136 go and 48 nogo trials
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit[, .N, keyby = c('sID', 'trialType')],
+      sID ~ trialType)[go != 136 | nogo != 48][, .N]
+```
+
+Nogo trials should be equivalently distributed between prev reward and prev loss trials. Each subject should have 24 prevRew, 24 prevLoss. 
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit[, .N, keyby = c('sID', 'nogoCondition')], 
+      sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, .N]
+```
+
+Go prepotency trials should number 20 for 2, 16 for 3, and 12 for 4. 
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit[, .N, keyby = c('sID', 'prepotency')], 
+      sID ~ prepotency)[`2go` != 20 | 
+                          `3go` != 16 |
+                          `4go` != 12][, .N]
+```
+
+These are all the same IDs who are missing one of the two runs.
+
+# Reaction times (RT)
+
+## General Characterization {.tabset}
+
+Number of negative reaction times: `r carit[RT.shape < 0, list(N = .N, rt = mean(RT.shape)), by = sID][, .N]`
+
+
+### RT and age
+
+
+```{r}
+
+ggplot(carit[RT.shape > 0]) +
+  geom_hex(aes(x = age, y = RT.shape, color = ..count..), binwidth = c(.5, .03)) +
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
+  scale_color_gradient(low = apal[[1]], high = apal[[5]]) + 
+  geom_line(aes(x = age, y = RT.shape), stat = 'smooth', method = 'gam', color = apal[[2]]) + 
+  jftheme
+
+```
+
+
+### Table of RT < 0
+
+```{r}
+do.call(DT::datatable, 
+        c(list(carit[RT.shape < 0, list(N = .N, rt = mean(RT.shape)), by = sID],
+               caption = 'Negative reaction times'), 
+          dt_options))
+```
+
+### All trials RT > 0
+
+```{r}
+ggplot(carit[RT.shape > 0], aes(x = RT.shape)) + 
+  stat_density(aes(group = sID), geom = "line", color = apal[[1]], alpha = 0.1, position = 'identity') + 
+  coord_cartesian(xlim = c(0, 1)) + 
+  jftheme
+```
+
+### Participants with RT < 0
+
+```{r}
+ggplot(carit[sID %in% carit[RT.shape < 0, sID]], aes(x = RT.shape)) + 
+  stat_bin(aes(group = sID), geom = "bar", fill = apal[[1]], alpha = 1, position = 'dodge') + 
+  scale_x_continuous(breaks = c(-15, -10, -5, 0, 1)) +
+  geom_vline(xintercept = 1, color = apal[[5]]) +
+  jftheme
+```
+
+### All RT by participant {.tabset}
+
+```{r results = 'asis'}
+#A few participants have a single negative RT.
+sid_groups <- split(unique(carit$sID), 1:20)
+for(i in 1:length(sid_groups)){
+  agrp <- sid_groups[[i]]
+  cat(sprintf('\n\n#### Group %02d\n\n', i))
+  print(ggplot(carit[RT.shape > 0 & sID %in% agrp], aes(x = RT.shape)) +
+          geom_histogram(fill = apal[[1]]) +
+          coord_cartesian(xlim = c(0, 1)) +
+          facet_wrap(~sID, ncol = 5) +
+          scale_y_continuous(breaks = c(0,30)) +
+          scale_x_continuous(breaks = c(0, .5, 1)) +
+          jftheme)
+}
+
+
+```
+
+
+### Participants with RT < .2
+
+
+```{r}
+
+dt_table(data = carit[RT.shape < .2, list(`N < .2` = .N), by = 'sID'],
+         caption = 'Participants with RT < .2')
+
+
+```
+
+## RT and task design {.tabset}
+
+### RT by go/nogo
+
+```{r}
+library(lme4)
+#conditional means
+null_mod_rx <- lmer(RT.shape ~ 1 + trialType + (1 + trialType | sID), data = carit[RT.shape > 0])
+conditional_means <- data.frame(trialType = c('go', 'nogo'), y = 0)
+conditional_means$RT.shape <- predict(null_mod_rx, newdata = conditional_means, re.form = NA)
+
+ggplot(carit[RT.shape > 0], aes(x = RT.shape)) + 
+  geom_area(data = data.frame(RT.shape = c(0, .600, .601, .800), 
+                              y = c(rep(1, 4)), 
+                              region = factor(c('Pres.', 'Pres.', 'Fix.', 'Fix.'), 
+                                              levels = c('Pres.', 'Fix.'))),
+            aes(y = y, fill = region),
+            alpha = .5) + 
+  scale_fill_manual(values = c(apal[c(1,4)])) +
+  stat_density(aes(y = ..ndensity..), geom = 'density', color = apal[[5]], fill = apal[[5]], alpha = .8, adjust = 1.25) + 
+  geom_histogram(aes(y = ..ndensity..), fill = apal[[1]], alpha = 1, binwidth = .015) + 
+  geom_vline(data = conditional_means, aes(xintercept = RT.shape), color = apal[[4]]) + 
+  geom_point(data = conditional_means, aes(x = RT.shape, y = y), color = apal[[4]], size = 2) + 
+    geom_point(data = conditional_means, aes(x = RT.shape, y = y), color = apal[[2]], size = .5) + 
+  coord_cartesian(xlim = c(0, 1)) + 
+  facet_grid(trialType ~ ., scales = 'free_y') +
+  jftheme
+```
+
+
+### All go RT by participant {.tabset}
+
+```{r results = 'asis'}
+#A few participants have a single negative RT.
+sid_groups <- split(unique(carit$sID), 1:20)
+for(i in 1:length(sid_groups)){
+  agrp <- sid_groups[[i]]
+  cat(sprintf('\n\n#### Group %02d\n\n', i))
+  print(ggplot(carit[RT.shape > 0 & trialType == 'go' & sID %in% agrp], aes(x = RT.shape)) + 
+          geom_histogram(fill = apal[[1]]) + 
+          coord_cartesian(xlim = c(0, 1)) + 
+          facet_wrap(~sID, ncol = 5) +
+          scale_y_continuous(breaks = c(0,15)) + 
+          scale_x_continuous(breaks = c(0, .5, 1)) + 
+          jftheme)
+}
+```
+
+### All nogo RT by participant {.tabset}
+
+```{r results = 'asis'}
+#A few participants have a single negative RT.
+sid_groups <- split(unique(carit$sID), 1:20)
+for(i in 1:length(sid_groups)){
+  agrp <- sid_groups[[i]]
+  cat(sprintf('\n\n#### Group %02d\n\n', i))
+  print(ggplot(carit[RT.shape > 0 & trialType == 'nogo' & sID %in% agrp], aes(x = RT.shape)) + 
+          geom_histogram(fill = apal[[1]]) + 
+          coord_cartesian(xlim = c(0, 1)) + 
+          facet_wrap(~sID, ncol = 5) +
+          scale_y_continuous(breaks = c(0,15)) + 
+          scale_x_continuous(breaks = c(0, .5, 1)) + 
+          jftheme)
+}
+```
+
+### Late Presses
+
+```{r}
+carit[, isiPress.rt_num := as.character(isiPress.rt)]
+carit[, isiPress.rt_num := gsub('\\[([0-9\\.]+)*,*.*\\]', '\\1', isiPress.rt_num)] #sometimes there are more than one, e.g., [.23, .45]
+carit[, isiPress.rt_num := as.numeric(isiPress.rt_num)]
+carit[, lateTime := isiPress.rt_num - 0.2]
+```
+
+Late presses here are just instances where there was no previous press. For "go" trials, these would count as misses, and for "nogo" trials, this would be correct-rejection trials.
+
+Number of late presses: `r carit[!is.na(isiPress.rt_num) & corrRespTrialType %in% c('Miss','corReject'), .N]`.
+
+Number of participants with late presses: `r carit[!is.na(isiPress.rt_num) & corrRespTrialType %in% c('Miss','corReject'), .N, by = 'sID'][N > 0, .N]`.
+
+Distribution of timing of late presses shows similarity across age bins.
+
+```{r}
+age_dens <- carit[!is.na(isiPress.rt_num) & corrRespTrialType %in% c('Miss','corReject'),]
+age_dens[, age_group := factor(((floor(age) - 5) %/% 6) * 6 + 5,
+                               levels = c(5, 11, 17),
+                               labels = c('5-10', '11-16','17-22'))]
+
+ggplot(age_dens,
+       aes(x = lateTime)) +
+  geom_density(aes(fill = age_group, 
+                   color = age_group, 
+                   group = age_group), 
+               alpha = .1, size = 1,
+               position = position_identity(),
+               adjust = 3) +
+  scale_color_manual(breaks = c('5-10', '11-16','17-22'), 
+                     values = apal[rev(c(2,1,5))],
+                     aesthetics = c('color', 'fill'),
+                     name = 'Age group') +
+  jftheme + 
+  labs(x = 'Late press: time since trial end (seconds)')
+```
+
+### Late presses by age
+
+Unsurprisingly, younger participants made more late presses.
+
+```{r}
+late_press_age <- carit[!is.na(isiPress.rt_num) & corrRespTrialType %in% c('Miss','corReject'), list(n = .N, age = unique(age)), by = 'sID']
+
+ggplot(late_press_age, aes(x = age, y = n)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, 3)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
+  scale_color_gradient(low = apal[[1]], high = apal[[5]]) +
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  jftheme + 
+  labs(x = 'Age (years)', y = 'Number of trials with late presses') + 
+  theme(legend.margin = margin(rep(14, 4), "pt"),
+        plot.margin = margin(rep(14, 4), "pt"), 
+        legend.box.margin = margin(rep(14, 4), "pt"))
+```
+
+# Accuracy {.tabset}
+
+
+```{r}
+accuracy_summary <- carit[, list(mean_accuracy = mean(corrRespCode, rm.na = TRUE),
+             N_na = sum(is.na(corrRespCode)),
+             age = unique(age)), 
+             by = c('sID', 'trialType', 'runN')]
+
+accuracy_summary_trialtype <- dcast(accuracy_summary[, -'N_na'], ... ~ trialType, value.var = 'mean_accuracy')
+```
+
+## Missing trials
+
+This shouldn't happen: a missed go is a "miss" and a missed nogo is a "correct rejection". 
+
+Number of missing trials across all participants: `r accuracy_summary[N_na > 0][,.N]`
+
+```{r}
+dt_table(accuracy_summary[N_na > 0], caption = 'Participant-runs with missing trials')
+```
+
+## No Button Presses
+
+If someone doesn't press, they'll get 0% accuracy for "go" trials and 100% accuracy for "nogo" trials.
+
+Number of participants not pressing for at least 1 run: `r unique(accuracy_summary_trialtype[go == 0 & nogo == 1, 'sID'])[,.N]`.
+
+```{r}
+setorder(accuracy_summary_trialtype, sID, runN) 
+dt_table(accuracy_summary_trialtype[go == 0 & nogo == 1, 
+                                    lapply(.SD, function(x) sprintf(fmt = '%d%%', x*100)), 
+                                    .SDcols = c('go', 'nogo'), 
+                                    by = c('sID', 'runN')],
+         caption = 'Participant-runs with no responses')
+```
+
+## Accuracy by age
+
+```{r}
+accuracy_summary[, run_text := sprintf('Run %d', runN)]
+ggplot(accuracy_summary, aes(x = age, y = mean_accuracy)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .05)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  geom_point(data = accuracy_summary[(trialType == 'go' & mean_accuracy == 0) | 
+                                       (trialType == 'nogo' & mean_accuracy == 1)],
+             color = apal[[4]], size = 1,
+             position = position_jitter(w = .125, h = .025)) +
+  facet_grid(trialType ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = 'Proportion correct', fill = 'Count', color = 'Count')
+```
+
+Points indicate participants who showed no presses on any trials.
+
+# Modeling
+
+One really interesting question we can ask with these data is what is the effect of previous reward associations on go/nogo accuracy, and whether that effect differs by loss amount, or by age.
+
+Using a hierarchical linear model (aka multilevel model) we can express this as a prediction of the probability of a correct rejection (no response on a "no-go" trial). We could also examine this effect on the probability of a hit (response on a "go" trial). For now, I'll limit it to the no-go trials, but incorrporating trial type would merely entail adding another interaction term.
+
+Given that the trial-level data response is either 0 or 1 (false alarms or correct rejections), this will be a logisitic regression.
+
+The model is:
+
+```
+y ~ 1 + prevrew + run + age + prevrew:run + prevrew:age + run:age + prevrew:run:age
+```
+
+
+$$
+y = \beta_0 + \beta_1\text{PrevRew} + \beta_2\text{Run} + \beta_3\text{Age} +\\ \beta_4\text{PrevRew}\cdot\text{Run} + \beta_5\text{PrevRew}\cdot\text{Age} + \\
+\beta_6\text{Run}\cdot\text{Age} + \\
+\beta_7\text{PrevRew}\cdot\text{Run}\cdot\text{Age} + \epsilon_{ij}
+$$
+
+where $y_{ij}$ is the *i*th response from the *j*th participant. Not shown is the random effects error terms or specific dummy coding. 
