@@ -162,6 +162,74 @@ dcast(carit[, .N, keyby = c('sID', 'prepotency')],
 
 These are all the same IDs who are missing one of the two runs.
 
+# Data availability {.tabset}
+
+N participants with task behavior: `r unique(d[, c('sID')])[, .N]`.
+N participants with any task fMRI: `r unique(staged_dlmri[has_task_scan == TRUE, c('sID')])[, .N]`.
+N participants with CARIT fMRI: `r unique(staged_dlmri[has_carit == TRUE, c('sID')])[, .N]`.
+N participants with Guessing fMRI: `r unique(staged_dlmri[has_guessing == TRUE, c('sID')])[, .N]`.
+
+## Age
+
+```{r fig.height=4, fig.width=6}
+carit_behavior_ids <- unique(d[, c('sID')])
+carit_behavior_ids[, carit_behav := TRUE]
+demos_and_data_avail <- merge(carit_behavior_ids, demos, on = 'sID', all = TRUE)
+demos_and_data_avail <- merge(demos_and_data_avail, staged_dlmri, on = 'sID', all = TRUE)
+avail_type <- function(behav, fmri){
+  r <- fifelse(fifelse(is.na(fmri), FALSE, fmri) & 
+                 fifelse(is.na(behav), FALSE, behav), 'CARIT fMRI', 'none')
+  return(r)
+}
+demos_and_data_avail[, `Data Available` := avail_type(carit_behav, has_carit)]
+ggplot(demos_and_data_avail, aes(x = age)) + 
+  geom_histogram(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
+                 position = position_dodge(), 
+                 alpha = .95,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = 1:25) + 
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme
+```
+
+## Sex
+
+```{r fig.height=4, fig.width=6}
+ggplot(demos_and_data_avail, aes(x = gender)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
+                 position = position_stack(), 
+                 width = 1, alpha = .95,
+                 binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme
+```
+
+## Site
+
+```{r fig.height=4, fig.width=6}
+ggplot(demos_and_data_avail, aes(x = site)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
+           position = position_stack(), 
+           width = 1, alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## Race
+
+```{r fig.height=4, fig.width=6}
+ggplot(demos_and_data_avail, aes(x = RACE)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`),
+           position = position_dodge(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
 # Reaction times (RT)
 
 ## General Characterization {.tabset}
@@ -406,6 +474,9 @@ dt_table(accuracy_summary_trialtype[go == 0 & nogo == 1,
          caption = 'Participant-runs with no responses')
 ```
 
+If someone presses all the time, they'll get 100% accuracy for "go" trials and 0% accuracy for "nogo" trials. Number of participants showing this pattern: `r accuracy_summary_trialtype[go == 1 & nogo == 0, ][, .N]`.
+
+
 ## Accuracy by age
 
 ```{r}
@@ -423,6 +494,76 @@ ggplot(accuracy_summary, aes(x = age, y = mean_accuracy)) +
 ```
 
 Points indicate participants who showed no presses on any trials.
+
+# Signal detection theory metrics
+
+```{r}
+carit_by_run_SDT_demo <- demos[carit_by_run_SDT, on = 'sID']
+carit_by_run_SDT_demo[, run_text := sprintf('Run %d', runN)]
+```
+
+## Age {.tabset}
+
+### $d^{\prime}$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = dprime)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .5)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = 'd prime', fill = 'Count', color = 'Count')
+```
+
+### $\beta$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = beta)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .25)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  coord_cartesian(y = c(0,2)) + 
+  labs(x = 'Age (years)', y = 'beta', fill = 'Count', color = 'Count')
+```
+
+### $A^{\prime}$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = aprime)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .06125)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = 'A prime', fill = 'Count', color = 'Count')
+```
+
+### $B^{\prime\prime}D$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = bppd)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .25)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = "B''D", fill = 'Count', color = 'Count')
+```
+
+### $c$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = c)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .25)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = "c", fill = 'Count', color = 'Count')
+```
 
 # Modeling
 

@@ -1,5 +1,6 @@
 ## @knitr process_carit
 library(data.table)
+library(psycho)
 data.table::setDTthreads(4)
 
 modal <- function(x){
@@ -48,7 +49,7 @@ d <- data.table(.id = names(fnames),
 readr::write_csv(d, 'CARIT_allRaw.csv')
 
 demos <- data.table::fread('HCPD_COMBINED20200608.csv',
-                           select = c('id', 'age', 'gender', 'site'))
+                           select = c('id', 'age', 'gender', 'site', 'RACE', 'SES_PLVL', 'SES_RLVL', 'income'))
 staged <- data.table::fread('ccf_hcd_stg_2020-06-09.csv', 
                             select = 'Subject')
 long <- data.table::fread('HCPD_LONGITUDINAL20200608.csv',
@@ -56,11 +57,27 @@ long <- data.table::fread('HCPD_LONGITUDINAL20200608.csv',
 staged_dlmri <- data.table(sessionID = dir('/ncf/hcp/data/intradb_multiprocfix/', pattern = "HCD.*"))
 
 staged_dlmri[, 'has_task_scan'] <-  unlist(lapply(staged_dlmri$sessionID, function(sess){
-  file.exists(file.path('/ncf/hcp/data/intradb_multiprocfix/', 
-                        sess, 
-                        '/MultiRunIcaFix_proc/',
-                        sess, 
-                        '/MNINonLinear/Results/tfMRI_CARIT_PA/'))
+  length(dir(file.path('/ncf/hcp/data/intradb_multiprocfix/', 
+                       sess, 
+                       '/MultiRunIcaFix_proc/',
+                       sess, 
+                       '/MNINonLinear/Results/'), pattern = 'tfMRI.*')) > 0
+}))
+
+staged_dlmri[, 'has_carit'] <-  unlist(lapply(staged_dlmri$sessionID, function(sess){
+  length(dir(file.path('/ncf/hcp/data/intradb_multiprocfix/', 
+                       sess, 
+                       '/MultiRunIcaFix_proc/',
+                       sess, 
+                       '/MNINonLinear/Results/'), pattern = 'tfMRI_CARIT.*')) > 0
+}))
+
+staged_dlmri[, 'has_guessing'] <-  unlist(lapply(staged_dlmri$sessionID, function(sess){
+  length(dir(file.path('/ncf/hcp/data/intradb_multiprocfix/', 
+                       sess, 
+                       '/MultiRunIcaFix_proc/',
+                       sess, 
+                       '/MNINonLinear/Results/'), pattern = 'tfMRI_GUESSING.*')) > 0
 }))
 
 staged_dlmri[, sID := gsub('.*(HCD[A-Za-z0-9]+)_V1_MR.*', '\\1', sessionID)]
@@ -99,4 +116,8 @@ carit[, prepotency := factor(prepotency,levels=c("2","3","4"),labels=c("2go","3g
 carit[, aggTrialN := trialNum + 92*(runN - 1)]
 carit[, RT.shape := trialResp.firstRt - shapeStartTime]
 
+carit_by_run_SDT <- dcast(carit[, .N, by = c('sID', 'runN', 'corrRespTrialType') ], ... ~ corrRespTrialType, value.var = 'N', fill =  0) 
+carit_by_run_SDT[, c('dprime', 'beta', 'aprime', 'bppd', 'c') := psycho::dprime(Hit, falseAlarm, Miss, corReject)]
+
 readr::write_csv(carit,"CARIT_allSubs.csv")
+readr::write_csv(carit_by_run_SDT,"CARIT_allSubs_dprime.csv")
