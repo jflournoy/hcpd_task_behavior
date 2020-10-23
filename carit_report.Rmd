@@ -192,6 +192,31 @@ ggplot(demos_and_data_avail, aes(x = age)) +
   jftheme
 ```
 
+## Age Prop.
+
+```{r fig.height=4, fig.width=6}
+agerange <- range(demos_and_data_avail$age)
+breaks <- seq(floor(agerange[[1]]), ceiling(agerange[[2]]), length.out = 10)
+values <- breaks[-length(breaks)] + diff(breaks[1:2])/2
+
+demos_and_data_avail_age <- demos_and_data_avail
+demos_and_data_avail_age[, age_bin := cut(age, breaks = breaks, labels = values)]
+demos_and_data_avail_age_prop <- 
+  demos_and_data_avail_age[, .N, 
+                           by = c('age_bin', 'Data Available')][, prop := N / sum(N), 
+                                                                by = 'age_bin']
+demos_and_data_avail_age_prop[, age_bin := as.numeric(as.character(age_bin))]
+ggplot(demos_and_data_avail_age_prop, aes(x = age_bin)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  scale_x_continuous(breaks = round(values, 1)) +
+  labs(x = 'Age binned (years)', y = 'Proportion') + 
+  jftheme
+```
+
 ## Sex
 
 ```{r fig.height=4, fig.width=6}
@@ -217,12 +242,81 @@ ggplot(demos_and_data_avail, aes(x = site)) +
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
 ```
 
-## Race
+## Site Prop.
+
+```{r fig.height=4, fig.width=6}
+demos_and_data_avail_site_prop <- 
+  demos_and_data_avail[, .N, 
+                       by = c('site', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'site']
+
+
+ggplot(demos_and_data_avail_site_prop, aes(x = site)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+
+## Race Count
 
 ```{r fig.height=4, fig.width=6}
 ggplot(demos_and_data_avail, aes(x = RACE)) + 
   geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`),
            position = position_dodge(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## Race Prop.
+
+```{r fig.height=4, fig.width=6}
+demos_and_data_avail_race_prop <- 
+  demos_and_data_avail[, .N, 
+                       by = c('RACE', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'RACE']
+ggplot(demos_and_data_avail_race_prop, aes(x = RACE)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## SES Count
+
+```{r}
+ggplot(demos_and_data_avail, aes(x = SES_RLVL)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`),
+           position = position_dodge(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## SES Prop.
+
+```{r fig.height=4, fig.width=6}
+demos_and_data_avail_ses_prop <- 
+  demos_and_data_avail[, .N, 
+                       by = c('SES_RLVL', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'SES_RLVL']
+
+
+ggplot(demos_and_data_avail_ses_prop, aes(x = SES_RLVL)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
            alpha = .95,
            binwidth = 1) +
   scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
