@@ -52,6 +52,8 @@ demos <- data.table::fread('HCPD_COMBINED20200608.csv',
                            select = c('id', 'age', 'gender', 'site', 'RACE', 'SES_PLVL', 'SES_RLVL', 'income'))
 staged <- data.table::fread('ccf_hcd_stg_2020-06-09.csv', 
                             select = 'Subject')
+public_release <- data.table::fread('HCD_V1_Release_Struct+fMRI_Merged_Adj.txt', header = FALSE, col.names = 'sID')
+
 long <- data.table::fread('HCPD_LONGITUDINAL20200608.csv',
                           select = c('id', 'LONG_AGE'))
 staged_dlmri <- data.table(sessionID = dir('/ncf/hcp/data/intradb_multiprocfix/', pattern = "HCD.*"))

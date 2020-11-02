@@ -100,9 +100,11 @@ Personal communication with Mike Hodge:
 
 >Sometimes when we find issues with the staging sessions after they’re built, we’ll remove the sessions so they’re not inadvertently released.  We’ll often not remove the corresponding subject record because we’ll eventually rebuild that session.  I’m sure that’s what happened here.
 
-Number of participants with dowloaded task MRI, but no CARIT task behavior: `r staged_dlmri[has_task_scan == TRUE][!d, on = 'sID'][, .N]`.
+Number of participants with (any) dowloaded task MRI, but no CARIT task behavior: `r staged_dlmri[has_task_scan == TRUE][!d, on = 'sID'][, .N]`.
 
-Number of participants with CARIT task behavior, but no dowloaded task MRI (on this task): `r unique(d[, 'sID'])[!staged_dlmri[has_task_scan == TRUE], on = 'sID'][, .N]`. This indicates that these participants had problems with their data in the multirun ica fix pipeline (it is possible that this session will eventually get rebuilt, it seems).
+Number of participants with dowloaded CARIT task MRI, but no CARIT task behavior: `r staged_dlmri[has_carit == TRUE][!d, on = 'sID'][, .N]`.
+
+Number of participants with CARIT task behavior, but no dowloaded task MRI (on this task): `r unique(d[, 'sID'])[!staged_dlmri[has_carit == TRUE], on = 'sID'][, .N]`. This indicates that these participants had problems with their data in the multirun ica fix pipeline (it is possible that this session will eventually get rebuilt, it seems).
 
 ```{r}
 missing_task_mri <- unique(d[, c('sessionID', 'sID')])[!staged_dlmri[has_task_scan == TRUE], on = 'sID']
@@ -217,10 +219,52 @@ ggplot(demos_and_data_avail_age_prop, aes(x = age_bin)) +
   jftheme
 ```
 
+## PR Age Prop.
+
+```{r fig.height=4, fig.width=6}
+public_release[, `Data Available` := TRUE]
+PR_data_avail <- merge(public_release, demos, on = 'sID', all = TRUE)
+PR_data_avail[is.na(`Data Available`), `Data Available` := FALSE] 
+PR_data_avail[, `Data Available` := factor(`Data Available`, levels = c(TRUE, FALSE), labels = c('Yes', 'No'))] 
+
+agerange <- range(PR_data_avail$age)
+breaks <- seq(floor(agerange[[1]]), ceiling(agerange[[2]]), length.out = 10)
+values <- breaks[-length(breaks)] + diff(breaks[1:2])/2
+
+PR_data_avail_age <- PR_data_avail
+PR_data_avail_age[, age_bin := cut(age, breaks = breaks, labels = values)]
+PR_data_avail_age_prop <- 
+  PR_data_avail_age[, .N, 
+                    by = c('age_bin', 'Data Available')][, prop := N / sum(N), 
+                                                         by = 'age_bin']
+PR_data_avail_age_prop[, age_bin := as.numeric(as.character(age_bin))]
+ggplot(PR_data_avail_age_prop, aes(x = age_bin)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  scale_x_continuous(breaks = round(values, 1)) +
+  labs(x = 'Age binned (years)', y = 'Proportion') + 
+  jftheme
+```
+
 ## Sex
 
 ```{r fig.height=4, fig.width=6}
 ggplot(demos_and_data_avail, aes(x = gender)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
+                 position = position_stack(), 
+                 width = 1, alpha = .95,
+                 binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme
+```
+
+## PR Sex
+
+```{r fig.height=4, fig.width=6}
+ggplot(PR_data_avail, aes(x = gender)) + 
   geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
                  position = position_stack(), 
                  width = 1, alpha = .95,
@@ -261,6 +305,23 @@ ggplot(demos_and_data_avail_site_prop, aes(x = site)) +
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
 ```
 
+## PR Site Prop.
+
+```{r fig.height=4, fig.width=6}
+PR_data_avail_site_prop <- 
+  PR_data_avail[, .N, 
+                by = c('site', 'Data Available')][, prop := N / sum(N), 
+                                                  by = 'site']
+
+ggplot(PR_data_avail_site_prop, aes(x = site)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
 
 ## Race Count
 
@@ -353,6 +414,23 @@ do.call(DT::datatable,
         c(list(carit[RT.shape < 0, list(N = .N, rt = mean(RT.shape)), by = sID],
                caption = 'Negative reaction times'), 
           dt_options))
+```
+
+### Negative RT over trials
+
+```{r}
+neg_ids <- unique(carit[RT.shape < 0, 'sID'])
+ggplot(carit[sID %in% neg_ids$sID], 
+       aes(x = trialNum,
+           y = RT.shape)) + 
+  geom_hline(yintercept = 0, color = apal[[5]]) + 
+  geom_line(aes(group = sID), color = apal[[4]]) + 
+  geom_point(color = apal[[1]], size = .25) + 
+  facet_grid(sID~runN, scales = 'free') + 
+  jftheme + 
+  theme(strip.background = element_blank(),
+        strip.text = element_blank(),
+        panel.margin = unit(.15, "lines"))
 ```
 
 ### All trials RT > 0
