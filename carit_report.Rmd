@@ -351,6 +351,25 @@ ggplot(demos_and_data_avail_race_prop, aes(x = RACE)) +
   scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
   jftheme + 
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+
+```
+
+## PR Race Prop.
+
+```{r fig.height=4, fig.width=6}
+PR_data_avail_race_prop <- 
+  PR_data_avail[, .N, 
+                       by = c('RACE', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'RACE']
+ggplot(PR_data_avail_race_prop, aes(x = RACE)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+
 ```
 
 ## SES Count
@@ -376,6 +395,25 @@ demos_and_data_avail_ses_prop <-
 
 
 ggplot(demos_and_data_avail_ses_prop, aes(x = SES_RLVL)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## PR SES Prop.
+
+```{r fig.height=4, fig.width=6}
+PR_data_avail_ses_prop <- 
+  PR_data_avail[, .N, 
+                       by = c('SES_RLVL', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'SES_RLVL']
+
+
+ggplot(PR_data_avail_ses_prop, aes(x = SES_RLVL)) + 
   geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
            position = position_stack(), 
            alpha = .95,
