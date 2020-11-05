@@ -423,6 +423,84 @@ ggplot(PR_data_avail_ses_prop, aes(x = SES_RLVL)) +
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
 ```
 
+## Proportions compared {.tabset}
+
+```{r}
+
+get_proportions <- function(adt, cols, id.vars, data_col, data_crit){
+  SEp <- function(p, n){
+    sqrt( p * (1 - p) / n )
+  }
+  ci <- Vectorize(function(p, se, interval, type, tol = .05){
+    interval <- c(0,1) + c(1,-1)*(1-interval)/2
+    if(type == 'u'){
+      r <- min(1-tol, p + qnorm(interval[[2]])*se)
+    } else if (type == 'l'){
+      r <- max(tol, p + qnorm(interval[[1]])*se)
+    }
+  }, vectorize.args = c('p', 'se'))
+  if('age' %in% cols){
+    agerange <- range(adt$age)
+    breaks <- seq(floor(agerange[[1]]), ceiling(agerange[[2]]), length.out = 10)
+    values <- breaks[-length(breaks)] + diff(breaks[1:2])/2
+    
+    adt[, age_bin := cut(age, breaks = breaks, labels = values)]
+    adt[, age_bin := sprintf('%04.1f', as.numeric(as.character(age_bin)))]
+    cols[which(cols == 'age')] <- 'age_bin'
+  }
+  adt_l <- data.table::melt(adt[, c(..id.vars, ..cols)],
+                            id.vars = id.vars)
+  adt_l_p <- adt_l[, .(N_with_data = sum(get(data_col) == data_crit), N = .N), by = c('variable', 'value')]
+  adt_l_p[, c('p', 'se') := list(N_with_data/N, SEp(N_with_data/N, N)), by = c('variable', 'value')]
+  adt_l_p[, c('l', 'u') := list(ci(p, se, .95, type = 'l'), ci(p, se, .95, type = 'u'))]
+  return(adt_l_p)
+}
+
+cols <- c('SES_RLVL', 'RACE', 'site', 'gender', 'age')
+id.vars <- c('sID', 'Data Available')
+
+PR_data_avail_props <- get_proportions(PR_data_avail, cols = cols, id.vars = id.vars, 
+                                       data_col = 'Data Available',
+                                       data_crit = 'Yes')
+demos_and_data_avail_props <- get_proportions(demos_and_data_avail, cols = cols, id.vars = id.vars,
+                                              data_col = 'Data Available',
+                                              data_crit = 'CARIT fMRI')
+
+PR_data_avail_props[, data := 'Public Release']
+demos_and_data_avail_props[, data := 'Staged']
+
+prop_comparison <- data.table::rbindlist(list(demos_and_data_avail_props, PR_data_avail_props))
+prop_comparison[, data := factor(data, levels = c('Staged', 'Public Release'))]
+```
+
+```{r fig.height=3.5, fig.width=6, results = 'asis'}
+for(col in cols){
+  cat(paste0('\n\n### ', col, '\n\n'))
+  if(col == 'age'){
+    col <- 'age_bin'
+    d <- prop_comparison[variable == col]
+    d[, value := as.numeric(value)]
+  } else {
+    d <- prop_comparison[variable == col]
+  }
+  if(col %in% c('SES_RLVL', 'RACE', 'site')){
+    axis_text <- theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+  } else {
+    axis_text <- theme(axis.text.x = element_text(angle = 0, hjust = .5))
+  }
+  print(ggplot(d, aes(x = value, y = p, group = data, color = data)) +
+          geom_point(position = position_dodge(width = .25), alpha = 1, size = 2) + 
+          geom_linerange(aes(ymin = l, ymax = u), position = position_dodge(width = .25)) + 
+          # facet_wrap(~variable, scales = 'free', ncol = 1) + 
+          scale_color_manual(breaks = c('Staged', 'Public Release'), values = apal[c(1,5)]) + 
+          jftheme + 
+          axis_text + 
+          coord_cartesian(y = c(0,1)) + 
+          # scale_y_continuous(trans = 'logit', limits = c(.05, .95)) + 
+          labs(x = col, y = 'Proportion with data', color = ''))
+}
+```
+
 # Reaction times (RT)
 
 ## General Characterization {.tabset}
@@ -644,6 +722,52 @@ ggplot(late_press_age, aes(x = age, y = n)) +
   theme(legend.margin = margin(rep(14, 4), "pt"),
         plot.margin = margin(rep(14, 4), "pt"), 
         legend.box.margin = margin(rep(14, 4), "pt"))
+```
+
+## RT changes
+
+Reaction times should change depending on the event. A "Go" after a previous "Go" should be faster, and slower after a "No-Go." This may differ depending on whether a "No-Go" resulted in a correct rejection or not.
+
+
+```{r}
+num_fac <- function(x, levels = NULL){
+  if(is.null(levels)){
+    as.numeric(factor(x))  
+  } else { 
+    as.numeric(factor(x, levels = levels))
+  }
+}
+lag1_num_fac_diff <- function(x, levels = NULL){
+  y <- abs(num_fac(x, levels = levels) - num_fac(shift(x, fill = x[[1]], type = 'lag'), levels = levels))
+  return(y)
+}
+
+setorder(carit, sID, runN, trialNum)
+carit[, trial_type_diff := lag1_num_fac_diff(trialType, levels = c('go', 'nogo')), by = c('sID', 'runN')]
+carit[, chunkID := cumsum(trial_type_diff)]
+carit[, N_of_trialType := 1:.N, by = c('sID', 'runN', 'chunkID')]
+carit[, prev_trial := shift(trialType, type = 'lag')]
+```
+
+```{r, fig.width=4.75, fig.height=4}
+ggplot(carit[trialType == 'go' & RT.shape > 0], aes(x = N_of_trialType, y = RT.shape)) + 
+  geom_bin2d(aes(fill = ..count.., color = ..count..), binwidth = c(1, .05)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
+  scale_color_gradient(low = apal[[1]], high = apal[[5]]) +
+  # geom_line(stat = 'smooth', method = 'gam', formula = y ~ s(x, k = 8), color = apal[[2]], size = .5, alpha = 1) +
+  geom_smooth(method = 'gam', formula = y ~ s(x, k = 8), color = apal[[2]], alpha = .8) +
+  jftheme + 
+  labs(x = 'Number of previous "Go" trials', y = 'Reaction time') + 
+  theme(legend.margin = margin(rep(14, 4), "pt"),
+        plot.margin = margin(rep(14, 4), "pt"), 
+        legend.box.margin = margin(rep(14, 4), "pt"))
+```
+
+```{r fig.height=4}
+ggplot(carit[trialType == 'go' & RT.shape > 0 & !is.na(prev_trial)], aes(x = RT.shape)) + 
+  geom_histogram(aes(group = interaction(prev_trial, , fill = prev_trial, y = ..density..), 
+                 position = position_identity(), alpha = .8, binwidth = .05) + 
+  jftheme
 ```
 
 # Accuracy {.tabset}
