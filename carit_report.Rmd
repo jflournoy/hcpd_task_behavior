@@ -41,8 +41,8 @@ jftheme <- theme_minimal() +
         panel.background = element_rect(fill = apal[[3]], size = 0, color = apal[[2]]),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), 
-        strip.background = element_rect(fill = apal[[2]], size = 0),
-        strip.text = element_text(color = '#222222'),
+        strip.background = element_rect(fill = apal[[3]], size = 0),
+        strip.text = element_text(color = apal[[1]]),
         axis.text =  element_text(color = apal[[4]]), axis.title = element_text(color = apal[[4]]))
 
 dt_options <- list(rownames = FALSE,
@@ -71,6 +71,14 @@ knitr::read_chunk('process_carit.R')
 # Process data
 
 ```{r process_carit}
+```
+
+At the moment, there are 2 participants who have too many trials for one run. The raw data file indicates that the same conditions file was used for each one, but it also indicates that only 1 run was run. We may ultimately be able to use these cases but I'm setting them aside for now.
+
+```{r}
+duplicate_run_ids <- unique(carit[, .N, by = c('sID', 'runN')][N > 92, sID])
+dim(carit)
+carit <- carit[!sID %in% duplicate_run_ids]
 ```
 
 # Data cross-check
@@ -198,25 +206,25 @@ ggplot(demos_and_data_avail, aes(x = age)) +
 
 ```{r fig.height=4, fig.width=6}
 agerange <- range(demos_and_data_avail$age)
-breaks <- seq(floor(agerange[[1]]), ceiling(agerange[[2]]), length.out = 10)
-values <- breaks[-length(breaks)] + diff(breaks[1:2])/2
+breaks <- c(seq(floor(agerange[[1]]), ceiling(agerange[[2]]), 2), ceiling(agerange[[2]]))
+breaks <- breaks[-(length(breaks) -1)]
+values <- paste0('(', breaks[-length(breaks)], '-', breaks[-1],']')
 
 demos_and_data_avail_age <- demos_and_data_avail
-demos_and_data_avail_age[, age_bin := cut(age, breaks = breaks, labels = values)]
+demos_and_data_avail_age[, age_bin := cut(floor(age), breaks = breaks, include.lowest = TRUE)]
 demos_and_data_avail_age_prop <- 
   demos_and_data_avail_age[, .N, 
                            by = c('age_bin', 'Data Available')][, prop := N / sum(N), 
                                                                 by = 'age_bin']
-demos_and_data_avail_age_prop[, age_bin := as.numeric(as.character(age_bin))]
 ggplot(demos_and_data_avail_age_prop, aes(x = age_bin)) + 
   geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
            position = position_stack(), 
            alpha = .95,
            binwidth = 1) +
   scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
-  scale_x_continuous(breaks = round(values, 1)) +
   labs(x = 'Age binned (years)', y = 'Proportion') + 
-  jftheme
+  jftheme + 
+  theme(axis.text.x = element_text(size = 10))
 ```
 
 ## PR Age Prop.
@@ -228,25 +236,25 @@ PR_data_avail[is.na(`Data Available`), `Data Available` := FALSE]
 PR_data_avail[, `Data Available` := factor(`Data Available`, levels = c(TRUE, FALSE), labels = c('Yes', 'No'))] 
 
 agerange <- range(PR_data_avail$age)
-breaks <- seq(floor(agerange[[1]]), ceiling(agerange[[2]]), length.out = 10)
-values <- breaks[-length(breaks)] + diff(breaks[1:2])/2
+breaks <- c(seq(floor(agerange[[1]]), ceiling(agerange[[2]]), 2), ceiling(agerange[[2]]))
+breaks <- breaks[-(length(breaks) -1)]
+values <- paste0('(', breaks[-length(breaks)], '-', breaks[-1],']')
 
 PR_data_avail_age <- PR_data_avail
-PR_data_avail_age[, age_bin := cut(age, breaks = breaks, labels = values)]
+PR_data_avail_age[, age_bin := cut(floor(age), breaks = breaks, include.lowest = TRUE)]
 PR_data_avail_age_prop <- 
   PR_data_avail_age[, .N, 
-                    by = c('age_bin', 'Data Available')][, prop := N / sum(N), 
-                                                         by = 'age_bin']
-PR_data_avail_age_prop[, age_bin := as.numeric(as.character(age_bin))]
+                           by = c('age_bin', 'Data Available')][, prop := N / sum(N), 
+                                                                by = 'age_bin']
 ggplot(PR_data_avail_age_prop, aes(x = age_bin)) + 
   geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
            position = position_stack(), 
            alpha = .95,
            binwidth = 1) +
   scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
-  scale_x_continuous(breaks = round(values, 1)) +
   labs(x = 'Age binned (years)', y = 'Proportion') + 
-  jftheme
+  jftheme + 
+  theme(axis.text.x = element_text(size = 10))
 ```
 
 ## Sex
@@ -441,16 +449,24 @@ get_proportions <- function(adt, cols, id.vars, data_col, data_crit){
   }, vectorize.args = c('p', 'se'))
   if('age' %in% cols){
     agerange <- range(adt$age)
-    breaks <- seq(floor(agerange[[1]]), ceiling(agerange[[2]]), length.out = 10)
-    values <- breaks[-length(breaks)] + diff(breaks[1:2])/2
+    breaks <- c(seq(floor(agerange[[1]]), ceiling(agerange[[2]]), 2), ceiling(agerange[[2]]))
+    breaks <- breaks[-(length(breaks) -1)]
+    values <- paste0('(', breaks[-length(breaks)], '-', breaks[-1],']')
     
-    adt[, age_bin := cut(age, breaks = breaks, labels = values)]
-    adt[, age_bin := sprintf('%04.1f', as.numeric(as.character(age_bin)))]
+    adt[, age_bin := cut(floor(age), breaks = breaks, include.lowest = TRUE)]
+    adt[, age_bin_order := as.numeric(age_bin)]
     cols[which(cols == 'age')] <- 'age_bin'
+    id.vars <- c(id.vars, 'age_bin_order')
   }
   adt_l <- data.table::melt(adt[, c(..id.vars, ..cols)],
                             id.vars = id.vars)
-  adt_l_p <- adt_l[, .(N_with_data = sum(get(data_col) == data_crit), N = .N), by = c('variable', 'value')]
+  if('age_bin_order' %in% id.vars){
+    adt_l_p <- adt_l[, .(N_with_data = sum(get(data_col) == data_crit), 
+                         N = .N,
+                         age_bin_order = unique(age_bin_order)), by = c('variable', 'value')]
+  } else {
+    adt_l_p <- adt_l[, .(N_with_data = sum(get(data_col) == data_crit), N = .N), by = c('variable', 'value')]
+  }
   adt_l_p[, c('p', 'se') := list(N_with_data/N, SEp(N_with_data/N, N)), by = c('variable', 'value')]
   adt_l_p[, c('l', 'u') := list(ci(p, se, .95, type = 'l'), ci(p, se, .95, type = 'u'))]
   return(adt_l_p)
@@ -479,24 +495,24 @@ for(col in cols){
   if(col == 'age'){
     col <- 'age_bin'
     d <- prop_comparison[variable == col]
-    d[, value := as.numeric(value)]
+    d[, value := factor(value, levels = unique(value)[order(unique(age_bin_order))])]
   } else {
     d <- prop_comparison[variable == col]
   }
   if(col %in% c('SES_RLVL', 'RACE', 'site')){
     axis_text <- theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+  } else if (col == 'age_bin'){
+    axis_text <- theme(axis.text.x = element_text(angle = 0, hjust = .5, size = 10))
   } else {
     axis_text <- theme(axis.text.x = element_text(angle = 0, hjust = .5))
   }
   print(ggplot(d, aes(x = value, y = p, group = data, color = data)) +
           geom_point(position = position_dodge(width = .25), alpha = 1, size = 2) + 
           geom_linerange(aes(ymin = l, ymax = u), position = position_dodge(width = .25)) + 
-          # facet_wrap(~variable, scales = 'free', ncol = 1) + 
           scale_color_manual(breaks = c('Staged', 'Public Release'), values = apal[c(1,5)]) + 
           jftheme + 
           axis_text + 
           coord_cartesian(y = c(0,1)) + 
-          # scale_y_continuous(trans = 'logit', limits = c(.05, .95)) + 
           labs(x = col, y = 'Proportion with data', color = ''))
 }
 ```
@@ -570,7 +586,7 @@ ggplot(carit[sID %in% carit[RT.shape < 0, sID]], aes(x = RT.shape)) +
 
 ### All RT by participant {.tabset}
 
-```{r results = 'asis'}
+```{r results = 'asis', eval = FALSE}
 #A few participants have a single negative RT.
 sid_groups <- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -632,7 +648,7 @@ ggplot(carit[RT.shape > 0], aes(x = RT.shape)) +
 
 ### All go RT by participant {.tabset}
 
-```{r results = 'asis'}
+```{r results = 'asis', eval = FALSE}
 #A few participants have a single negative RT.
 sid_groups <- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -650,7 +666,7 @@ for(i in 1:length(sid_groups)){
 
 ### All nogo RT by participant {.tabset}
 
-```{r results = 'asis'}
+```{r results = 'asis', eval = FALSE}
 #A few participants have a single negative RT.
 sid_groups <- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -751,11 +767,11 @@ carit[, prev_trial := shift(trialType, type = 'lag')]
 
 ```{r, fig.width=4.75, fig.height=4}
 ggplot(carit[trialType == 'go' & RT.shape > 0], aes(x = N_of_trialType, y = RT.shape)) + 
-  geom_bin2d(aes(fill = ..count.., color = ..count..), binwidth = c(1, .05)) + 
+  geom_bin2d(aes(fill = ..count.., color = ..count..), binwidth = c(1, .025)) + 
   scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
   scale_color_gradient(low = apal[[1]], high = apal[[5]]) +
   # geom_line(stat = 'smooth', method = 'gam', formula = y ~ s(x, k = 8), color = apal[[2]], size = .5, alpha = 1) +
-  geom_smooth(method = 'gam', formula = y ~ s(x, k = 8), color = apal[[2]], alpha = .8) +
+  geom_smooth(method = 'gam', formula = y ~ s(x, k = 4), color = apal[[2]], alpha = .8) +
   jftheme + 
   labs(x = 'Number of previous "Go" trials', y = 'Reaction time') + 
   theme(legend.margin = margin(rep(14, 4), "pt"),
@@ -763,11 +779,78 @@ ggplot(carit[trialType == 'go' & RT.shape > 0], aes(x = N_of_trialType, y = RT.s
         legend.box.margin = margin(rep(14, 4), "pt"))
 ```
 
-```{r fig.height=4}
-ggplot(carit[trialType == 'go' & RT.shape > 0 & !is.na(prev_trial)], aes(x = RT.shape)) + 
-  geom_histogram(aes(group = interaction(prev_trial, , fill = prev_trial, y = ..density..), 
-                 position = position_identity(), alpha = .8, binwidth = .05) + 
+```{r, fig.width=6, fig.height=4}
+ggplot(carit[trialType == 'go' & RT.shape > 0], aes(x = trialNum, y = RT.shape)) + 
+  geom_bin2d(aes(fill = ..count.., color = ..count..), binwidth = c(5, .025)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
+  scale_color_gradient(low = apal[[1]], high = apal[[5]]) +
+  # geom_line(stat = 'smooth', method = 'gam', formula = y ~ s(x, k = 8), color = apal[[2]], size = .5, alpha = 1) +
+  geom_smooth(method = 'gam', formula = y ~ s(x, k = 4), color = apal[[2]], alpha = .8) +
+  facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
+  jftheme + 
+  labs(x = 'Number of previous "Go" trials', y = 'Reaction time') + 
+  theme(legend.margin = margin(rep(14, 4), "pt"),
+        plot.margin = margin(rep(14, 4), "pt"), 
+        legend.box.margin = margin(rep(14, 4), "pt"))
+```
+
+```{r}
+library(lme4)
+
+N_of_trialType_s <- scale(carit$N_of_trialType)
+RT.shape_s <- scale(carit$RT.shape)
+RT.m <- attr(RT.shape_s, 'scaled:center')
+RT.sd <- attr(RT.shape_s, 'scaled:scale')
+trialNum_s <- scale(carit$trialNum)
+runN_fac <- factor(carit$runN)
+
+carit_rt_frame <- data.table(RT.shape = carit$RT.shape, 
+                             RT.shape_s = as.numeric(RT.shape_s),
+                             N_of_trialType_s = as.numeric(N_of_trialType_s),
+                             N_of_trialType = carit$N_of_trialType,
+                             trialNum_s = as.numeric(trialNum_s),
+                             trialNum = carit$trialNum,
+                             runN_fac = runN_fac,
+                             runN = carit$runN,
+                             sID = carit$sID,
+                             trialType = carit$trialType)
+
+rt_repeated_go_trialnum_fit <- lmer(
+  RT.shape_s ~ 1 + N_of_trialType_s*trialNum_s*runN_fac + (1 + N_of_trialType_s + runN_fac | sID), 
+  data = carit_rt_frame[trialType == 'go' & RT.shape > 0])
+summary(rt_repeated_go_trialnum_fit)
+
+new_frame <- unique(carit_rt_frame[, c('N_of_trialType_s', 'trialNum_s', 'runN_fac',
+                                       'N_of_trialType', 'trialNum', 'runN')])
+new_frame[, RT.shape_s := predict(rt_repeated_go_trialnum_fit, newdata = new_frame, re.form = ~0)]
+new_frame[, RT.shape := RT.shape_s * RT.sd + RT.m]
+```
+```{r fig.height=4, fig.width=8}
+ggplot(new_frame, aes(x = trialNum, y = RT.shape)) + 
+  geom_point(aes(color = N_of_trialType)) + 
+  geom_line(aes(group = N_of_trialType, color = N_of_trialType)) + 
+  scale_color_gradient(low = apal[[4]], high = apal[[2]], name = 'N previous\n"go" trials') + 
+  facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
   jftheme
+```
+
+
+```{r fig.height=4}
+rt_means <- carit[trialType == 'go' & 
+                    RT.shape > 0 & 
+                    !is.na(prev_trial)][, .(mean = mean(RT.shape, na.rm = TRUE)),
+                                        by = prev_trial]
+ggplot(carit[trialType == 'go' & RT.shape > 0 & !is.na(prev_trial)], aes(x = RT.shape)) + 
+  geom_density(aes(group = prev_trial, fill = prev_trial, color = prev_trial, y = ..density..), 
+                 position = position_identity(), alpha = .8) + 
+  geom_segment(data = rt_means, aes(x = mean, xend = mean, y = 0, yend = .25, color = prev_trial)) + 
+  geom_point(data = rt_means, aes(x = mean, y = 0, color = prev_trial)) + 
+  scale_fill_manual(breaks = c('go', 'nogo'), values = apal[c(5,1)], 
+                    name = 'Previous trial') + 
+  scale_color_manual(breaks = c('go', 'nogo'), values = apal[c(2,4)], 
+                    name = 'Previous trial') + 
+  jftheme + 
+  labs(x = 'Reaction time', y = '')
 ```
 
 # Accuracy {.tabset}
