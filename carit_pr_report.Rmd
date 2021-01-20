@@ -1,0 +1,98 @@
+---
+title: "CARIT Public Release Data Report"
+author: "John Flournoy"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+    self_contained: false
+---
+
+```{css, echo=FALSE}
+@import url('https://fonts.googleapis.com/css?family=Didact+Gothic&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Fira+Code&display=swap');
+body{
+  font-family: 'Didact Gothic',  sans-serif;
+}
+pre code {
+  font-family: 'Fira Code',  monospace;
+}
+```
+
+```{r setup, include=FALSE}
+library(showtext)
+library(ggplot2)
+library(data.table)
+library(DT)
+data.table::setDTthreads(2)
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+#https://www.instagram.com/p/CCQvy_BAkWv/
+apal <- paste0('#', c('005867', 'FFB335', 'F3F1EA', '2E383D', 'F34226'))
+
+#{.tabset}
+font_add_google("Didact Gothic", "Didact Gothic")
+# showtext_auto()
+
+jftheme <- theme_minimal() +  
+  theme(text = element_text(family = 'Didact Gothic', size = 14),
+        panel.background = element_rect(fill = apal[[3]], size = 0, color = apal[[2]]),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        strip.background = element_rect(fill = apal[[3]], size = 0),
+        strip.text = element_text(color = apal[[1]]),
+        axis.text =  element_text(color = apal[[4]]), axis.title = element_text(color = apal[[4]]))
+
+dt_options <- list(rownames = FALSE,
+                   filter = 'top',
+                   class = 'cell-border stripe',
+                   extensions = 'Buttons', 
+                   options = list(dom = 'Bfrtip', buttons = c('csv')))
+
+dt_table <- function(data, caption, dt_options = NULL){
+  if(is.null(dt_options)){
+    dt_options <- list(rownames = FALSE,
+                   filter = 'top',
+                   class = 'cell-border stripe',
+                   extensions = 'Buttons', 
+                   options = list(dom = 'Bfrtip', buttons = c('csv')))
+  }
+  return(do.call(DT::datatable, 
+                 c(list(data,
+                        caption = caption), 
+                   dt_options)))
+}
+
+knitr::read_chunk('process_carit.R')
+```
+
+# Process data
+
+```{r process_carit}
+```
+
+At the moment, there are 2 participants who have too many trials for one run. The raw data file indicates that the same conditions file was used for each one, but it also indicates that only 1 run was run. We may ultimately be able to use these cases but I'm setting them aside for now.
+
+```{r}
+#remove longitudinal subjects:
+carit <- carit[!grepl('_V[2-9]_', filename),]
+###INVESTIGATE FURTHER
+duplicate_run_ids <- unique(carit[, .N, by = c('sID', 'runN')][N > 92, sID])
+print(duplicate_run_ids)
+dim(carit)
+carit <- carit[!sID %in% duplicate_run_ids]
+dim(carit)
+carit_pr_scan <- carit[public_release, on = 'sID', nomatch = 0]
+carit_pr_scan <- staged_dlmri[carit_pr_scan, on = 'sID'][has_carit == TRUE]
+```
+
+# Events
+
+```{r}
+#For each person:
+#  get the number of events in each combination:
+#     1. GO/NOGO
+#     2. Prepotentcy POS/NEG
+```

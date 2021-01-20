@@ -76,9 +76,14 @@ knitr::read_chunk('process_carit.R')
 At the moment, there are 2 participants who have too many trials for one run. The raw data file indicates that the same conditions file was used for each one, but it also indicates that only 1 run was run. We may ultimately be able to use these cases but I'm setting them aside for now.
 
 ```{r}
+#remove longitudinal subjects:
+carit <- carit[!grepl('_V[2-9]_', filename),]
+###INVESTIGATE FURTHER
 duplicate_run_ids <- unique(carit[, .N, by = c('sID', 'runN')][N > 92, sID])
+print(duplicate_run_ids)
 dim(carit)
 carit <- carit[!sID %in% duplicate_run_ids]
+dim(carit)
 ```
 
 # Data cross-check
@@ -92,6 +97,24 @@ Number of participants with demo info but no CARIT task behavior: `r demos[!d, o
 Number of participants with CARIT task behavior but not staged: `r d[!staged, on = 'sID'][, .N]`.
 
 Number of participants staged but no CARIT task behavior: `r staged[!d, on = 'sID'][, .N]`. These participants likely did not complete the task, though other data is relevant for staging.
+
+Number of participants with task behavior not staged, recovered from intake project: `r length(unique(d_intake$sID))`
+
+Number of intake participants with no demo info: `r d_intake[!demos, on = 'sID'][, list(sID = unique(sID))][, .N]`. Participant ids: `r d_intake[!demos, on = 'sID'][, list(sID = unique(sID))]`.
+
+Number of participants not in either intake or staged CARIT behavior lists: `r demos[!d, on = 'sID'][!d_intake, on = 'sID'][, .N]`.
+
+List of those:
+
+`r demos[!d, on = 'sID'][!d_intake, on = 'sID'][, sID]`
+
+Spot check suggests these sessions may be missing some data for the task, or have other problems.
+
+```{r, eval = FALSE}
+intradb_beh_only_list <- demos[!d, on = 'sID']
+setnames(intradb_beh_only_list, 'sID', 'Subject')
+readr::write_csv(intradb_beh_only_list, '~/code/intradb_sync/HCPD_behavior_only.csv')
+```
 
 ```{r}
 do.call(DT::datatable, 
@@ -124,19 +147,102 @@ do.call(DT::datatable,
 
 ```
 
+## Public release
 
-# Check design
+```{r}
+public_release[, PR := TRUE]
+d_pr <- public_release[d_combined, on = 'sID']
+d_pr[, PR := data.table::fifelse(PR, TRUE, FALSE, na = FALSE)]
+d_pr <- d_pr[PR == TRUE]
+```
+
+Not all staged participants are available for public release, and we've decided to use the public release data for this set of analyses. 
+
+Number of PR participants: `r public_release[, .N]`
+
+Number of PR participants with CARIT behavior: `r unique(d_combined[public_release, on = 'sID'][!is.na(PR), 'sID'])[, .N]`
+
+Number of PR participants with CARIT task scan: `r staged_dlmri[public_release, on = 'sID'][has_carit == TRUE][, .N]`
+
+# Check design 
+
+## Public release and scan data
+
+```{r}
+carit_pr_scan <- carit[public_release, on = 'sID', nomatch = 0]
+carit_pr_scan <- staged_dlmri[carit_pr_scan, on = 'sID'][has_carit == TRUE]
+```
 
 CARIT has two rounds of 92 trials each, for a total of 184 trials per subject.
 
-Modal number of trials: `r d[, .N, by = 'sID'][, as.numeric(modal(N))]`.
+Modal number of trials: `r carit_pr_scan[, .N, by = 'sID'][, as.numeric(modal(N))]`.
 
-Number of participants without modal number: `r d[, .N, by = 'sID'][N != as.numeric(modal(N))][, .N]`.
+Number of participants without modal number: `r carit_pr_scan[, .N, by = 'sID'][N != as.numeric(modal(N))][, .N]`.
 
 ```{r}
 #List participants without the modal number of trials
 do.call(DT::datatable, 
-        c(list(d[, list(`N trials` = .N), by = 'sID'][`N trials` != as.numeric(modal(`N trials`))],
+        c(list(carit_pr_scan[, list(`N trials` = .N), by = 'sID'][`N trials` != as.numeric(modal(`N trials`))],
+               caption = 'Pariticipants without modal number of trials.'), 
+          dt_options))
+```
+
+Each round of the task has 68 go trials and 24 nogo trials. Each subject should have 136 go and 48 nogo trials
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit_pr_scan[, .N, keyby = c('sID', 'trialType')],
+      sID ~ trialType)[go != 136 | nogo != 48][, .N]
+```
+
+Nogo trials should be equivalently distributed between prev reward and prev loss trials. Each subject should have 24 prevRew, 24 prevLoss. 
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit_pr_scan[, .N, keyby = c('sID', 'nogoCondition')], 
+      sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, .N]
+```
+
+Go prepotency trials should number 20 for 2, 16 for 3, and 12 for 4. 
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit_pr_scan[, .N, keyby = c('sID', 'prepotency')], 
+      sID ~ prepotency)[`2go` != 20 | 
+                          `3go` != 16 |
+                          `4go` != 12][, .N]
+```
+
+These are all the same IDs who are missing one of the two runs.
+
+```{r}
+identical(dcast(carit_pr_scan[, .N, keyby = c('sID', 'trialType')],
+                sID ~ trialType)[go != 136 | nogo != 48][, 'sID'],
+          dcast(carit_pr_scan[, .N, keyby = c('sID', 'nogoCondition')], 
+                sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, 'sID'])
+identical(dcast(carit_pr_scan[, .N, keyby = c('sID', 'nogoCondition')], 
+                sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, 'sID'], 
+          dcast(carit_pr_scan[, .N, keyby = c('sID', 'prepotency')], 
+                sID ~ prepotency)[`2go` != 20 | 
+                                    `3go` != 16 |
+                                    `4go` != 12][, 'sID'])
+```
+
+## For all CARIT data
+
+CARIT has two rounds of 92 trials each, for a total of 184 trials per subject.
+
+Modal number of trials: `r carit[, .N, by = 'sID'][, as.numeric(modal(N))]`.
+
+Number of participants without modal number: `r carit[, .N, by = 'sID'][N != as.numeric(modal(N))][, .N]`.
+
+```{r}
+#List participants without the modal number of trials
+do.call(DT::datatable, 
+        c(list(carit[, list(`N trials` = .N, data_source = unique(data_source)), by = 'sID'][`N trials` != as.numeric(modal(`N trials`))],
                caption = 'Pariticipants without modal number of trials.'), 
           dt_options))
 ```
@@ -170,19 +276,20 @@ dcast(carit[, .N, keyby = c('sID', 'prepotency')],
                           `4go` != 12][, .N]
 ```
 
-These are all the same IDs who are missing one of the two runs.
-
 # Data availability {.tabset}
 
-N participants with task behavior: `r unique(d[, c('sID')])[, .N]`.
+N participants with task behavior: `r unique(carit[, c('sID')])[, .N]`.
 N participants with any task fMRI: `r unique(staged_dlmri[has_task_scan == TRUE, c('sID')])[, .N]`.
 N participants with CARIT fMRI: `r unique(staged_dlmri[has_carit == TRUE, c('sID')])[, .N]`.
 N participants with Guessing fMRI: `r unique(staged_dlmri[has_guessing == TRUE, c('sID')])[, .N]`.
 
+
+The following comparisons are based on the those with any CARIT task data whatsover, and those who have fMRI CARIT data.
+
 ## Age
 
 ```{r fig.height=4, fig.width=6}
-carit_behavior_ids <- unique(d[, c('sID')])
+carit_behavior_ids <- unique(carit[, c('sID')])
 carit_behavior_ids[, carit_behav := TRUE]
 demos_and_data_avail <- merge(carit_behavior_ids, demos, on = 'sID', all = TRUE)
 demos_and_data_avail <- merge(demos_and_data_avail, staged_dlmri, on = 'sID', all = TRUE)
@@ -205,7 +312,7 @@ ggplot(demos_and_data_avail, aes(x = age)) +
 ## Age Prop.
 
 ```{r fig.height=4, fig.width=6}
-agerange <- range(demos_and_data_avail$age)
+agerange <- range(demos_and_data_avail$age, na.rm = TRUE)
 breaks <- c(seq(floor(agerange[[1]]), ceiling(agerange[[2]]), 2), ceiling(agerange[[2]]))
 breaks <- breaks[-(length(breaks) -1)]
 values <- paste0('(', breaks[-length(breaks)], '-', breaks[-1],']')
@@ -222,6 +329,7 @@ ggplot(demos_and_data_avail_age_prop, aes(x = age_bin)) +
            alpha = .95,
            binwidth = 1) +
   scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  scale_x_discrete(na.translate = FALSE) + 
   labs(x = 'Age binned (years)', y = 'Proportion') + 
   jftheme + 
   theme(axis.text.x = element_text(size = 10))
@@ -448,7 +556,7 @@ get_proportions <- function(adt, cols, id.vars, data_col, data_crit){
     }
   }, vectorize.args = c('p', 'se'))
   if('age' %in% cols){
-    agerange <- range(adt$age)
+    agerange <- range(adt$age, na.rm = TRUE)
     breaks <- c(seq(floor(agerange[[1]]), ceiling(agerange[[2]]), 2), ceiling(agerange[[2]]))
     breaks <- breaks[-(length(breaks) -1)]
     values <- paste0('(', breaks[-length(breaks)], '-', breaks[-1],']')
@@ -788,7 +896,7 @@ ggplot(carit[trialType == 'go' & RT.shape > 0], aes(x = trialNum, y = RT.shape))
   geom_smooth(method = 'gam', formula = y ~ s(x, k = 4), color = apal[[2]], alpha = .8) +
   facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
   jftheme + 
-  labs(x = 'Number of previous "Go" trials', y = 'Reaction time') + 
+  labs(x = 'Trial Number', y = 'Reaction time') + 
   theme(legend.margin = margin(rep(14, 4), "pt"),
         plot.margin = margin(rep(14, 4), "pt"), 
         legend.box.margin = margin(rep(14, 4), "pt"))
@@ -818,10 +926,15 @@ carit_rt_frame <- data.table(RT.shape = carit$RT.shape,
 rt_repeated_go_trialnum_fit <- lmer(
   RT.shape_s ~ 1 + N_of_trialType_s*trialNum_s*runN_fac + (1 + N_of_trialType_s + runN_fac | sID), 
   data = carit_rt_frame[trialType == 'go' & RT.shape > 0])
-summary(rt_repeated_go_trialnum_fit)
+#summary(rt_repeated_go_trialnum_fit)
+#It didn't converge so restart and run for more iterations
+ss <- getME(rt_repeated_go_trialnum_fit,c("theta","fixef"))
+m2 <- update(rt_repeated_go_trialnum_fit,start=ss,control=lmerControl(optCtrl=list(maxfun=2e4)))
+summary(m2)
 
 new_frame <- unique(carit_rt_frame[, c('N_of_trialType_s', 'trialNum_s', 'runN_fac',
                                        'N_of_trialType', 'trialNum', 'runN')])
+
 new_frame[, RT.shape_s := predict(rt_repeated_go_trialnum_fit, newdata = new_frame, re.form = ~0)]
 new_frame[, RT.shape := RT.shape_s * RT.sd + RT.m]
 ```
@@ -852,6 +965,70 @@ ggplot(carit[trialType == 'go' & RT.shape > 0 & !is.na(prev_trial)], aes(x = RT.
   jftheme + 
   labs(x = 'Reaction time', y = '')
 ```
+
+## Probability of FA
+
+Is a FA more likely after more previous "go" trials?
+
+```{r}
+carit[, is_FA := corrRespTrialType == 'falseAlarm']
+
+carit_FA_frame <- data.table(is_FA = carit$is_FA, 
+                             trialNum = carit$trialNum,
+                             runN_fac = runN_fac,
+                             runN = carit$runN,
+                             sID = carit$sID,
+                             trialType = carit$trialType,
+                             prepotency = carit$prepotency,
+                             age = carit$age)
+
+carit_FA_frame <- carit_FA_frame[trialType == 'nogo']
+carit_FA_frame[, trialNum := 1:.N, by = c('sID', 'runN')]
+carit_FA_frame[, trialNum_s := scale(trialNum)]
+
+acc_mod <- glmer(is_FA ~ 1 + prepotency + (1 | sID),
+                data = carit_FA_frame, family = 'binomial')
+summary(acc_mod)
+
+FE <- fixef(acc_mod)
+
+P_FA <- c(arm::invlogit(FE['(Intercept)']),
+          arm::invlogit(sum(FE[c('(Intercept)', 'prepotency3go')])),
+          arm::invlogit(sum(FE[c('(Intercept)', 'prepotency4go')])))
+
+knitr::kable(dplyr::tibble('Number of previous "GO"s' = 2:4,
+                           'Probability of FA' = round(P_FA, 2)))
+```
+
+By run and age?
+
+```{r}
+acc_mod_expanded.fn <- 'acc_mod_expanded.RDS'
+if(!file.exists(acc_mod_expanded.fn)){
+  acc_mod_expanded <- glmer(is_FA ~ 1 + prepotency*runN_fac*trialNum_s + (1 | sID),
+                            data = carit_FA_frame, family = 'binomial')
+  saveRDS(acc_mod_expanded, file = 'acc_mod_expanded.RDS')
+} else {
+  acc_mod_expanded <- readRDS(file = 'acc_mod_expanded.RDS')
+}
+summary(acc_mod_expanded)
+
+new_frame_FA <- unique(carit_FA_frame[, c('prepotency', 
+                                          'trialNum_s', 'runN_fac',
+                                          'trialNum', 'runN')])
+
+new_frame_FA[, p_FA := predict(acc_mod_expanded, newdata = new_frame_FA, re.form = ~0, type = 'response')]
+```
+
+```{r fig.height=4, fig.width=8}
+ggplot(new_frame_FA, aes(x = trialNum, y = p_FA)) + 
+  geom_point(aes(color = prepotency)) + 
+  geom_line(aes(group = prepotency, color = prepotency)) + 
+  scale_color_manual(values = c(apal[[2]], apal[[5]], apal[[4]]), name = 'N previous\n"go" trials') + 
+  facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
+  jftheme
+```
+
 
 # Accuracy {.tabset}
 
@@ -993,14 +1170,14 @@ Given that the trial-level data response is either 0 or 1 (false alarms or corre
 The model is:
 
 ```
-y ~ 1 + prevrew + run + age + prevrew:run + prevrew:age + run:age + prevrew:run:age
+CR ~ 1 + prevrew + run + age + prevrew:run + prevrew:age + run:age + prevrew:run:age + prepotency
 ```
 
 
 $$
-y = \beta_0 + \beta_1\text{PrevRew} + \beta_2\text{Run} + \beta_3\text{Age} +\\ \beta_4\text{PrevRew}\cdot\text{Run} + \beta_5\text{PrevRew}\cdot\text{Age} + \\
+\text{CR} = \beta_0 + \beta_1\text{PrevRew} + \beta_2\text{Run} + \beta_3\text{Age} +\\ \beta_4\text{PrevRew}\cdot\text{Run} + \beta_5\text{PrevRew}\cdot\text{Age} + \\
 \beta_6\text{Run}\cdot\text{Age} + \\
-\beta_7\text{PrevRew}\cdot\text{Run}\cdot\text{Age} + \epsilon_{ij}
+\beta_7\text{PrevRew}\cdot\text{Run}\cdot\text{Age} + \beta_8 \cdot \text{prepotency} +  \epsilon_{ij}
 $$
 
 where $y_{ij}$ is the *i*th response from the *j*th participant. Not shown is the random effects error terms or specific dummy coding. 
