@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="John Flournoy" />
+
+<meta name="date" content="2021-01-21" />
+
+<title>CARIT Public Release Data Report</title>
+
+<script src="carit_pr_report_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="carit_pr_report_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="carit_pr_report_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="carit_pr_report_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="carit_pr_report_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="carit_pr_report_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="carit_pr_report_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="carit_pr_report_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="carit_pr_report_files/navigation-1.1/tabsets.js"></script>
+<script src="carit_pr_report_files/navigation-1.1/codefolding.js"></script>
+<link href="carit_pr_report_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="carit_pr_report_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">CARIT Public Release Data Report</h1>
+<h4 class="author">John Flournoy</h4>
+<h4 class="date">2021-01-21</h4>
+
+</div>
+
+
+<style type="text/css">
+@import url('https://fonts.googleapis.com/css?family=Didact+Gothic&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Fira+Code&display=swap');
+body{
+  font-family: 'Didact Gothic',  sans-serif;
+}
+pre code {
+  font-family: 'Fira Code',  monospace;
+}
+</style>
+<div id="process-data" class="section level1">
+<h1>Process data</h1>
+<pre class="r"><code>library(data.table)
+library(psycho)
+data.table::setDTthreads(3)
+
+modal &lt;- function(x){
+  t &lt;- table(unlist(x))
+  n &lt;- dimnames(t)[[1]]
+  return(n[which(t == max(t))])
+}
+
+read_carit_dir &lt;- function(data_path, pattern = &quot;*CARIT.*run[12]_wide.csv&quot;){
+  #List all of the CARIT task files in the data directory
+  fnames &lt;- dir(data_path, 
+                pattern = pattern, 
+                recursive = TRUE, 
+                full.names = TRUE)
+  names(fnames) &lt;- 1:length(fnames)
+  
+  #Set the column names we want from each csv file
+  col_select &lt;- c(&#39;condFile&#39;, &#39;trialNum&#39;, &#39;stim&#39;,
+                  &#39;corrAns&#39;, &#39;prepotency&#39;, &#39;ISI&#39;,
+                  &#39;shapeStartTime&#39;, &#39;shapeEndTime&#39;, 
+                  &#39;fixStartTime&#39;,&#39;fixEndTime&#39;,
+                  &#39;nogoCondition&#39;,&#39;resp&#39;, 
+                  &#39;trialResp.firstKey&#39;, &#39;trialResp.firstRt&#39;,
+                  &#39;corrRespMsg&#39;, &#39;corrRespCode&#39;, 
+                  &#39;corrRespTrialType&#39;,&#39;isiPress.keys&#39;,
+                  &#39;isiPress.rt&#39;, &#39;hitCount&#39;, &#39;missCount&#39;,
+                  &#39;falseAlarmCount&#39;, &#39;corrRejectCount&#39;, 
+                  &#39;totalAcc&#39;, &#39;goAcc&#39;, &#39;nogoAcc&#39;, 
+                  &#39;goFiveBackAvg&#39;, &#39;nogoFiveBackAvg&#39;,
+                  &#39;totalFiveBackAvg&#39;)
+  
+  #create a temporary data frame of all the data from all the csv files
+  adf &lt;- data.table::rbindlist(
+    lapply(fnames, function(f){
+      #remove the first 4 rows of each data frame.
+      data.table::fread(f, select = col_select)[-(1:4),]
+    }),
+    idcol = TRUE)
+  
+  #combine information about the files with the temporary data frame.
+  d &lt;- data.table(.id = names(fnames),
+                  filename = fnames,
+                  sessionID = gsub(&#39;.*(HCD[A-Za-z0-9]+_V[0-9]_[A|B|X]).*&#39;, &#39;\\1&#39;, fnames),
+                  sID = gsub(&#39;.*(HCD[A-Za-z0-9]+)_V[0-9]_[A|B|X].*&#39;, &#39;\\1&#39;, fnames))[adf, on = &#39;.id&#39;]
+  return(d)
+}
+
+workspace_fname &lt;- &#39;process_carit.rda&#39;
+if(!file.exists(workspace_fname)){
+  
+  data_path &lt;- &#39;/ncf/hcp/data/CCF_HCD_STG_PsychoPy_files/&#39;
+  intake_data_path &lt;- &#39;/ncf/hcp/data/intradb_intake/&#39;
+  
+  d &lt;- read_carit_dir(data_path)
+  d_intake &lt;- read_carit_dir(intake_data_path)
+  #remove long
+  
+  readr::write_csv(d, &#39;CARIT_allRaw.csv&#39;)
+  
+  demos &lt;- data.table::fread(&#39;HCPD_COMBINED20200608.csv&#39;,
+                             select = c(&#39;id&#39;, &#39;age&#39;, &#39;gender&#39;, &#39;site&#39;, &#39;RACE&#39;, &#39;SES_PLVL&#39;, &#39;SES_RLVL&#39;, &#39;income&#39;))
+  staged &lt;- data.table::fread(&#39;ccf_hcd_stg_2020-06-09.csv&#39;, 
+                              select = &#39;Subject&#39;)
+  public_release &lt;- data.table::fread(&#39;HCD_V1_Release_Struct+fMRI_Merged_Adj.txt&#39;, header = FALSE, col.names = &#39;sID&#39;)
+  
+  long &lt;- data.table::fread(&#39;HCPD_LONGITUDINAL20200608.csv&#39;,
+                            select = c(&#39;id&#39;, &#39;LONG_AGE&#39;))
+  staged_dlmri &lt;- data.table(sessionID = dir(&#39;/ncf/hcp/data/intradb_multiprocfix/&#39;, pattern = &quot;HCD.*&quot;))
+  
+  staged_dlmri[, &#39;has_task_scan&#39;] &lt;-  unlist(lapply(staged_dlmri$sessionID, function(sess){
+    length(dir(file.path(&#39;/ncf/hcp/data/intradb_multiprocfix/&#39;, 
+                         sess, 
+                         &#39;/MultiRunIcaFix_proc/&#39;,
+                         sess, 
+                         &#39;/MNINonLinear/Results/&#39;), pattern = &#39;tfMRI.*&#39;)) &gt; 0
+  }))
+  
+  staged_dlmri[, &#39;has_carit&#39;] &lt;-  unlist(lapply(staged_dlmri$sessionID, function(sess){
+    length(dir(file.path(&#39;/ncf/hcp/data/intradb_multiprocfix/&#39;, 
+                         sess, 
+                         &#39;/MultiRunIcaFix_proc/&#39;,
+                         sess, 
+                         &#39;/MNINonLinear/Results/&#39;), pattern = &#39;tfMRI_CARIT.*&#39;)) &gt; 0
+  }))
+  
+  staged_dlmri[, &#39;has_guessing&#39;] &lt;-  unlist(lapply(staged_dlmri$sessionID, function(sess){
+    length(dir(file.path(&#39;/ncf/hcp/data/intradb_multiprocfix/&#39;, 
+                         sess, 
+                         &#39;/MultiRunIcaFix_proc/&#39;,
+                         sess, 
+                         &#39;/MNINonLinear/Results/&#39;), pattern = &#39;tfMRI_GUESSING.*&#39;)) &gt; 0
+  }))
+  
+  staged_dlmri[, sID := gsub(&#39;.*(HCD[A-Za-z0-9]+)_V1_MR.*&#39;, &#39;\\1&#39;, sessionID)]
+  setnames(demos, &#39;id&#39;, &#39;sID&#39;)
+  setnames(staged, &#39;Subject&#39;, &#39;sID&#39;)
+  setnames(long, &#39;id&#39;, &#39;sID&#39;)
+  
+  #Some columns should be factors
+  factor_vars &lt;- c(&#39;sessionID&#39;,
+                   &#39;stim&#39;,
+                   &#39;corrAns&#39;,
+                   &#39;prepotency&#39;,
+                   &#39;nogoCondition&#39;,
+                   &#39;resp&#39;,
+                   &#39;trialResp.firstKey&#39;,
+                   &#39;corrRespMsg&#39;,
+                   &#39;corrRespTrialType&#39;)
+  d[, (factor_vars) := lapply(.SD, as.factor), .SDcols = factor_vars]
+  d_intake[, (factor_vars) := lapply(.SD, as.factor), .SDcols = factor_vars]
+  
+  d_combined &lt;- data.table::rbindlist(list(staged = d, intake = d_intake), idcol = &quot;data_source&quot;)
+  
+  #Integrate demographic variables
+  carit &lt;- demos[d_combined, on = &#39;sID&#39;]
+  
+  #use the condition file name to figure out the run number
+  setnames(carit, &#39;condFile&#39;, &#39;runN&#39;)
+  carit[, runN := as.numeric(gsub(&#39;.*/scan([12])\\.csv&#39;, &#39;\\1&#39;, runN))]
+  
+  #rename corrAns to trialType
+  setnames(carit, &#39;corrAns&#39;, &#39;trialType&#39;)
+  
+  #relabel the nogo condtion to be more accurate
+  carit[, nogoCondition := factor(nogoCondition,levels=c(&quot;prevRewNogo&quot;,&quot;neutralNogo&quot;),labels=c(&quot;prevRewNogo&quot;,&quot;prevLossNogo&quot;)) 
+        ]
+  #relabel the prepotency factor to be more clear 
+  carit[, prepotency := factor(prepotency,levels=c(&quot;2&quot;,&quot;3&quot;,&quot;4&quot;),labels=c(&quot;2go&quot;,&quot;3go&quot;,&quot;4go&quot;))]
+  #aggTrialN is trial number across both runs
+  carit[, aggTrialN := trialNum + 92*(runN - 1)]
+  carit[, RT.shape := trialResp.firstRt - shapeStartTime]
+  
+  carit_by_run_SDT &lt;- dcast(carit[, .N, by = c(&#39;sID&#39;, &#39;runN&#39;, &#39;corrRespTrialType&#39;) ], ... ~ corrRespTrialType, value.var = &#39;N&#39;, fill =  0) 
+  carit_by_run_SDT[, c(&#39;dprime&#39;, &#39;beta&#39;, &#39;aprime&#39;, &#39;bppd&#39;, &#39;c&#39;) := psycho::dprime(Hit, falseAlarm, Miss, corReject)]
+  
+  readr::write_csv(carit,&quot;CARIT_allSubs.csv&quot;)
+  readr::write_csv(carit_by_run_SDT,&quot;CARIT_allSubs_dprime.csv&quot;)
+  save.image(file = workspace_fname)
+} else {
+  load(workspace_fname)
+}</code></pre>
+<p>At the moment, there are 2 participants who have too many trials for one run. The raw data file indicates that the same conditions file was used for each one, but it also indicates that only 1 run was run. We may ultimately be able to use these cases but I'm setting them aside for now.</p>
+<pre class="r"><code>#remove longitudinal subjects:
+carit &lt;- carit[!grepl(&#39;_V[2-9]_&#39;, filename),]
+###INVESTIGATE FURTHER
+duplicate_run_ids &lt;- unique(carit[, .N, by = c(&#39;sID&#39;, &#39;runN&#39;)][N &gt; 92, sID])
+print(duplicate_run_ids)</code></pre>
+<pre><code>## [1] &quot;HCD0197045&quot; &quot;HCD0353538&quot;</code></pre>
+<pre class="r"><code>dim(carit)</code></pre>
+<pre><code>## [1] 203035     43</code></pre>
+<pre class="r"><code>carit &lt;- carit[!sID %in% duplicate_run_ids]
+dim(carit)</code></pre>
+<pre><code>## [1] 202667     43</code></pre>
+<pre class="r"><code>carit_pr_scan &lt;- carit[public_release, on = &#39;sID&#39;, nomatch = 0]
+carit_pr_scan &lt;- staged_dlmri[carit_pr_scan, on = &#39;sID&#39;][has_carit == TRUE]</code></pre>
+</div>
+<div id="events" class="section level1">
+<h1>Events</h1>
+<p>To model the BOLD using task behavior, we need to decide how to parse events.</p>
+<p>We care primarily about how false alarms and correct rejections, but it would also be good to model out the go trials as well. We don't care too much about misses, and there likely will not be very many. Additionally, we might care about how many &quot;Go&quot; trials precede a &quot;No-Go&quot; trial. Finally, we are interested in how reward conditioning from a previously-run task impacts performance on &quot;No-Go&quot; trials.</p>
+<p>FSL does not model the data all-at-once, though it does take into account variability at the first level.</p>
+<p>Refer:</p>
+<ul>
+<li><p><a href="https://www.fmrib.ox.ac.uk/datasets/techrep/tr04ss2/tr04ss2/node4.html" class="uri">https://www.fmrib.ox.ac.uk/datasets/techrep/tr04ss2/tr04ss2/node4.html</a></p></li>
+<li><p><a href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT" class="uri">https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT</a></p></li>
+</ul>
+<pre class="r"><code>#For each person:
+#  get the number of events in each combination:
+#     1. GO/NOGO
+#     2. Prepotentcy POS/NEG
+names(carit_pr_scan)</code></pre>
+<pre><code>##  [1] &quot;sessionID&quot;          &quot;has_task_scan&quot;      &quot;has_carit&quot;         
+##  [4] &quot;has_guessing&quot;       &quot;sID&quot;                &quot;age&quot;               
+##  [7] &quot;gender&quot;             &quot;site&quot;               &quot;RACE&quot;              
+## [10] &quot;SES_PLVL&quot;           &quot;SES_RLVL&quot;           &quot;income&quot;            
+## [13] &quot;data_source&quot;        &quot;.id&quot;                &quot;filename&quot;          
+## [16] &quot;i.sessionID&quot;        &quot;runN&quot;               &quot;trialNum&quot;          
+## [19] &quot;stim&quot;               &quot;trialType&quot;          &quot;prepotency&quot;        
+## [22] &quot;ISI&quot;                &quot;shapeStartTime&quot;     &quot;shapeEndTime&quot;      
+## [25] &quot;fixStartTime&quot;       &quot;fixEndTime&quot;         &quot;nogoCondition&quot;     
+## [28] &quot;resp&quot;               &quot;trialResp.firstKey&quot; &quot;trialResp.firstRt&quot; 
+## [31] &quot;corrRespMsg&quot;        &quot;corrRespCode&quot;       &quot;corrRespTrialType&quot; 
+## [34] &quot;isiPress.keys&quot;      &quot;isiPress.rt&quot;        &quot;hitCount&quot;          
+## [37] &quot;missCount&quot;          &quot;falseAlarmCount&quot;    &quot;corrRejectCount&quot;   
+## [40] &quot;totalAcc&quot;           &quot;goAcc&quot;              &quot;nogoAcc&quot;           
+## [43] &quot;goFiveBackAvg&quot;      &quot;nogoFiveBackAvg&quot;    &quot;totalFiveBackAvg&quot;  
+## [46] &quot;aggTrialN&quot;          &quot;RT.shape&quot;</code></pre>
+<pre class="r"><code>carit_pr_scan_trialtype_summary &lt;- carit_pr_scan[, .N, by = c(&#39;sID&#39;, &#39;runN&#39;, &#39;corrRespTrialType&#39;)][corrRespTrialType != &#39;&#39;]
+trial_types &lt;- data.table(expand.grid(sID = unique(carit_pr_scan$sID),
+                                      corrRespTrialType = unique(carit_pr_scan$corrRespTrialType),
+                                      runN = unique(carit_pr_scan$runN)))[corrRespTrialType != &#39;&#39;]
+carit_pr_scan_trialtype_summary &lt;- carit_pr_scan_trialtype_summary[trial_types, on = c(&#39;sID&#39;, &#39;corrRespTrialType&#39;, &#39;runN&#39;)]
+carit_pr_scan_trialtype_summary[, N := fifelse(is.na(N), 0, N)]
+no_trials_dt &lt;- carit_pr_scan_trialtype_summary[N == 0][, list(&#39;Num of subs w/o trial-type&#39; = .N), by = c(&#39;corrRespTrialType&#39;, &#39;runN&#39;)]
+
+no_trials_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c(&#39;Hit&#39;, &#39;Miss&#39;, &#39;corReject&#39;, &#39;falseAlarm&#39;)) ]
+
+setkey(no_trials_dt, runN, corrRespTrialType)</code></pre>
+<pre class="r"><code>carit_pr_scan_trialtype_summary[, c(&#39;N = 0&#39;) := fifelse(N == 0, &#39;N == 0&#39;, &#39;N != 0&#39;)]
+ggplot(carit_pr_scan_trialtype_summary, aes(x = N)) + 
+  geom_histogram(aes(fill = `N = 0`), binwidth = 5) + 
+  scale_fill_manual(values = apal[c(1, 2)], name = &#39;&#39;) + 
+  facet_grid(runN ~ corrRespTrialType) + 
+  jftheme</code></pre>
+<p><img src="carit_pr_report_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>knitr::kable(no_trials_dt, 
+             caption = sprintf(&#39;Number of participants without a particular trial type across all runs, out of N = %d&#39;, unique(carit_pr_scan_trialtype_summary[, &#39;sID&#39;])[, .N]))</code></pre>
+<table>
+<caption>Number of participants without a particular trial type across all runs, out of N = 641</caption>
+<thead>
+<tr class="header">
+<th align="left">corrRespTrialType</th>
+<th align="right">runN</th>
+<th align="right">Num of subs w/o trial-type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Hit</td>
+<td align="right">1</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">Miss</td>
+<td align="right">1</td>
+<td align="right">208</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">1</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">1</td>
+<td align="right">13</td>
+</tr>
+<tr class="odd">
+<td align="left">Hit</td>
+<td align="right">2</td>
+<td align="right">27</td>
+</tr>
+<tr class="even">
+<td align="left">Miss</td>
+<td align="right">2</td>
+<td align="right">217</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">2</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">2</td>
+<td align="right">40</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
