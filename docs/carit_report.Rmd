@@ -41,8 +41,8 @@ jftheme <- theme_minimal() +
         panel.background = element_rect(fill = apal[[3]], size = 0, color = apal[[2]]),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), 
-        strip.background = element_rect(fill = apal[[2]], size = 0),
-        strip.text = element_text(color = '#222222'),
+        strip.background = element_rect(fill = apal[[3]], size = 0),
+        strip.text = element_text(color = apal[[1]]),
         axis.text =  element_text(color = apal[[4]]), axis.title = element_text(color = apal[[4]]))
 
 dt_options <- list(rownames = FALSE,
@@ -73,6 +73,19 @@ knitr::read_chunk('process_carit.R')
 ```{r process_carit}
 ```
 
+At the moment, there are 2 participants who have too many trials for one run. The raw data file indicates that the same conditions file was used for each one, but it also indicates that only 1 run was run. We may ultimately be able to use these cases but I'm setting them aside for now.
+
+```{r}
+#remove longitudinal subjects:
+carit <- carit[!grepl('_V[2-9]_', filename),]
+###INVESTIGATE FURTHER
+duplicate_run_ids <- unique(carit[, .N, by = c('sID', 'runN')][N > 92, sID])
+print(duplicate_run_ids)
+dim(carit)
+carit <- carit[!sID %in% duplicate_run_ids]
+dim(carit)
+```
+
 # Data cross-check
 
 Total N with CARIT task behavior: `r length(unique(d$sID))`.
@@ -84,6 +97,24 @@ Number of participants with demo info but no CARIT task behavior: `r demos[!d, o
 Number of participants with CARIT task behavior but not staged: `r d[!staged, on = 'sID'][, .N]`.
 
 Number of participants staged but no CARIT task behavior: `r staged[!d, on = 'sID'][, .N]`. These participants likely did not complete the task, though other data is relevant for staging.
+
+Number of participants with task behavior not staged, recovered from intake project: `r length(unique(d_intake$sID))`
+
+Number of intake participants with no demo info: `r d_intake[!demos, on = 'sID'][, list(sID = unique(sID))][, .N]`. Participant ids: `r d_intake[!demos, on = 'sID'][, list(sID = unique(sID))]`.
+
+Number of participants not in either intake or staged CARIT behavior lists: `r demos[!d, on = 'sID'][!d_intake, on = 'sID'][, .N]`.
+
+List of those:
+
+`r demos[!d, on = 'sID'][!d_intake, on = 'sID'][, sID]`
+
+Spot check suggests these sessions may be missing some data for the task, or have other problems.
+
+```{r, eval = FALSE}
+intradb_beh_only_list <- demos[!d, on = 'sID']
+setnames(intradb_beh_only_list, 'sID', 'Subject')
+readr::write_csv(intradb_beh_only_list, '~/code/intradb_sync/HCPD_behavior_only.csv')
+```
 
 ```{r}
 do.call(DT::datatable, 
@@ -100,9 +131,11 @@ Personal communication with Mike Hodge:
 
 >Sometimes when we find issues with the staging sessions after they’re built, we’ll remove the sessions so they’re not inadvertently released.  We’ll often not remove the corresponding subject record because we’ll eventually rebuild that session.  I’m sure that’s what happened here.
 
-Number of participants with dowloaded task MRI, but no CARIT task behavior: `r staged_dlmri[has_task_scan == TRUE][!d, on = 'sID'][, .N]`.
+Number of participants with (any) dowloaded task MRI, but no CARIT task behavior: `r staged_dlmri[has_task_scan == TRUE][!d, on = 'sID'][, .N]`.
 
-Number of participants with CARIT task behavior, but no dowloaded task MRI (on this task): `r unique(d[, 'sID'])[!staged_dlmri[has_task_scan == TRUE], on = 'sID'][, .N]`. This indicates that these participants had problems with their data in the multirun ica fix pipeline (it is possible that this session will eventually get rebuilt, it seems).
+Number of participants with dowloaded CARIT task MRI, but no CARIT task behavior: `r staged_dlmri[has_carit == TRUE][!d, on = 'sID'][, .N]`.
+
+Number of participants with CARIT task behavior, but no dowloaded task MRI (on this task): `r unique(d[, 'sID'])[!staged_dlmri[has_carit == TRUE], on = 'sID'][, .N]`. This indicates that these participants had problems with their data in the multirun ica fix pipeline (it is possible that this session will eventually get rebuilt, it seems).
 
 ```{r}
 missing_task_mri <- unique(d[, c('sessionID', 'sID')])[!staged_dlmri[has_task_scan == TRUE], on = 'sID']
@@ -114,19 +147,102 @@ do.call(DT::datatable,
 
 ```
 
+## Public release
 
-# Check design
+```{r}
+public_release[, PR := TRUE]
+d_pr <- public_release[d_combined, on = 'sID']
+d_pr[, PR := data.table::fifelse(PR, TRUE, FALSE, na = FALSE)]
+d_pr <- d_pr[PR == TRUE]
+```
+
+Not all staged participants are available for public release, and we've decided to use the public release data for this set of analyses. 
+
+Number of PR participants: `r public_release[, .N]`
+
+Number of PR participants with CARIT behavior: `r unique(d_combined[public_release, on = 'sID'][!is.na(PR), 'sID'])[, .N]`
+
+Number of PR participants with CARIT task scan: `r staged_dlmri[public_release, on = 'sID'][has_carit == TRUE][, .N]`
+
+# Check design 
+
+## Public release and scan data
+
+```{r}
+carit_pr_scan <- carit[public_release, on = 'sID', nomatch = 0]
+carit_pr_scan <- staged_dlmri[carit_pr_scan, on = 'sID'][has_carit == TRUE]
+```
 
 CARIT has two rounds of 92 trials each, for a total of 184 trials per subject.
 
-Modal number of trials: `r d[, .N, by = 'sID'][, as.numeric(modal(N))]`.
+Modal number of trials: `r carit_pr_scan[, .N, by = 'sID'][, as.numeric(modal(N))]`.
 
-Number of participants without modal number: `r d[, .N, by = 'sID'][N != as.numeric(modal(N))][, .N]`.
+Number of participants without modal number: `r carit_pr_scan[, .N, by = 'sID'][N != as.numeric(modal(N))][, .N]`.
 
 ```{r}
 #List participants without the modal number of trials
 do.call(DT::datatable, 
-        c(list(d[, list(`N trials` = .N), by = 'sID'][`N trials` != as.numeric(modal(`N trials`))],
+        c(list(carit_pr_scan[, list(`N trials` = .N), by = 'sID'][`N trials` != as.numeric(modal(`N trials`))],
+               caption = 'Pariticipants without modal number of trials.'), 
+          dt_options))
+```
+
+Each round of the task has 68 go trials and 24 nogo trials. Each subject should have 136 go and 48 nogo trials
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit_pr_scan[, .N, keyby = c('sID', 'trialType')],
+      sID ~ trialType)[go != 136 | nogo != 48][, .N]
+```
+
+Nogo trials should be equivalently distributed between prev reward and prev loss trials. Each subject should have 24 prevRew, 24 prevLoss. 
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit_pr_scan[, .N, keyby = c('sID', 'nogoCondition')], 
+      sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, .N]
+```
+
+Go prepotency trials should number 20 for 2, 16 for 3, and 12 for 4. 
+
+Number of participants with any deviation from this:
+
+```{r}
+dcast(carit_pr_scan[, .N, keyby = c('sID', 'prepotency')], 
+      sID ~ prepotency)[`2go` != 20 | 
+                          `3go` != 16 |
+                          `4go` != 12][, .N]
+```
+
+These are all the same IDs who are missing one of the two runs.
+
+```{r}
+identical(dcast(carit_pr_scan[, .N, keyby = c('sID', 'trialType')],
+                sID ~ trialType)[go != 136 | nogo != 48][, 'sID'],
+          dcast(carit_pr_scan[, .N, keyby = c('sID', 'nogoCondition')], 
+                sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, 'sID'])
+identical(dcast(carit_pr_scan[, .N, keyby = c('sID', 'nogoCondition')], 
+                sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, 'sID'], 
+          dcast(carit_pr_scan[, .N, keyby = c('sID', 'prepotency')], 
+                sID ~ prepotency)[`2go` != 20 | 
+                                    `3go` != 16 |
+                                    `4go` != 12][, 'sID'])
+```
+
+## For all CARIT data
+
+CARIT has two rounds of 92 trials each, for a total of 184 trials per subject.
+
+Modal number of trials: `r carit[, .N, by = 'sID'][, as.numeric(modal(N))]`.
+
+Number of participants without modal number: `r carit[, .N, by = 'sID'][N != as.numeric(modal(N))][, .N]`.
+
+```{r}
+#List participants without the modal number of trials
+do.call(DT::datatable, 
+        c(list(carit[, list(`N trials` = .N, data_source = unique(data_source)), by = 'sID'][`N trials` != as.numeric(modal(`N trials`))],
                caption = 'Pariticipants without modal number of trials.'), 
           dt_options))
 ```
@@ -160,7 +276,354 @@ dcast(carit[, .N, keyby = c('sID', 'prepotency')],
                           `4go` != 12][, .N]
 ```
 
-These are all the same IDs who are missing one of the two runs.
+# Data availability {.tabset}
+
+N participants with task behavior: `r unique(carit[, c('sID')])[, .N]`.
+N participants with any task fMRI: `r unique(staged_dlmri[has_task_scan == TRUE, c('sID')])[, .N]`.
+N participants with CARIT fMRI: `r unique(staged_dlmri[has_carit == TRUE, c('sID')])[, .N]`.
+N participants with Guessing fMRI: `r unique(staged_dlmri[has_guessing == TRUE, c('sID')])[, .N]`.
+
+
+The following comparisons are based on the those with any CARIT task data whatsover, and those who have fMRI CARIT data.
+
+## Age
+
+```{r fig.height=4, fig.width=6}
+carit_behavior_ids <- unique(carit[, c('sID')])
+carit_behavior_ids[, carit_behav := TRUE]
+demos_and_data_avail <- merge(carit_behavior_ids, demos, on = 'sID', all = TRUE)
+demos_and_data_avail <- merge(demos_and_data_avail, staged_dlmri, on = 'sID', all = TRUE)
+avail_type <- function(behav, fmri){
+  r <- fifelse(fifelse(is.na(fmri), FALSE, fmri) & 
+                 fifelse(is.na(behav), FALSE, behav), 'CARIT fMRI', 'none')
+  return(r)
+}
+demos_and_data_avail[, `Data Available` := avail_type(carit_behav, has_carit)]
+ggplot(demos_and_data_avail, aes(x = age)) + 
+  geom_histogram(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
+                 position = position_dodge(), 
+                 alpha = .95,
+                 binwidth = 1) +
+  scale_x_continuous(breaks = 1:25) + 
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme
+```
+
+## Age Prop.
+
+```{r fig.height=4, fig.width=6}
+agerange <- range(demos_and_data_avail$age, na.rm = TRUE)
+breaks <- c(seq(floor(agerange[[1]]), ceiling(agerange[[2]]), 2), ceiling(agerange[[2]]))
+breaks <- breaks[-(length(breaks) -1)]
+values <- paste0('(', breaks[-length(breaks)], '-', breaks[-1],']')
+
+demos_and_data_avail_age <- demos_and_data_avail
+demos_and_data_avail_age[, age_bin := cut(floor(age), breaks = breaks, include.lowest = TRUE)]
+demos_and_data_avail_age_prop <- 
+  demos_and_data_avail_age[, .N, 
+                           by = c('age_bin', 'Data Available')][, prop := N / sum(N), 
+                                                                by = 'age_bin']
+ggplot(demos_and_data_avail_age_prop, aes(x = age_bin)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  scale_x_discrete(na.translate = FALSE) + 
+  labs(x = 'Age binned (years)', y = 'Proportion') + 
+  jftheme + 
+  theme(axis.text.x = element_text(size = 10))
+```
+
+## PR Age Prop.
+
+```{r fig.height=4, fig.width=6}
+public_release[, `Data Available` := TRUE]
+PR_data_avail <- merge(public_release, demos, on = 'sID', all = TRUE)
+PR_data_avail[is.na(`Data Available`), `Data Available` := FALSE] 
+PR_data_avail[, `Data Available` := factor(`Data Available`, levels = c(TRUE, FALSE), labels = c('Yes', 'No'))] 
+
+agerange <- range(PR_data_avail$age)
+breaks <- c(seq(floor(agerange[[1]]), ceiling(agerange[[2]]), 2), ceiling(agerange[[2]]))
+breaks <- breaks[-(length(breaks) -1)]
+values <- paste0('(', breaks[-length(breaks)], '-', breaks[-1],']')
+
+PR_data_avail_age <- PR_data_avail
+PR_data_avail_age[, age_bin := cut(floor(age), breaks = breaks, include.lowest = TRUE)]
+PR_data_avail_age_prop <- 
+  PR_data_avail_age[, .N, 
+                           by = c('age_bin', 'Data Available')][, prop := N / sum(N), 
+                                                                by = 'age_bin']
+ggplot(PR_data_avail_age_prop, aes(x = age_bin)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  labs(x = 'Age binned (years)', y = 'Proportion') + 
+  jftheme + 
+  theme(axis.text.x = element_text(size = 10))
+```
+
+## Sex
+
+```{r fig.height=4, fig.width=6}
+ggplot(demos_and_data_avail, aes(x = gender)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
+                 position = position_stack(), 
+                 width = 1, alpha = .95,
+                 binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme
+```
+
+## PR Sex
+
+```{r fig.height=4, fig.width=6}
+ggplot(PR_data_avail, aes(x = gender)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
+                 position = position_stack(), 
+                 width = 1, alpha = .95,
+                 binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme
+```
+
+## Site
+
+```{r fig.height=4, fig.width=6}
+ggplot(demos_and_data_avail, aes(x = site)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = ..count..),
+           position = position_stack(), 
+           width = 1, alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## Site Prop.
+
+```{r fig.height=4, fig.width=6}
+demos_and_data_avail_site_prop <- 
+  demos_and_data_avail[, .N, 
+                       by = c('site', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'site']
+
+
+ggplot(demos_and_data_avail_site_prop, aes(x = site)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## PR Site Prop.
+
+```{r fig.height=4, fig.width=6}
+PR_data_avail_site_prop <- 
+  PR_data_avail[, .N, 
+                by = c('site', 'Data Available')][, prop := N / sum(N), 
+                                                  by = 'site']
+
+ggplot(PR_data_avail_site_prop, aes(x = site)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## Race Count
+
+```{r fig.height=4, fig.width=6}
+ggplot(demos_and_data_avail, aes(x = RACE)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`),
+           position = position_dodge(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## Race Prop.
+
+```{r fig.height=4, fig.width=6}
+demos_and_data_avail_race_prop <- 
+  demos_and_data_avail[, .N, 
+                       by = c('RACE', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'RACE']
+ggplot(demos_and_data_avail_race_prop, aes(x = RACE)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+
+```
+
+## PR Race Prop.
+
+```{r fig.height=4, fig.width=6}
+PR_data_avail_race_prop <- 
+  PR_data_avail[, .N, 
+                       by = c('RACE', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'RACE']
+ggplot(PR_data_avail_race_prop, aes(x = RACE)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+
+```
+
+## SES Count
+
+```{r}
+ggplot(demos_and_data_avail, aes(x = SES_RLVL)) + 
+  geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`),
+           position = position_dodge(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## SES Prop.
+
+```{r fig.height=4, fig.width=6}
+demos_and_data_avail_ses_prop <- 
+  demos_and_data_avail[, .N, 
+                       by = c('SES_RLVL', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'SES_RLVL']
+
+
+ggplot(demos_and_data_avail_ses_prop, aes(x = SES_RLVL)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## PR SES Prop.
+
+```{r fig.height=4, fig.width=6}
+PR_data_avail_ses_prop <- 
+  PR_data_avail[, .N, 
+                       by = c('SES_RLVL', 'Data Available')][, prop := N / sum(N), 
+                                                             by = 'SES_RLVL']
+
+
+ggplot(PR_data_avail_ses_prop, aes(x = SES_RLVL)) + 
+  geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
+           position = position_stack(), 
+           alpha = .95,
+           binwidth = 1) +
+  scale_fill_manual(aesthetics = c('fill', 'color'), values = apal[c(1,5)]) + 
+  jftheme + 
+  theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+```
+
+## Proportions compared {.tabset}
+
+```{r}
+
+get_proportions <- function(adt, cols, id.vars, data_col, data_crit){
+  SEp <- function(p, n){
+    sqrt( p * (1 - p) / n )
+  }
+  ci <- Vectorize(function(p, se, interval, type, tol = .05){
+    interval <- c(0,1) + c(1,-1)*(1-interval)/2
+    if(type == 'u'){
+      r <- min(1-tol, p + qnorm(interval[[2]])*se)
+    } else if (type == 'l'){
+      r <- max(tol, p + qnorm(interval[[1]])*se)
+    }
+  }, vectorize.args = c('p', 'se'))
+  if('age' %in% cols){
+    agerange <- range(adt$age, na.rm = TRUE)
+    breaks <- c(seq(floor(agerange[[1]]), ceiling(agerange[[2]]), 2), ceiling(agerange[[2]]))
+    breaks <- breaks[-(length(breaks) -1)]
+    values <- paste0('(', breaks[-length(breaks)], '-', breaks[-1],']')
+    
+    adt[, age_bin := cut(floor(age), breaks = breaks, include.lowest = TRUE)]
+    adt[, age_bin_order := as.numeric(age_bin)]
+    cols[which(cols == 'age')] <- 'age_bin'
+    id.vars <- c(id.vars, 'age_bin_order')
+  }
+  adt_l <- data.table::melt(adt[, c(..id.vars, ..cols)],
+                            id.vars = id.vars)
+  if('age_bin_order' %in% id.vars){
+    adt_l_p <- adt_l[, .(N_with_data = sum(get(data_col) == data_crit), 
+                         N = .N,
+                         age_bin_order = unique(age_bin_order)), by = c('variable', 'value')]
+  } else {
+    adt_l_p <- adt_l[, .(N_with_data = sum(get(data_col) == data_crit), N = .N), by = c('variable', 'value')]
+  }
+  adt_l_p[, c('p', 'se') := list(N_with_data/N, SEp(N_with_data/N, N)), by = c('variable', 'value')]
+  adt_l_p[, c('l', 'u') := list(ci(p, se, .95, type = 'l'), ci(p, se, .95, type = 'u'))]
+  return(adt_l_p)
+}
+
+cols <- c('SES_RLVL', 'RACE', 'site', 'gender', 'age')
+id.vars <- c('sID', 'Data Available')
+
+PR_data_avail_props <- get_proportions(PR_data_avail, cols = cols, id.vars = id.vars, 
+                                       data_col = 'Data Available',
+                                       data_crit = 'Yes')
+demos_and_data_avail_props <- get_proportions(demos_and_data_avail, cols = cols, id.vars = id.vars,
+                                              data_col = 'Data Available',
+                                              data_crit = 'CARIT fMRI')
+
+PR_data_avail_props[, data := 'Public Release']
+demos_and_data_avail_props[, data := 'Staged']
+
+prop_comparison <- data.table::rbindlist(list(demos_and_data_avail_props, PR_data_avail_props))
+prop_comparison[, data := factor(data, levels = c('Staged', 'Public Release'))]
+```
+
+```{r fig.height=3.5, fig.width=6, results = 'asis'}
+for(col in cols){
+  cat(paste0('\n\n### ', col, '\n\n'))
+  if(col == 'age'){
+    col <- 'age_bin'
+    d <- prop_comparison[variable == col]
+    d[, value := factor(value, levels = unique(value)[order(unique(age_bin_order))])]
+  } else {
+    d <- prop_comparison[variable == col]
+  }
+  if(col %in% c('SES_RLVL', 'RACE', 'site')){
+    axis_text <- theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
+  } else if (col == 'age_bin'){
+    axis_text <- theme(axis.text.x = element_text(angle = 0, hjust = .5, size = 10))
+  } else {
+    axis_text <- theme(axis.text.x = element_text(angle = 0, hjust = .5))
+  }
+  print(ggplot(d, aes(x = value, y = p, group = data, color = data)) +
+          geom_point(position = position_dodge(width = .25), alpha = 1, size = 2) + 
+          geom_linerange(aes(ymin = l, ymax = u), position = position_dodge(width = .25)) + 
+          scale_color_manual(breaks = c('Staged', 'Public Release'), values = apal[c(1,5)]) + 
+          jftheme + 
+          axis_text + 
+          coord_cartesian(y = c(0,1)) + 
+          labs(x = col, y = 'Proportion with data', color = ''))
+}
+```
 
 # Reaction times (RT)
 
@@ -193,6 +656,23 @@ do.call(DT::datatable,
           dt_options))
 ```
 
+### Negative RT over trials
+
+```{r}
+neg_ids <- unique(carit[RT.shape < 0, 'sID'])
+ggplot(carit[sID %in% neg_ids$sID], 
+       aes(x = trialNum,
+           y = RT.shape)) + 
+  geom_hline(yintercept = 0, color = apal[[5]]) + 
+  geom_line(aes(group = sID), color = apal[[4]]) + 
+  geom_point(color = apal[[1]], size = .25) + 
+  facet_grid(sID~runN, scales = 'free') + 
+  jftheme + 
+  theme(strip.background = element_blank(),
+        strip.text = element_blank(),
+        panel.margin = unit(.15, "lines"))
+```
+
 ### All trials RT > 0
 
 ```{r}
@@ -214,7 +694,7 @@ ggplot(carit[sID %in% carit[RT.shape < 0, sID]], aes(x = RT.shape)) +
 
 ### All RT by participant {.tabset}
 
-```{r results = 'asis'}
+```{r results = 'asis', eval = FALSE}
 #A few participants have a single negative RT.
 sid_groups <- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -276,7 +756,7 @@ ggplot(carit[RT.shape > 0], aes(x = RT.shape)) +
 
 ### All go RT by participant {.tabset}
 
-```{r results = 'asis'}
+```{r results = 'asis', eval = FALSE}
 #A few participants have a single negative RT.
 sid_groups <- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -294,7 +774,7 @@ for(i in 1:length(sid_groups)){
 
 ### All nogo RT by participant {.tabset}
 
-```{r results = 'asis'}
+```{r results = 'asis', eval = FALSE}
 #A few participants have a single negative RT.
 sid_groups <- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -368,6 +848,225 @@ ggplot(late_press_age, aes(x = age, y = n)) +
         legend.box.margin = margin(rep(14, 4), "pt"))
 ```
 
+## RT changes
+
+Reaction times should change depending on the event. A "Go" after a previous "Go" should be faster, and slower after a "No-Go." This may differ depending on whether a "No-Go" resulted in a correct rejection or not.
+
+
+```{r}
+num_fac <- function(x, levels = NULL){
+  if(is.null(levels)){
+    as.numeric(factor(x))  
+  } else { 
+    as.numeric(factor(x, levels = levels))
+  }
+}
+lag1_num_fac_diff <- function(x, levels = NULL){
+  y <- abs(num_fac(x, levels = levels) - num_fac(shift(x, fill = x[[1]], type = 'lag'), levels = levels))
+  return(y)
+}
+
+setorder(carit, sID, runN, trialNum)
+carit[, trial_type_diff := lag1_num_fac_diff(trialType, levels = c('go', 'nogo')), by = c('sID', 'runN')]
+carit[, chunkID := cumsum(trial_type_diff)]
+carit[, N_of_trialType := 1:.N, by = c('sID', 'runN', 'chunkID')]
+carit[, prev_trial := shift(trialType, type = 'lag')]
+```
+
+```{r, fig.width=4.75, fig.height=4}
+ggplot(carit[trialType == 'go' & RT.shape > 0], aes(x = N_of_trialType, y = RT.shape)) + 
+  geom_bin2d(aes(fill = ..count.., color = ..count..), binwidth = c(1, .025)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
+  scale_color_gradient(low = apal[[1]], high = apal[[5]]) +
+  # geom_line(stat = 'smooth', method = 'gam', formula = y ~ s(x, k = 8), color = apal[[2]], size = .5, alpha = 1) +
+  geom_smooth(method = 'gam', formula = y ~ s(x, k = 4), color = apal[[2]], alpha = .8) +
+  jftheme + 
+  labs(x = 'Number of previous "Go" trials', y = 'Reaction time') + 
+  theme(legend.margin = margin(rep(14, 4), "pt"),
+        plot.margin = margin(rep(14, 4), "pt"), 
+        legend.box.margin = margin(rep(14, 4), "pt"))
+```
+
+```{r, fig.width=6, fig.height=4}
+ggplot(carit[trialType == 'go' & RT.shape > 0], aes(x = trialNum, y = RT.shape)) + 
+  geom_bin2d(aes(fill = ..count.., color = ..count..), binwidth = c(5, .025)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
+  scale_color_gradient(low = apal[[1]], high = apal[[5]]) +
+  # geom_line(stat = 'smooth', method = 'gam', formula = y ~ s(x, k = 8), color = apal[[2]], size = .5, alpha = 1) +
+  geom_smooth(method = 'gam', formula = y ~ s(x, k = 4), color = apal[[2]], alpha = .8) +
+  facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
+  jftheme + 
+  labs(x = 'Trial Number', y = 'Reaction time') + 
+  theme(legend.margin = margin(rep(14, 4), "pt"),
+        plot.margin = margin(rep(14, 4), "pt"), 
+        legend.box.margin = margin(rep(14, 4), "pt"))
+```
+
+```{r}
+library(lme4)
+
+N_of_trialType_s <- scale(carit$N_of_trialType)
+RT.shape_s <- scale(carit$RT.shape)
+RT.m <- attr(RT.shape_s, 'scaled:center')
+RT.sd <- attr(RT.shape_s, 'scaled:scale')
+trialNum_s <- scale(carit$trialNum)
+runN_fac <- factor(carit$runN)
+N_of_trialType_fac <- factor(carit$N_of_trialType, levels = c('1', '2', '3', '4'))
+
+carit_rt_frame <- data.table(RT.shape = carit$RT.shape, 
+                             RT.shape_s = as.numeric(RT.shape_s),
+                             N_of_trialType_s = as.numeric(N_of_trialType_s),
+                             N_of_trialType = carit$N_of_trialType,
+                             trialNum_s = as.numeric(trialNum_s),
+                             trialNum = carit$trialNum,
+                             runN_fac = runN_fac,
+                             runN = carit$runN,
+                             sID = carit$sID,
+                             trialType = carit$trialType,
+                             N_of_trialType_fac = N_of_trialType_fac)
+
+rt_repeated_go_trialnum_fit <- lmer(
+  RT.shape_s ~ 1 + N_of_trialType_s*trialNum_s*runN_fac + (1 + runN_fac | sID), 
+  data = carit_rt_frame[trialType == 'go' & RT.shape > 0], REML = FALSE)
+summary(rt_repeated_go_trialnum_fit)
+#It didn't converge so restart and run for more iterations
+#ss <- getME(rt_repeated_go_trialnum_fit,c("theta","fixef"))
+#m2 <- update(rt_repeated_go_trialnum_fit,start=ss,control=lmerControl(optCtrl=list(maxfun=2e4)))
+#summary(m2)
+
+rt_repeated_go_trialnum_fac_fit <- lmer(
+  RT.shape_s ~ 1 + N_of_trialType_fac*trialNum_s*runN_fac + (1 + runN_fac | sID), 
+  data = carit_rt_frame[trialType == 'go' & RT.shape > 0], REML = FALSE)
+summary(rt_repeated_go_trialnum_fac_fit)
+
+AIC(rt_repeated_go_trialnum_fac_fit, rt_repeated_go_trialnum_fit)
+
+new_frame <- unique(carit_rt_frame[, c('N_of_trialType_s', 'trialNum_s', 'runN_fac',
+                                       'N_of_trialType', 'trialNum', 'runN')])
+
+new_frame[, RT.shape_s := predict(rt_repeated_go_trialnum_fit, newdata = new_frame, re.form = ~0)]
+new_frame[, RT.shape := RT.shape_s * RT.sd + RT.m]
+
+new_frame_fac <- unique(carit_rt_frame[, c('N_of_trialType_fac', 'trialNum_s', 'runN_fac',
+                                           'N_of_trialType', 'trialNum', 'runN')])
+new_frame_fac[, RT.shape_s := predict(rt_repeated_go_trialnum_fac_fit, newdata = new_frame_fac, re.form = ~0)]
+new_frame_fac[, RT.shape := RT.shape_s * RT.sd + RT.m]
+```
+
+### N Previous "GO" and RT plots {.tabset}
+
+#### Continuous
+
+Number of previous go trials is a continuous variable. This model fits less well than when this variable is a factor.
+
+```{r fig.height=4, fig.width=8}
+ggplot(new_frame, aes(x = trialNum, y = RT.shape)) + 
+  geom_point(aes(color = N_of_trialType)) + 
+  geom_line(aes(group = N_of_trialType, color = N_of_trialType)) + 
+  scale_color_gradient(low = apal[[4]], high = apal[[2]], name = 'N previous\n"go" trials') + 
+  facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
+  jftheme
+```
+
+#### Factor
+
+Number of previous go trials is a factor. This model fits best..
+
+
+```{r fig.height=4, fig.width=8}
+ggplot(new_frame_fac, aes(x = trialNum, y = RT.shape)) + 
+  geom_point(aes(color = N_of_trialType)) + 
+  geom_line(aes(group = N_of_trialType, color = N_of_trialType)) + 
+  scale_color_gradient(low = apal[[4]], high = apal[[2]], name = 'N previous\n"go" trials') + 
+  facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
+  jftheme
+```
+
+### RT Previous Go versus No-Go
+
+```{r fig.height=4}
+rt_means <- carit[trialType == 'go' & 
+                    RT.shape > 0 & 
+                    !is.na(prev_trial)][, .(mean = mean(RT.shape, na.rm = TRUE)),
+                                        by = prev_trial]
+ggplot(carit[trialType == 'go' & RT.shape > 0 & !is.na(prev_trial)], aes(x = RT.shape)) + 
+  geom_density(aes(group = prev_trial, fill = prev_trial, color = prev_trial, y = ..density..), 
+                 position = position_identity(), alpha = .8) + 
+  geom_segment(data = rt_means, aes(x = mean, xend = mean, y = 0, yend = .25, color = prev_trial)) + 
+  geom_point(data = rt_means, aes(x = mean, y = 0, color = prev_trial)) + 
+  scale_fill_manual(breaks = c('go', 'nogo'), values = apal[c(5,1)], 
+                    name = 'Previous trial') + 
+  scale_color_manual(breaks = c('go', 'nogo'), values = apal[c(2,4)], 
+                    name = 'Previous trial') + 
+  jftheme + 
+  labs(x = 'Reaction time', y = '')
+```
+
+## Probability of FA
+
+Is a FA more likely after more previous "go" trials?
+
+```{r}
+carit[, is_FA := corrRespTrialType == 'falseAlarm']
+
+carit_FA_frame <- data.table(is_FA = carit$is_FA, 
+                             trialNum = carit$trialNum,
+                             runN_fac = runN_fac,
+                             runN = carit$runN,
+                             sID = carit$sID,
+                             trialType = carit$trialType,
+                             prepotency = carit$prepotency,
+                             age = carit$age)
+
+carit_FA_frame <- carit_FA_frame[trialType == 'nogo']
+carit_FA_frame[, trialNum := 1:.N, by = c('sID', 'runN')]
+carit_FA_frame[, trialNum_s := scale(trialNum)]
+
+acc_mod <- glmer(is_FA ~ 1 + prepotency + (1 | sID),
+                data = carit_FA_frame, family = 'binomial')
+summary(acc_mod)
+
+FE <- fixef(acc_mod)
+
+P_FA <- c(arm::invlogit(FE['(Intercept)']),
+          arm::invlogit(sum(FE[c('(Intercept)', 'prepotency3go')])),
+          arm::invlogit(sum(FE[c('(Intercept)', 'prepotency4go')])))
+
+knitr::kable(dplyr::tibble('Number of previous "GO"s' = 2:4,
+                           'Probability of FA' = round(P_FA, 2)))
+```
+
+By run and trail-number?
+
+```{r}
+carit_FA_frame[, prepotency_cont := as.numeric(gsub('go', '', prepotency)) - 3]
+acc_mod_expanded.fn <- 'acc_mod_expanded.RDS'
+if(!file.exists(acc_mod_expanded.fn)){
+  acc_mod_expanded <- glmer(is_FA ~ 1 + prepotency*runN_fac*trialNum_s + (1 | sID),
+                            data = carit_FA_frame, family = 'binomial')
+  saveRDS(acc_mod_expanded, file = acc_mod_expanded.fn)
+} else {
+  acc_mod_expanded <- readRDS(file = acc_mod_expanded.fn)
+}
+summary(acc_mod_expanded)
+
+new_frame_FA <- unique(carit_FA_frame[, c('prepotency', 
+                                          'trialNum_s', 'runN_fac',
+                                          'trialNum', 'runN')])
+
+new_frame_FA[, p_FA := predict(acc_mod_expanded, newdata = new_frame_FA, re.form = ~0, type = 'response')]
+```
+
+```{r fig.height=4, fig.width=8}
+ggplot(new_frame_FA, aes(x = trialNum, y = p_FA)) + 
+  geom_point(aes(color = prepotency)) + 
+  geom_line(aes(group = prepotency, color = prepotency)) + 
+  scale_color_manual(values = c(apal[[2]], apal[[5]], apal[[4]]), name = 'N previous\n"go" trials') + 
+  facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
+  jftheme
+```
+
+
 # Accuracy {.tabset}
 
 
@@ -406,6 +1105,9 @@ dt_table(accuracy_summary_trialtype[go == 0 & nogo == 1,
          caption = 'Participant-runs with no responses')
 ```
 
+If someone presses all the time, they'll get 100% accuracy for "go" trials and 0% accuracy for "nogo" trials. Number of participants showing this pattern: `r accuracy_summary_trialtype[go == 1 & nogo == 0, ][, .N]`.
+
+
 ## Accuracy by age
 
 ```{r}
@@ -424,6 +1126,76 @@ ggplot(accuracy_summary, aes(x = age, y = mean_accuracy)) +
 
 Points indicate participants who showed no presses on any trials.
 
+# Signal detection theory metrics
+
+```{r}
+carit_by_run_SDT_demo <- demos[carit_by_run_SDT, on = 'sID']
+carit_by_run_SDT_demo[, run_text := sprintf('Run %d', runN)]
+```
+
+## Age {.tabset}
+
+### $d^{\prime}$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = dprime)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .5)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = 'd prime', fill = 'Count', color = 'Count')
+```
+
+### $\beta$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = beta)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .25)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  coord_cartesian(y = c(0,2)) + 
+  labs(x = 'Age (years)', y = 'beta', fill = 'Count', color = 'Count')
+```
+
+### $A^{\prime}$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = aprime)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .06125)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = 'A prime', fill = 'Count', color = 'Count')
+```
+
+### $B^{\prime\prime}D$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = bppd)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .25)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = "B''D", fill = 'Count', color = 'Count')
+```
+
+### $c$
+
+```{r fig.width=6, fig.height=3}
+ggplot(carit_by_run_SDT_demo, aes(x = age, y = c)) + 
+  geom_hex(aes(fill = ..count.., color = ..count..), binwidth = c(1, .25)) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], aesthetics = c('fill', 'color')) + 
+  geom_line(stat = 'smooth', method = 'gam', color = apal[[2]], size = .5, alpha = 1) +
+  facet_grid( ~ run_text) +
+  jftheme + 
+  labs(x = 'Age (years)', y = "c", fill = 'Count', color = 'Count')
+```
+
 # Modeling
 
 One really interesting question we can ask with these data is what is the effect of previous reward associations on go/nogo accuracy, and whether that effect differs by loss amount, or by age.
@@ -435,14 +1207,14 @@ Given that the trial-level data response is either 0 or 1 (false alarms or corre
 The model is:
 
 ```
-y ~ 1 + prevrew + run + age + prevrew:run + prevrew:age + run:age + prevrew:run:age
+CR ~ 1 + prevrew + run + age + prevrew:run + prevrew:age + run:age + prevrew:run:age + prepotency
 ```
 
 
 $$
-y = \beta_0 + \beta_1\text{PrevRew} + \beta_2\text{Run} + \beta_3\text{Age} +\\ \beta_4\text{PrevRew}\cdot\text{Run} + \beta_5\text{PrevRew}\cdot\text{Age} + \\
+\text{CR} = \beta_0 + \beta_1\text{PrevRew} + \beta_2\text{Run} + \beta_3\text{Age} +\\ \beta_4\text{PrevRew}\cdot\text{Run} + \beta_5\text{PrevRew}\cdot\text{Age} + \\
 \beta_6\text{Run}\cdot\text{Age} + \\
-\beta_7\text{PrevRew}\cdot\text{Run}\cdot\text{Age} + \epsilon_{ij}
+\beta_7\text{PrevRew}\cdot\text{Run}\cdot\text{Age} + \beta_8 \cdot \text{prepotency} +  \epsilon_{ij}
 $$
 
 where $y_{ij}$ is the *i*th response from the *j*th participant. Not shown is the random effects error terms or specific dummy coding. 

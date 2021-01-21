@@ -911,6 +911,7 @@ RT.m <- attr(RT.shape_s, 'scaled:center')
 RT.sd <- attr(RT.shape_s, 'scaled:scale')
 trialNum_s <- scale(carit$trialNum)
 runN_fac <- factor(carit$runN)
+N_of_trialType_fac <- factor(carit$N_of_trialType, levels = c('1', '2', '3', '4'))
 
 carit_rt_frame <- data.table(RT.shape = carit$RT.shape, 
                              RT.shape_s = as.numeric(RT.shape_s),
@@ -921,23 +922,43 @@ carit_rt_frame <- data.table(RT.shape = carit$RT.shape,
                              runN_fac = runN_fac,
                              runN = carit$runN,
                              sID = carit$sID,
-                             trialType = carit$trialType)
+                             trialType = carit$trialType,
+                             N_of_trialType_fac = N_of_trialType_fac)
 
 rt_repeated_go_trialnum_fit <- lmer(
-  RT.shape_s ~ 1 + N_of_trialType_s*trialNum_s*runN_fac + (1 + N_of_trialType_s + runN_fac | sID), 
-  data = carit_rt_frame[trialType == 'go' & RT.shape > 0])
-#summary(rt_repeated_go_trialnum_fit)
+  RT.shape_s ~ 1 + N_of_trialType_s*trialNum_s*runN_fac + (1 + runN_fac | sID), 
+  data = carit_rt_frame[trialType == 'go' & RT.shape > 0], REML = FALSE)
+summary(rt_repeated_go_trialnum_fit)
 #It didn't converge so restart and run for more iterations
-ss <- getME(rt_repeated_go_trialnum_fit,c("theta","fixef"))
-m2 <- update(rt_repeated_go_trialnum_fit,start=ss,control=lmerControl(optCtrl=list(maxfun=2e4)))
-summary(m2)
+#ss <- getME(rt_repeated_go_trialnum_fit,c("theta","fixef"))
+#m2 <- update(rt_repeated_go_trialnum_fit,start=ss,control=lmerControl(optCtrl=list(maxfun=2e4)))
+#summary(m2)
+
+rt_repeated_go_trialnum_fac_fit <- lmer(
+  RT.shape_s ~ 1 + N_of_trialType_fac*trialNum_s*runN_fac + (1 + runN_fac | sID), 
+  data = carit_rt_frame[trialType == 'go' & RT.shape > 0], REML = FALSE)
+summary(rt_repeated_go_trialnum_fac_fit)
+
+AIC(rt_repeated_go_trialnum_fac_fit, rt_repeated_go_trialnum_fit)
 
 new_frame <- unique(carit_rt_frame[, c('N_of_trialType_s', 'trialNum_s', 'runN_fac',
                                        'N_of_trialType', 'trialNum', 'runN')])
 
 new_frame[, RT.shape_s := predict(rt_repeated_go_trialnum_fit, newdata = new_frame, re.form = ~0)]
 new_frame[, RT.shape := RT.shape_s * RT.sd + RT.m]
+
+new_frame_fac <- unique(carit_rt_frame[, c('N_of_trialType_fac', 'trialNum_s', 'runN_fac',
+                                           'N_of_trialType', 'trialNum', 'runN')])
+new_frame_fac[, RT.shape_s := predict(rt_repeated_go_trialnum_fac_fit, newdata = new_frame_fac, re.form = ~0)]
+new_frame_fac[, RT.shape := RT.shape_s * RT.sd + RT.m]
 ```
+
+### N Previous "GO" and RT plots {.tabset}
+
+#### Continuous
+
+Number of previous go trials is a continuous variable. This model fits less well than when this variable is a factor.
+
 ```{r fig.height=4, fig.width=8}
 ggplot(new_frame, aes(x = trialNum, y = RT.shape)) + 
   geom_point(aes(color = N_of_trialType)) + 
@@ -947,6 +968,21 @@ ggplot(new_frame, aes(x = trialNum, y = RT.shape)) +
   jftheme
 ```
 
+#### Factor
+
+Number of previous go trials is a factor. This model fits best..
+
+
+```{r fig.height=4, fig.width=8}
+ggplot(new_frame_fac, aes(x = trialNum, y = RT.shape)) + 
+  geom_point(aes(color = N_of_trialType)) + 
+  geom_line(aes(group = N_of_trialType, color = N_of_trialType)) + 
+  scale_color_gradient(low = apal[[4]], high = apal[[2]], name = 'N previous\n"go" trials') + 
+  facet_wrap(~sprintf('Run %d', runN), ncol = 2) + 
+  jftheme
+```
+
+### RT Previous Go versus No-Go
 
 ```{r fig.height=4}
 rt_means <- carit[trialType == 'go' & 
@@ -1000,16 +1036,17 @@ knitr::kable(dplyr::tibble('Number of previous "GO"s' = 2:4,
                            'Probability of FA' = round(P_FA, 2)))
 ```
 
-By run and age?
+By run and trail-number?
 
 ```{r}
+carit_FA_frame[, prepotency_cont := as.numeric(gsub('go', '', prepotency)) - 3]
 acc_mod_expanded.fn <- 'acc_mod_expanded.RDS'
 if(!file.exists(acc_mod_expanded.fn)){
   acc_mod_expanded <- glmer(is_FA ~ 1 + prepotency*runN_fac*trialNum_s + (1 | sID),
                             data = carit_FA_frame, family = 'binomial')
-  saveRDS(acc_mod_expanded, file = 'acc_mod_expanded.RDS')
+  saveRDS(acc_mod_expanded, file = acc_mod_expanded.fn)
 } else {
-  acc_mod_expanded <- readRDS(file = 'acc_mod_expanded.RDS')
+  acc_mod_expanded <- readRDS(file = acc_mod_expanded.fn)
 }
 summary(acc_mod_expanded)
 
