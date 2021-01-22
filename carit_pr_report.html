@@ -11,7 +11,7 @@
 
 <meta name="author" content="John Flournoy" />
 
-<meta name="date" content="2021-01-21" />
+<meta name="date" content="2021-01-22" />
 
 <title>CARIT Public Release Data Report</title>
 
@@ -277,7 +277,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">CARIT Public Release Data Report</h1>
 <h4 class="author">John Flournoy</h4>
-<h4 class="date">2021-01-21</h4>
+<h4 class="date">2021-01-22</h4>
 
 </div>
 
@@ -462,54 +462,55 @@ carit_pr_scan &lt;- staged_dlmri[carit_pr_scan, on = &#39;sID&#39;][has_carit ==
 <li><p><a href="https://www.fmrib.ox.ac.uk/datasets/techrep/tr04ss2/tr04ss2/node4.html" class="uri">https://www.fmrib.ox.ac.uk/datasets/techrep/tr04ss2/tr04ss2/node4.html</a></p></li>
 <li><p><a href="https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT" class="uri">https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT</a></p></li>
 </ul>
+<div id="task-basics" class="section level2">
+<h2>Task basics</h2>
 <pre class="r"><code>#For each person:
 #  get the number of events in each combination:
 #     1. GO/NOGO
 #     2. Prepotentcy POS/NEG
-names(carit_pr_scan)</code></pre>
-<pre><code>##  [1] &quot;sessionID&quot;          &quot;has_task_scan&quot;      &quot;has_carit&quot;         
-##  [4] &quot;has_guessing&quot;       &quot;sID&quot;                &quot;age&quot;               
-##  [7] &quot;gender&quot;             &quot;site&quot;               &quot;RACE&quot;              
-## [10] &quot;SES_PLVL&quot;           &quot;SES_RLVL&quot;           &quot;income&quot;            
-## [13] &quot;data_source&quot;        &quot;.id&quot;                &quot;filename&quot;          
-## [16] &quot;i.sessionID&quot;        &quot;runN&quot;               &quot;trialNum&quot;          
-## [19] &quot;stim&quot;               &quot;trialType&quot;          &quot;prepotency&quot;        
-## [22] &quot;ISI&quot;                &quot;shapeStartTime&quot;     &quot;shapeEndTime&quot;      
-## [25] &quot;fixStartTime&quot;       &quot;fixEndTime&quot;         &quot;nogoCondition&quot;     
-## [28] &quot;resp&quot;               &quot;trialResp.firstKey&quot; &quot;trialResp.firstRt&quot; 
-## [31] &quot;corrRespMsg&quot;        &quot;corrRespCode&quot;       &quot;corrRespTrialType&quot; 
-## [34] &quot;isiPress.keys&quot;      &quot;isiPress.rt&quot;        &quot;hitCount&quot;          
-## [37] &quot;missCount&quot;          &quot;falseAlarmCount&quot;    &quot;corrRejectCount&quot;   
-## [40] &quot;totalAcc&quot;           &quot;goAcc&quot;              &quot;nogoAcc&quot;           
-## [43] &quot;goFiveBackAvg&quot;      &quot;nogoFiveBackAvg&quot;    &quot;totalFiveBackAvg&quot;  
-## [46] &quot;aggTrialN&quot;          &quot;RT.shape&quot;</code></pre>
-<pre class="r"><code>carit_pr_scan_trialtype_summary &lt;- carit_pr_scan[, .N, by = c(&#39;sID&#39;, &#39;runN&#39;, &#39;corrRespTrialType&#39;)][corrRespTrialType != &#39;&#39;]
+
+carit_pr_scan_trialtype_summary &lt;- carit_pr_scan[, .N, by = c(&#39;sID&#39;, &#39;runN&#39;, &#39;corrRespTrialType&#39;)][corrRespTrialType != &#39;&#39;]
 trial_types &lt;- data.table(expand.grid(sID = unique(carit_pr_scan$sID),
                                       corrRespTrialType = unique(carit_pr_scan$corrRespTrialType),
                                       runN = unique(carit_pr_scan$runN)))[corrRespTrialType != &#39;&#39;]
 carit_pr_scan_trialtype_summary &lt;- carit_pr_scan_trialtype_summary[trial_types, on = c(&#39;sID&#39;, &#39;corrRespTrialType&#39;, &#39;runN&#39;)]
 carit_pr_scan_trialtype_summary[, N := fifelse(is.na(N), 0, N)]
-no_trials_dt &lt;- carit_pr_scan_trialtype_summary[N == 0][, list(&#39;Num of subs w/o trial-type&#39; = .N), by = c(&#39;corrRespTrialType&#39;, &#39;runN&#39;)]
+
+N_subs &lt;- unique(carit_pr_scan_trialtype_summary[, &#39;sID&#39;])[, .N]
+
+no_trials_dt &lt;- carit_pr_scan_trialtype_summary[N == 0][, list(&#39;N subjects&#39; = .N,
+                                                                   &#39;Prop Subjects&#39; = round(.N/N_subs, 2)), by = c(&#39;corrRespTrialType&#39;, &#39;runN&#39;)]
 
 no_trials_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c(&#39;Hit&#39;, &#39;Miss&#39;, &#39;corReject&#39;, &#39;falseAlarm&#39;)) ]
 
-setkey(no_trials_dt, runN, corrRespTrialType)</code></pre>
-<pre class="r"><code>carit_pr_scan_trialtype_summary[, c(&#39;N = 0&#39;) := fifelse(N == 0, &#39;N == 0&#39;, &#39;N != 0&#39;)]
+setkey(no_trials_dt, runN, corrRespTrialType)
+
+lt3_trials_dt &lt;- carit_pr_scan_trialtype_summary[N &lt; 3][, list(&#39;N subjects&#39; = .N,
+                                                                   &#39;Prop Subjects&#39; = round(.N/N_subs, 2)), by = c(&#39;corrRespTrialType&#39;, &#39;runN&#39;)]
+
+lt3_trials_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c(&#39;Hit&#39;, &#39;Miss&#39;, &#39;corReject&#39;, &#39;falseAlarm&#39;)) ]
+
+setkey(lt3_trials_dt, runN, corrRespTrialType)</code></pre>
+<pre class="r"><code>carit_pr_scan_trialtype_summary[, c(&#39;N = 0&#39;) := factor(fifelse(N == 0, &#39;N == 0&#39;, 
+                                                               fifelse(N &lt; 3, &#39;N &lt; 3&#39;, &#39;N &gt;= 3&#39;)),
+                                                       levels = c(&#39;N == 0&#39;, &#39;N &lt; 3&#39;, &#39;N &gt;= 3&#39;))]
 ggplot(carit_pr_scan_trialtype_summary, aes(x = N)) + 
   geom_histogram(aes(fill = `N = 0`), binwidth = 5) + 
-  scale_fill_manual(values = apal[c(1, 2)], name = &#39;&#39;) + 
+  scale_fill_manual(values = apal[c(2, 5, 1)], name = &#39;&#39;) + 
   facet_grid(runN ~ corrRespTrialType) + 
   jftheme</code></pre>
 <p><img src="carit_pr_report_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code>knitr::kable(no_trials_dt, 
-             caption = sprintf(&#39;Number of participants without a particular trial type across all runs, out of N = %d&#39;, unique(carit_pr_scan_trialtype_summary[, &#39;sID&#39;])[, .N]))</code></pre>
+             caption = sprintf(&#39;Number of participants without a particular trial type across all runs, out of N = %d&#39;,
+                               N_subs))</code></pre>
 <table>
 <caption>Number of participants without a particular trial type across all runs, out of N = 641</caption>
 <thead>
 <tr class="header">
 <th align="left">corrRespTrialType</th>
 <th align="right">runN</th>
-<th align="right">Num of subs w/o trial-type</th>
+<th align="right">N subjects</th>
+<th align="right">Prop Subjects</th>
 </tr>
 </thead>
 <tbody>
@@ -517,44 +518,481 @@ ggplot(carit_pr_scan_trialtype_summary, aes(x = N)) +
 <td align="left">Hit</td>
 <td align="right">1</td>
 <td align="right">5</td>
+<td align="right">0.01</td>
 </tr>
 <tr class="even">
 <td align="left">Miss</td>
 <td align="right">1</td>
 <td align="right">208</td>
+<td align="right">0.32</td>
 </tr>
 <tr class="odd">
 <td align="left">corReject</td>
 <td align="right">1</td>
 <td align="right">1</td>
+<td align="right">0.00</td>
 </tr>
 <tr class="even">
 <td align="left">falseAlarm</td>
 <td align="right">1</td>
 <td align="right">13</td>
+<td align="right">0.02</td>
 </tr>
 <tr class="odd">
 <td align="left">Hit</td>
 <td align="right">2</td>
 <td align="right">27</td>
+<td align="right">0.04</td>
 </tr>
 <tr class="even">
 <td align="left">Miss</td>
 <td align="right">2</td>
 <td align="right">217</td>
+<td align="right">0.34</td>
 </tr>
 <tr class="odd">
 <td align="left">corReject</td>
 <td align="right">2</td>
 <td align="right">20</td>
+<td align="right">0.03</td>
 </tr>
 <tr class="even">
 <td align="left">falseAlarm</td>
 <td align="right">2</td>
 <td align="right">40</td>
+<td align="right">0.06</td>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>knitr::kable(lt3_trials_dt, 
+             caption = sprintf(&#39;Number of participants with &lt; 3 events across all runs, out of N = %d&#39;,
+                               N_subs))</code></pre>
+<table>
+<caption>Number of participants with &lt; 3 events across all runs, out of N = 641</caption>
+<thead>
+<tr class="header">
+<th align="left">corrRespTrialType</th>
+<th align="right">runN</th>
+<th align="right">N subjects</th>
+<th align="right">Prop Subjects</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Hit</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">0.01</td>
+</tr>
+<tr class="even">
+<td align="left">Miss</td>
+<td align="right">1</td>
+<td align="right">440</td>
+<td align="right">0.69</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.00</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">1</td>
+<td align="right">70</td>
+<td align="right">0.11</td>
+</tr>
+<tr class="odd">
+<td align="left">Hit</td>
+<td align="right">2</td>
+<td align="right">27</td>
+<td align="right">0.04</td>
+</tr>
+<tr class="even">
+<td align="left">Miss</td>
+<td align="right">2</td>
+<td align="right">404</td>
+<td align="right">0.63</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">2</td>
+<td align="right">22</td>
+<td align="right">0.03</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">2</td>
+<td align="right">93</td>
+<td align="right">0.15</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="prepotency" class="section level2">
+<h2>Prepotency</h2>
+<pre class="r"><code>carit_pr_scan_prepotency_summary &lt;- carit_pr_scan[trialType == &#39;nogo&#39;][, .N, 
+                                                                         by = c(&#39;sID&#39;, 
+                                                                                &#39;runN&#39;,
+                                                                                &#39;corrRespTrialType&#39;,
+                                                                                &#39;prepotency&#39;)][corrRespTrialType != &#39;&#39;]
+trial_types_pp &lt;- data.table(expand.grid(sID = unique(carit_pr_scan$sID),
+                                         corrRespTrialType = unique(carit_pr_scan[trialType == &#39;nogo&#39;, corrRespTrialType]),
+                                         prepotency = unique(carit_pr_scan[trialType == &#39;nogo&#39;, prepotency]),
+                                         runN = unique(carit_pr_scan$runN)))[corrRespTrialType != &#39;&#39;]
+carit_pr_scan_prepotency_summary &lt;- carit_pr_scan_prepotency_summary[trial_types_pp, on = c(&#39;sID&#39;, &#39;corrRespTrialType&#39;, &#39;runN&#39;, &#39;prepotency&#39;)]
+carit_pr_scan_prepotency_summary[, N := fifelse(is.na(N), 0, N)]
+
+
+
+no_trials_pp_dt &lt;- carit_pr_scan_prepotency_summary[N == 0][, list(&#39;N subjects&#39; = .N,
+                                                                   &#39;Prop Subjects&#39; = round(.N/N_subs, 2)), by = c(&#39;corrRespTrialType&#39;, &#39;runN&#39;, &#39;prepotency&#39;)]
+
+
+no_trials_pp_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c(&#39;corReject&#39;, &#39;falseAlarm&#39;)) ]
+no_trials_pp_dt[, prepotency := factor(prepotency)]
+
+setkey(no_trials_pp_dt, runN, corrRespTrialType, prepotency)
+
+lt3_trials_pp_dt &lt;- carit_pr_scan_prepotency_summary[N &lt; 3][, list(&#39;N subjects&#39; = .N,
+                                                                   &#39;Prop Subjects&#39; = round(.N/N_subs, 2)), by = c(&#39;corrRespTrialType&#39;, &#39;runN&#39;, &#39;prepotency&#39;)]
+
+lt3_trials_pp_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c(&#39;corReject&#39;, &#39;falseAlarm&#39;)) ]
+lt3_trials_pp_dt[, prepotency := factor(prepotency)]
+
+setkey(lt3_trials_pp_dt, runN, corrRespTrialType, prepotency)</code></pre>
+<pre class="r"><code>carit_pr_scan_prepotency_summary[, c(&#39;N = 0&#39;) := factor(fifelse(N == 0, &#39;N == 0&#39;, 
+                                                               fifelse(N &lt; 3, &#39;N &lt; 3&#39;, &#39;N &gt;= 3&#39;)),
+                                                       levels = c(&#39;N == 0&#39;, &#39;N &lt; 3&#39;, &#39;N &gt;= 3&#39;))]
+ggplot(carit_pr_scan_prepotency_summary, aes(x = N)) + 
+  geom_histogram(aes(fill = `N = 0`), binwidth = 1) + 
+  scale_fill_manual(values = apal[c(2, 5, 1)], name = &#39;&#39;) + 
+  scale_x_continuous(breaks = c(0:10)) + 
+  facet_grid(runN + prepotency ~ corrRespTrialType) + 
+  labs(x = &#39;Events&#39;, y = &#39;Number of Subjects&#39;) + 
+  jftheme</code></pre>
+<p><img src="carit_pr_report_files/figure-html/unnamed-chunk-6-1.png" width="576" /></p>
+<pre class="r"><code>knitr::kable(no_trials_pp_dt, 
+             caption = sprintf(&#39;Number of participants without a particular trial type across all runs, out of N = %d&#39;, 
+                               N_subs))</code></pre>
+<table>
+<caption>Number of participants without a particular trial type across all runs, out of N = 641</caption>
+<thead>
+<tr class="header">
+<th align="left">corrRespTrialType</th>
+<th align="right">runN</th>
+<th align="left">prepotency</th>
+<th align="right">N subjects</th>
+<th align="right">Prop Subjects</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">1</td>
+<td align="left">2go</td>
+<td align="right">1</td>
+<td align="right">0.00</td>
+</tr>
+<tr class="even">
+<td align="left">corReject</td>
+<td align="right">1</td>
+<td align="left">3go</td>
+<td align="right">4</td>
+<td align="right">0.01</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">1</td>
+<td align="left">4go</td>
+<td align="right">7</td>
+<td align="right">0.01</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">1</td>
+<td align="left">2go</td>
+<td align="right">72</td>
+<td align="right">0.11</td>
+</tr>
+<tr class="odd">
+<td align="left">falseAlarm</td>
+<td align="right">1</td>
+<td align="left">3go</td>
+<td align="right">60</td>
+<td align="right">0.09</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">1</td>
+<td align="left">4go</td>
+<td align="right">128</td>
+<td align="right">0.20</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">2</td>
+<td align="left">2go</td>
+<td align="right">22</td>
+<td align="right">0.03</td>
+</tr>
+<tr class="even">
+<td align="left">corReject</td>
+<td align="right">2</td>
+<td align="left">3go</td>
+<td align="right">23</td>
+<td align="right">0.04</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">2</td>
+<td align="left">4go</td>
+<td align="right">28</td>
+<td align="right">0.04</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">2</td>
+<td align="left">2go</td>
+<td align="right">84</td>
+<td align="right">0.13</td>
+</tr>
+<tr class="odd">
+<td align="left">falseAlarm</td>
+<td align="right">2</td>
+<td align="left">3go</td>
+<td align="right">98</td>
+<td align="right">0.15</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">2</td>
+<td align="left">4go</td>
+<td align="right">137</td>
+<td align="right">0.21</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>knitr::kable(lt3_trials_pp_dt, 
+             caption = sprintf(&#39;Number of participants with &lt; 3 events across all runs, out of N = %d&#39;,
+                               N_subs))</code></pre>
+<table>
+<caption>Number of participants with &lt; 3 events across all runs, out of N = 641</caption>
+<thead>
+<tr class="header">
+<th align="left">corrRespTrialType</th>
+<th align="right">runN</th>
+<th align="left">prepotency</th>
+<th align="right">N subjects</th>
+<th align="right">Prop Subjects</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">1</td>
+<td align="left">2go</td>
+<td align="right">18</td>
+<td align="right">0.03</td>
+</tr>
+<tr class="even">
+<td align="left">corReject</td>
+<td align="right">1</td>
+<td align="left">3go</td>
+<td align="right">48</td>
+<td align="right">0.07</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">1</td>
+<td align="left">4go</td>
+<td align="right">94</td>
+<td align="right">0.15</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">1</td>
+<td align="left">2go</td>
+<td align="right">291</td>
+<td align="right">0.45</td>
+</tr>
+<tr class="odd">
+<td align="left">falseAlarm</td>
+<td align="right">1</td>
+<td align="left">3go</td>
+<td align="right">335</td>
+<td align="right">0.52</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">1</td>
+<td align="left">4go</td>
+<td align="right">444</td>
+<td align="right">0.69</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">2</td>
+<td align="left">2go</td>
+<td align="right">46</td>
+<td align="right">0.07</td>
+</tr>
+<tr class="even">
+<td align="left">corReject</td>
+<td align="right">2</td>
+<td align="left">3go</td>
+<td align="right">67</td>
+<td align="right">0.10</td>
+</tr>
+<tr class="odd">
+<td align="left">corReject</td>
+<td align="right">2</td>
+<td align="left">4go</td>
+<td align="right">118</td>
+<td align="right">0.18</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">2</td>
+<td align="left">2go</td>
+<td align="right">276</td>
+<td align="right">0.43</td>
+</tr>
+<tr class="odd">
+<td align="left">falseAlarm</td>
+<td align="right">2</td>
+<td align="left">3go</td>
+<td align="right">332</td>
+<td align="right">0.52</td>
+</tr>
+<tr class="even">
+<td align="left">falseAlarm</td>
+<td align="right">2</td>
+<td align="left">4go</td>
+<td align="right">435</td>
+<td align="right">0.68</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="misc-questions" class="section level1">
+<h1>Misc Questions</h1>
+<p>What event time do we use for a correct rejection?</p>
+<p>Prepotency: modeled as a factor, we have a lot of subjects with very few events. Should we collapse? Should we test linear, factorial effects? Can we do model comparison like this in FSL? What's the hypothesis we wish to test? Where is there a linear effect? Where is there a factorial effect?</p>
+<div id="learning" class="section level2">
+<h2>Learning</h2>
+<p>There's a learning component here we are not really accounting for. Does prepotency predict a no-go trial?</p>
+<pre class="r"><code>num_fac &lt;- function(x, levels = NULL){
+  if(is.null(levels)){
+    as.numeric(factor(x))  
+  } else { 
+    as.numeric(factor(x, levels = levels))
+  }
+}
+lag1_num_fac_diff &lt;- function(x, levels = NULL){
+  y &lt;- abs(num_fac(x, levels = levels) - num_fac(shift(x, fill = x[[1]], type = &#39;lag&#39;), levels = levels))
+  return(y)
+}
+
+trial_structure &lt;- unique(carit_pr_scan[, c(&#39;runN&#39;, &#39;trialNum&#39;, &#39;prepotency&#39;, &#39;trialType&#39;)])
+
+setorder(trial_structure, runN, trialNum)
+trial_structure[, trial_type_diff := lag1_num_fac_diff(trialType, levels = c(&#39;go&#39;, &#39;nogo&#39;)), by = c(&#39;runN&#39;)]
+trial_structure[, chunkID := cumsum(trial_type_diff)]
+trial_structure[, N_of_trialType := 1:.N, by = c(&#39;runN&#39;, &#39;chunkID&#39;)]
+trial_structure[, prev_trial := shift(trialType, type = &#39;lag&#39;), by = c(&#39;runN&#39;)]
+trial_structure[, is_nogo := as.numeric(trialType == &#39;nogo&#39;)]
+trial_structure[, next_is_nogo := shift(is_nogo, n = 1, fill = NA, type = &#39;lead&#39;), by = c(&#39;runN&#39;)]
+
+trial_structure[, c(&#39;runN&#39;, &#39;trialNum&#39;, &#39;trialType&#39;, &#39;next_is_nogo&#39;, &#39;N_of_trialType&#39;)]</code></pre>
+<pre><code>##      runN trialNum trialType next_is_nogo N_of_trialType
+##   1:    1        1        go            0              1
+##   2:    1        2        go            0              2
+##   3:    1        3        go            1              3
+##   4:    1        4      nogo            0              1
+##   5:    1        5        go            0              1
+##  ---                                                    
+## 180:    2       88        go            1              4
+## 181:    2       89      nogo            0              1
+## 182:    2       90        go            0              1
+## 183:    2       91        go            1              2
+## 184:    2       92      nogo           NA              1</code></pre>
+<pre class="r"><code>trial_structure &lt;- trial_structure[trialType == &#39;go&#39;]
+
+fit_b &lt;- glm(next_is_nogo ~ N_of_trialType, data = trial_structure, family = &#39;binomial&#39;)
+summary(fit_b)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = next_is_nogo ~ N_of_trialType, family = &quot;binomial&quot;, 
+##     data = trial_structure)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.5963  -0.8201  -0.3470   0.8100   1.5831  
+## 
+## Coefficients:
+##                Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)     -4.6426     0.7461  -6.223 4.89e-10 ***
+## N_of_trialType   1.8629     0.3183   5.854 4.81e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 176.60  on 135  degrees of freedom
+## Residual deviance: 117.22  on 134  degrees of freedom
+## AIC: 121.22
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>with(trial_structure, table(N_of_trialType, next_is_nogo))</code></pre>
+<pre><code>##               next_is_nogo
+## N_of_trialType  0  1
+##              1 48  0
+##              2 28 20
+##              3 12 16
+##              4  0 12</code></pre>
+<pre class="r"><code>trial_structure[, list(P_nogo = sum(next_is_nogo)/.N), by = &#39;N_of_trialType&#39;]</code></pre>
+<pre><code>##    N_of_trialType    P_nogo
+## 1:              1 0.0000000
+## 2:              2 0.4166667
+## 3:              3 0.5714286
+## 4:              4 1.0000000</code></pre>
+<pre class="r"><code>#contrast
+c &lt;- contr.treatment(4)
+my.coding &lt;- matrix(rep(1/4, 12), ncol=3)
+my.simple&lt;- c - my.coding
+
+trial_structure[, N_of_trialType_fac := factor(N_of_trialType)]
+contrasts(trial_structure$N_of_trialType_fac) &lt;- my.simple
+
+fit_b_fac &lt;- glm(next_is_nogo ~ N_of_trialType_fac, data = trial_structure)
+summary(fit_b_fac)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = next_is_nogo ~ N_of_trialType_fac, data = trial_structure)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.5714  -0.4167   0.0000   0.4286   0.5833  
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          0.49702    0.03754  13.238  &lt; 2e-16 ***
+## N_of_trialType_fac2  0.41667    0.07647   5.449 2.40e-07 ***
+## N_of_trialType_fac3  0.57143    0.08908   6.415 2.32e-09 ***
+## N_of_trialType_fac4  1.00000    0.12090   8.271 1.26e-13 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for gaussian family taken to be 0.1403319)
+## 
+##     Null deviance: 31.059  on 135  degrees of freedom
+## Residual deviance: 18.524  on 132  degrees of freedom
+## AIC: 124.82
+## 
+## Number of Fisher Scoring iterations: 2</code></pre>
+</div>
 </div>
 
 
