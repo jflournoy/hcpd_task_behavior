@@ -263,3 +263,32 @@ summary(fit_b_fac)
 
 #something something updating bayesian priors.
 ```
+
+P(FA | Prepotency) across the trials
+
+```{r}
+modnum = 4
+othernum = 24/modnum - 1
+carit_pr_scan_learning <- carit_pr_scan[trialType == 'nogo']
+setorder(carit_pr_scan_learning, 'sID', 'runN', 'trialNum')
+carit_pr_scan_learning[, nogotrial := 1:.N, by = c('sID', 'runN')]
+carit_pr_scan_learning[, nogotrial_group := (nogotrial - 1) %/% modnum]
+carit_pr_scan_learning_summary <- carit_pr_scan_learning[, .(p_FA = mean(corrRespTrialType == 'falseAlarm', na.rm = TRUE),
+                                                             N = .N), by = c('runN', 'nogotrial_group', 'prepotency')]
+carit_pr_scan_learning_summary[, p_FA_SE := sqrt( p_FA * (1 - p_FA) / N)]
+carit_pr_scan_learning_summary[, c('p_FA_u', 'p_FA_l') := list(p_FA + qnorm(.975) * p_FA_SE, p_FA + qnorm(.025) * p_FA_SE)]
+```
+
+
+```{r fig.width=5, fig.height=4}
+ggplot(carit_pr_scan_learning_summary, aes(x = nogotrial_group, y = p_FA, group = prepotency, color = prepotency)) + 
+  geom_errorbar(aes(ymin = p_FA_l, ymax = p_FA_u), width = 0) + 
+  geom_point() + 
+  geom_line() + 
+  facet_grid( ~ runN) + 
+  coord_cartesian(y = c(0, 1)) + 
+  scale_x_continuous(breaks = 0:othernum, labels = sprintf('%d:%d', (0:othernum)*modnum+1, (0:othernum+1)*modnum)) + 
+  scale_color_manual(values = apal[c(1,5,2)]) + 
+  labs(x = 'Number of No-Go trials', y = 'Probability of a False-Alarm') +
+  jftheme
+```
