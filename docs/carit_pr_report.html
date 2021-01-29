@@ -11,7 +11,7 @@
 
 <meta name="author" content="John Flournoy" />
 
-<meta name="date" content="2021-01-22" />
+<meta name="date" content="2021-01-29" />
 
 <title>CARIT Public Release Data Report</title>
 
@@ -277,7 +277,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">CARIT Public Release Data Report</h1>
 <h4 class="author">John Flournoy</h4>
-<h4 class="date">2021-01-22</h4>
+<h4 class="date">2021-01-29</h4>
 
 </div>
 
@@ -992,6 +992,29 @@ summary(fit_b_fac)</code></pre>
 ## AIC: 124.82
 ## 
 ## Number of Fisher Scoring iterations: 2</code></pre>
+<pre class="r"><code>#something something updating bayesian priors.</code></pre>
+<p>P(FA | Prepotency) across the trials</p>
+<pre class="r"><code>modnum = 4
+othernum = 24/modnum - 1
+carit_pr_scan_learning &lt;- carit_pr_scan[trialType == &#39;nogo&#39;]
+setorder(carit_pr_scan_learning, &#39;sID&#39;, &#39;runN&#39;, &#39;trialNum&#39;)
+carit_pr_scan_learning[, nogotrial := 1:.N, by = c(&#39;sID&#39;, &#39;runN&#39;)]
+carit_pr_scan_learning[, nogotrial_group := (nogotrial - 1) %/% modnum]
+carit_pr_scan_learning_summary &lt;- carit_pr_scan_learning[, .(p_FA = mean(corrRespTrialType == &#39;falseAlarm&#39;, na.rm = TRUE),
+                                                             N = .N), by = c(&#39;runN&#39;, &#39;nogotrial_group&#39;, &#39;prepotency&#39;)]
+carit_pr_scan_learning_summary[, p_FA_SE := sqrt( p_FA * (1 - p_FA) / N)]
+carit_pr_scan_learning_summary[, c(&#39;p_FA_u&#39;, &#39;p_FA_l&#39;) := list(p_FA + qnorm(.975) * p_FA_SE, p_FA + qnorm(.025) * p_FA_SE)]</code></pre>
+<pre class="r"><code>ggplot(carit_pr_scan_learning_summary, aes(x = nogotrial_group, y = p_FA, group = prepotency, color = prepotency)) + 
+  geom_errorbar(aes(ymin = p_FA_l, ymax = p_FA_u), width = 0) + 
+  geom_point() + 
+  geom_line() + 
+  facet_grid( ~ runN) + 
+  coord_cartesian(y = c(0, 1)) + 
+  scale_x_continuous(breaks = 0:othernum, labels = sprintf(&#39;%d:%d&#39;, (0:othernum)*modnum+1, (0:othernum+1)*modnum)) + 
+  scale_color_manual(values = apal[c(1,5,2)]) + 
+  labs(x = &#39;Number of No-Go trials&#39;, y = &#39;Probability of a False-Alarm&#39;) +
+  jftheme</code></pre>
+<p><img src="carit_pr_report_files/figure-html/unnamed-chunk-9-1.png" width="480" /></p>
 </div>
 </div>
 
