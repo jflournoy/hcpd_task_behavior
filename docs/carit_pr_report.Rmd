@@ -116,22 +116,39 @@ trial_types <- data.table(expand.grid(sID = unique(carit_pr_scan$sID),
                                       runN = unique(carit_pr_scan$runN)))[corrRespTrialType != '']
 carit_pr_scan_trialtype_summary <- carit_pr_scan_trialtype_summary[trial_types, on = c('sID', 'corrRespTrialType', 'runN')]
 carit_pr_scan_trialtype_summary[, N := fifelse(is.na(N), 0, N)]
-no_trials_dt <- carit_pr_scan_trialtype_summary[N == 0][, list('Num of subs w/o trial-type' = .N), by = c('corrRespTrialType', 'runN')]
+
+N_subs <- unique(carit_pr_scan_trialtype_summary[, 'sID'])[, .N]
+
+no_trials_dt <- carit_pr_scan_trialtype_summary[N == 0][, list('N subjects' = .N,
+                                                                   'Prop Subjects' = round(.N/N_subs, 2)), by = c('corrRespTrialType', 'runN')]
 
 no_trials_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c('Hit', 'Miss', 'corReject', 'falseAlarm')) ]
 
 setkey(no_trials_dt, runN, corrRespTrialType)
+
+lt3_trials_dt <- carit_pr_scan_trialtype_summary[N < 3][, list('N subjects' = .N,
+                                                                   'Prop Subjects' = round(.N/N_subs, 2)), by = c('corrRespTrialType', 'runN')]
+
+lt3_trials_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c('Hit', 'Miss', 'corReject', 'falseAlarm')) ]
+
+setkey(lt3_trials_dt, runN, corrRespTrialType)
 ```
 
 ```{r fig.width=7, fig.height=3}
-carit_pr_scan_trialtype_summary[, c('N = 0') := fifelse(N == 0, 'N == 0', 'N != 0')]
+carit_pr_scan_trialtype_summary[, c('N = 0') := factor(fifelse(N == 0, 'N == 0', 
+                                                               fifelse(N < 3, 'N < 3', 'N >= 3')),
+                                                       levels = c('N == 0', 'N < 3', 'N >= 3'))]
 ggplot(carit_pr_scan_trialtype_summary, aes(x = N)) + 
   geom_histogram(aes(fill = `N = 0`), binwidth = 5) + 
-  scale_fill_manual(values = apal[c(1, 2)], name = '') + 
+  scale_fill_manual(values = apal[c(2, 5, 1)], name = '') + 
   facet_grid(runN ~ corrRespTrialType) + 
   jftheme
 knitr::kable(no_trials_dt, 
-             caption = sprintf('Number of participants without a particular trial type across all runs, out of N = %d', unique(carit_pr_scan_trialtype_summary[, 'sID'])[, .N]))
+             caption = sprintf('Number of participants without a particular trial type across all runs, out of N = %d',
+                               N_subs))
+knitr::kable(lt3_trials_dt, 
+             caption = sprintf('Number of participants with < 3 events across all runs, out of N = %d',
+                               N_subs))
 ```
 
 ## Prepotency
@@ -148,25 +165,44 @@ trial_types_pp <- data.table(expand.grid(sID = unique(carit_pr_scan$sID),
                                          runN = unique(carit_pr_scan$runN)))[corrRespTrialType != '']
 carit_pr_scan_prepotency_summary <- carit_pr_scan_prepotency_summary[trial_types_pp, on = c('sID', 'corrRespTrialType', 'runN', 'prepotency')]
 carit_pr_scan_prepotency_summary[, N := fifelse(is.na(N), 0, N)]
-no_trials_pp_dt <- carit_pr_scan_prepotency_summary[N == 0][, list('Num of subs w/o trial-type' = .N), by = c('corrRespTrialType', 'runN', 'prepotency')]
+
+
+
+no_trials_pp_dt <- carit_pr_scan_prepotency_summary[N == 0][, list('N subjects' = .N,
+                                                                   'Prop Subjects' = round(.N/N_subs, 2)), by = c('corrRespTrialType', 'runN', 'prepotency')]
+
 
 no_trials_pp_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c('corReject', 'falseAlarm')) ]
 no_trials_pp_dt[, prepotency := factor(prepotency)]
 
 setkey(no_trials_pp_dt, runN, corrRespTrialType, prepotency)
+
+lt3_trials_pp_dt <- carit_pr_scan_prepotency_summary[N < 3][, list('N subjects' = .N,
+                                                                   'Prop Subjects' = round(.N/N_subs, 2)), by = c('corrRespTrialType', 'runN', 'prepotency')]
+
+lt3_trials_pp_dt[, corrRespTrialType := factor(corrRespTrialType, levels = c('corReject', 'falseAlarm')) ]
+lt3_trials_pp_dt[, prepotency := factor(prepotency)]
+
+setkey(lt3_trials_pp_dt, runN, corrRespTrialType, prepotency)
 ```
 
 ```{r fig.width=6, fig.height=5}
-carit_pr_scan_prepotency_summary[, c('N = 0') := fifelse(N == 0, 'N == 0', 'N != 0')]
+carit_pr_scan_prepotency_summary[, c('N = 0') := factor(fifelse(N == 0, 'N == 0', 
+                                                               fifelse(N < 3, 'N < 3', 'N >= 3')),
+                                                       levels = c('N == 0', 'N < 3', 'N >= 3'))]
 ggplot(carit_pr_scan_prepotency_summary, aes(x = N)) + 
   geom_histogram(aes(fill = `N = 0`), binwidth = 1) + 
-  scale_fill_manual(values = apal[c(1, 2)], name = '') + 
+  scale_fill_manual(values = apal[c(2, 5, 1)], name = '') + 
   scale_x_continuous(breaks = c(0:10)) + 
   facet_grid(runN + prepotency ~ corrRespTrialType) + 
   labs(x = 'Events', y = 'Number of Subjects') + 
   jftheme
 knitr::kable(no_trials_pp_dt, 
-             caption = sprintf('Number of participants without a particular trial type across all runs, out of N = %d', unique(carit_pr_scan_trialtype_summary[, 'sID'])[, .N]))
+             caption = sprintf('Number of participants without a particular trial type across all runs, out of N = %d', 
+                               N_subs))
+knitr::kable(lt3_trials_pp_dt, 
+             caption = sprintf('Number of participants with < 3 events across all runs, out of N = %d',
+                               N_subs))
 ```
 
 
@@ -174,3 +210,85 @@ knitr::kable(no_trials_pp_dt,
 # Misc Questions
 
 What event time do we use for a correct rejection?
+
+Prepotency: modeled as a factor, we have a lot of subjects with very few events. Should we collapse? Should we test linear, factorial effects? Can we do model comparison like this in FSL? What's the hypothesis we wish to test? Where is there a linear effect? Where is there a factorial effect? 
+
+
+## Learning 
+
+There's a learning component here we are not really accounting for. Does prepotency predict a no-go trial?
+
+```{r}
+num_fac <- function(x, levels = NULL){
+  if(is.null(levels)){
+    as.numeric(factor(x))  
+  } else { 
+    as.numeric(factor(x, levels = levels))
+  }
+}
+lag1_num_fac_diff <- function(x, levels = NULL){
+  y <- abs(num_fac(x, levels = levels) - num_fac(shift(x, fill = x[[1]], type = 'lag'), levels = levels))
+  return(y)
+}
+
+trial_structure <- unique(carit_pr_scan[, c('runN', 'trialNum', 'prepotency', 'trialType')])
+
+setorder(trial_structure, runN, trialNum)
+trial_structure[, trial_type_diff := lag1_num_fac_diff(trialType, levels = c('go', 'nogo')), by = c('runN')]
+trial_structure[, chunkID := cumsum(trial_type_diff)]
+trial_structure[, N_of_trialType := 1:.N, by = c('runN', 'chunkID')]
+trial_structure[, prev_trial := shift(trialType, type = 'lag'), by = c('runN')]
+trial_structure[, is_nogo := as.numeric(trialType == 'nogo')]
+trial_structure[, next_is_nogo := shift(is_nogo, n = 1, fill = NA, type = 'lead'), by = c('runN')]
+
+trial_structure[, c('runN', 'trialNum', 'trialType', 'next_is_nogo', 'N_of_trialType')]
+trial_structure <- trial_structure[trialType == 'go']
+
+fit_b <- glm(next_is_nogo ~ N_of_trialType, data = trial_structure, family = 'binomial')
+summary(fit_b)
+
+with(trial_structure, table(N_of_trialType, next_is_nogo))
+trial_structure[, list(P_nogo = sum(next_is_nogo)/.N), by = 'N_of_trialType']
+
+#contrast
+c <- contr.treatment(4)
+my.coding <- matrix(rep(1/4, 12), ncol=3)
+my.simple<- c - my.coding
+
+trial_structure[, N_of_trialType_fac := factor(N_of_trialType)]
+contrasts(trial_structure$N_of_trialType_fac) <- my.simple
+
+fit_b_fac <- glm(next_is_nogo ~ N_of_trialType_fac, data = trial_structure)
+summary(fit_b_fac)
+
+#something something updating bayesian priors.
+```
+
+P(FA | Prepotency) across the trials
+
+```{r}
+modnum = 4
+othernum = 24/modnum - 1
+carit_pr_scan_learning <- carit_pr_scan[trialType == 'nogo']
+setorder(carit_pr_scan_learning, 'sID', 'runN', 'trialNum')
+carit_pr_scan_learning[, nogotrial := 1:.N, by = c('sID', 'runN')]
+carit_pr_scan_learning[, nogotrial_group := (nogotrial - 1) %/% modnum]
+carit_pr_scan_learning_summary <- carit_pr_scan_learning[, .(p_FA = mean(corrRespTrialType == 'falseAlarm', na.rm = TRUE),
+                                                             N = .N), by = c('runN', 'nogotrial_group', 'prepotency')]
+carit_pr_scan_learning_summary[, p_FA_SE := sqrt( p_FA * (1 - p_FA) / N)]
+carit_pr_scan_learning_summary[, c('p_FA_u', 'p_FA_l') := list(p_FA + qnorm(.975) * p_FA_SE, p_FA + qnorm(.025) * p_FA_SE)]
+```
+
+
+```{r fig.width=5, fig.height=4}
+ggplot(carit_pr_scan_learning_summary, aes(x = nogotrial_group, y = p_FA, group = prepotency, color = prepotency)) + 
+  geom_errorbar(aes(ymin = p_FA_l, ymax = p_FA_u), width = 0) + 
+  geom_point() + 
+  geom_line() + 
+  facet_grid( ~ runN) + 
+  coord_cartesian(y = c(0, 1)) + 
+  scale_x_continuous(breaks = 0:othernum, labels = sprintf('%d:%d', (0:othernum)*modnum+1, (0:othernum+1)*modnum)) + 
+  scale_color_manual(values = apal[c(1,5,2)]) + 
+  labs(x = 'Number of No-Go trials', y = 'Probability of a False-Alarm') +
+  jftheme
+```
