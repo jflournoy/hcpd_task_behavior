@@ -292,3 +292,25 @@ ggplot(carit_pr_scan_learning_summary, aes(x = nogotrial_group, y = p_FA, group 
   labs(x = 'Number of No-Go trials', y = 'Probability of a False-Alarm') +
   jftheme
 ```
+
+# Subset for testing
+
+```{r}
+
+carit_pr_scan_trialtype_summary[, robust_trials := `N = 0` == 'N >= 3']
+carit_pr_scan_trialtype_summary[, factor_cell := paste(corrRespTrialType, runN, sep = '_')]
+carit_pr_scan_trialtype_summary_w <- dcast(carit_pr_scan_trialtype_summary, 
+                                            sID ~ factor_cell, 
+                                            value.var = 'robust_trials')
+robust_trials_ids <- carit_pr_scan_trialtype_summary_w[, .(all = Reduce(`*`, .SD)), .SDcols = !'sID', by = 'sID']
+robust_trials_ids <- robust_trials_ids[all > 0]
+carit_ap_ev_sprintf_path <- '/ncf/hcp/data/intradb/%s_V1_MR/tfMRI_CARIT_AP_unproc/LINKED_DATA/PSYCHOPY/EVs/'
+
+robust_trials_ids[, has_ev := !is.null(dir(sprintf(carit_ap_ev_sprintf_path, sID)))]
+robust_trials_ids <- robust_trials_ids[has_ev == TRUE]
+set.seed(9210)
+random_10 <- sort(sample(1:dim(robust_trials_ids)[[1]], 10))
+random_robust_10_ids <- robust_trials_ids[random_10, 'sID']
+knitr::kable(random_robust_10_ids)
+```
+

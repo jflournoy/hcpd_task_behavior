@@ -1,7 +1,7 @@
 ## @knitr process_carit
 library(data.table)
 library(psycho)
-data.table::setDTthreads(3)
+data.table::setDTthreads(1)
 
 modal <- function(x){
   t <- table(unlist(x))
