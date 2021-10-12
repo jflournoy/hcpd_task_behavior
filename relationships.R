@@ -1,3 +1,7 @@
+## Note, this script may not work with all possible family make-ups. Please
+## check to make sure it produces the structure you're intending
+## 
+
 library(data.table)
 library(igraph)
 
@@ -73,6 +77,9 @@ d_g <- decompose(g)
 
 get.edge.attribute(d_g[[1]])
 
+
+#Half siblings need to be exchanged...if there are only two half-siblings in a
+#family, they should be marked as the same EB index.
 get_relationship_counts <- function(g){
   t <- table(get.edge.attribute(g)[['relationship']])
   return(t)
@@ -83,10 +90,48 @@ make_relcount_labels <- function(rc){
 get_vertices_names <- function(g){
   igraph::get.vertex.attribute(g)$name
 }
-make_family_dt <- function(g){
+make_outer_familty_dt <- function(g){
+  tmp_g <- g
+  tmp_g_df <- as_data_frame(tmp_g)
+  tmp_g_df <- tmp_g_df[order(tmp_g_df$relationship), ]
+  g <- graph_from_data_frame(tmp_g_df)
+  d_g <- decompose(g - E(g)[get.edge.attribute(g)$relationship == 'half sibling'])
+  fset <- rbindlist(lapply(d_g, make_inner_family_dt), idcol = 'sub_family_id')
+  setnames(fset, 'family_type', 'sub_family_type')
+  return(fset)
+}
+make_inner_family_dt <- function(g){
   ids <- get_vertices_names(g)
   fam_lab <- make_relcount_labels(get_relationship_counts(g))
-  data.table(id = ids, family_type = fam_lab)
+  fset <- data.table(id = ids, family_type = fam_lab)
+  return(fset)
+}
+make_family_dt <- function(g){
+  innerfset <- make_inner_family_dt(g)
+  subfset <- make_outer_familty_dt(g)
+  fullfset <- merge(innerfset, subfset, by = 'id')
+  return(fullfset)
 }
 
-family_sets <- lapply(d_g, make_family_dt)
+family_sets_list <- lapply(d_g, make_family_dt)
+family_sets <- rbindlist(family_sets_list, idcol = 'family_id')
+family_sets[family_type == 'flls-1_hlfs-1']
+
+family_types <- unique(family_sets[, 'family_type'])[, eb2 := 1:.N]
+family_sets[, eb1 := -1]
+family_sets <- family_types[family_sets, on = 'family_type']
+family_sets[, eb3 := -family_id]
+family_sets[, eb4 := sub_family_id]
+family_sets[, eb5 := 1:.N]
+family_sets <- family_sets[, c('family_id', 'id', 'family_type', 'sub_family_id', 'sub_family_type', paste0('eb', 1:5))]
+
+#for everyone else their EB will be 
+#-1 -(max(eb2) + 1) 1 .N
+fwrite(family_sets[, c(paste0('eb', 1:5))], 'family_set_eb.csv', col.names = FALSE)
+
+View(family_sets[, c(paste0('eb', 1:5))][, .N, by = c('eb1', 'eb2', 'eb3', 'eb4')])
+View(family_sets)
+
+
+
+
