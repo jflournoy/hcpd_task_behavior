@@ -33,7 +33,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 apal <- paste0('#', c('005867', 'FFB335', 'F3F1EA', '2E383D', 'F34226'))
 
 #{.tabset}
-font_add_google("Didact Gothic", "Didact Gothic")
+font_add_google("Didact Gothic", "Didact Gothic", 
+                handle = curl::new_handle(proxy = 'rcproxy.rc.fas.harvard.edu', proxyport = 3128))
 # showtext_auto()
 
 jftheme <- theme_minimal() +  
@@ -66,6 +67,7 @@ dt_table <- function(data, caption, dt_options = NULL){
 }
 
 knitr::read_chunk('process_carit.R')
+knitr::read_chunk('carit_first-level-participants.R')
 ```
 
 # Process data
@@ -76,7 +78,7 @@ knitr::read_chunk('process_carit.R')
 At the moment, there are 2 participants who have too many trials for one run. The raw data file indicates that the same conditions file was used for each one, but it also indicates that only 1 run was run. We may ultimately be able to use these cases but I'm setting them aside for now.
 
 ```{r}
-#remove longitudinal subjects:
+#remove longitudinal sessions:
 carit <- carit[!grepl('_V[2-9]_', filename),]
 ###INVESTIGATE FURTHER
 duplicate_run_ids <- unique(carit[, .N, by = c('sID', 'runN')][N > 92, sID])
@@ -1071,10 +1073,12 @@ ggplot(new_frame_FA, aes(x = trialNum, y = p_FA)) +
 
 
 ```{r}
+
 accuracy_summary <- carit[, list(mean_accuracy = mean(corrRespCode, rm.na = TRUE),
              N_na = sum(is.na(corrRespCode)),
              age = unique(age)), 
-             by = c('sID', 'trialType', 'runN')]
+             by = c('sID', 'trialType', 'runN', 'filename')]
+accuracy_summary[, acquisition_direction := stringr::str_replace(filename, '.*CARIT_(PA|AP).*', '\\1')][, filename := NULL]
 
 accuracy_summary_trialtype <- dcast(accuracy_summary[, -'N_na'], ... ~ trialType, value.var = 'mean_accuracy')
 ```
@@ -1098,7 +1102,7 @@ Number of participants not pressing for at least 1 run: `r unique(accuracy_summa
 ```{r}
 setorder(accuracy_summary_trialtype, sID, runN) 
 nopress_id <- accuracy_summary_trialtype[go == 0 & nogo == 1, c('sID', 'runN')]
-dt_table(accuracy_summary_trialtype[go == 0 & nogo == 1, 
+dt_table(accuracy_summary_trialtype[(go == 0 & nogo == 1) | (go == 1 & nogo == 0), 
                                     lapply(.SD, function(x) sprintf(fmt = '%d%%', x*100)), 
                                     .SDcols = c('go', 'nogo'), 
                                     by = c('sID', 'runN')],
@@ -1106,6 +1110,30 @@ dt_table(accuracy_summary_trialtype[go == 0 & nogo == 1,
 ```
 
 If someone presses all the time, they'll get 100% accuracy for "go" trials and 0% accuracy for "nogo" trials. Number of participants showing this pattern: `r accuracy_summary_trialtype[go == 1 & nogo == 0, ][, .N]`.
+
+```{r cope1_check}
+```
+
+## Particpants to be excluded from tfMRI
+
+```{r}
+accuracy_summary_trialtype_fMRI <- accuracy_summary_trialtype[
+  cope1_dt[exists == TRUE, c('sID', 'acquisition_direction', 'analysis_type', 'exists', 'filename')], 
+  on = c('sID', 'acquisition_direction')]
+
+accuracy_summary_trialtype_fMRI[, .N, by = c('analysis_type', 'acquisition_direction')]
+setorder(accuracy_summary_trialtype_fMRI, sID, runN, analysis_type)
+
+dt_table(accuracy_summary_trialtype_fMRI[(go == 0 & nogo == 1) | (go == 1 & nogo == 0), 
+                                    lapply(.SD, function(x) sprintf(fmt = '%d%%', x*100)), 
+                                    .SDcols = c('go', 'nogo'), 
+                                    by = c('sID', 'runN', 'analysis_type', 'acquisition_direction')],
+         caption = 'First-level models with no responses (or all responses)')
+
+data.table::fwrite(accuracy_summary_trialtype_fMRI[!(go == 0 & nogo == 1) & !(go == 1 & nogo == 0) & analysis_type == 'Parcellated',
+                                c('sID', 'acquisition_direction', 'filename')],
+                   file = 'parcellated_files_for_inclusion.csv')
+```
 
 
 ## Accuracy by age
