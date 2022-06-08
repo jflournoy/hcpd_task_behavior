@@ -90,7 +90,7 @@ readr::write_delim(n_trialtype_full_sum, 'run_summary.txt', delim = '\t')
 
 n_trialtype_full_sum[, c('total_N_missing', 'runs') := list(sum(N_missing), .N), by = 'sID']
 
-EVs <- fread('~/code/hcpd_tfMRI_CARIT/TaskAnalysis_input.txt', sep = ' ', col.names = c('HCPID', 'runs'))
+EVs <- fread('~/code/hcpd_tfMRI_CARIT/TaskAnalysis_input.txt', sep = ' ', col.names = c('HCPID', 'runs', 'task'))[, c('HCPID', 'runs')]
 EVs[, sID := gsub('_V1_MR', '', HCPID)]
 EVs[, L2 := 'tfMRI_CARIT']
 
