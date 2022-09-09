@@ -9,6 +9,18 @@ modal <- function(x){
   return(n[which(t == max(t))])
 }
 
+num_fac <- function(x, levels = NULL){
+  if(is.null(levels)){
+    as.numeric(factor(x))
+  } else {
+    as.numeric(factor(x, levels = levels))
+  }
+}
+lag1_num_fac_diff <- function(x, levels = NULL){
+  y <- abs(num_fac(x, levels = levels) - num_fac(shift(x, fill = x[[1]], type = 'lag'), levels = levels))
+  return(y)
+}
+
 read_carit_dir <- function(data_path, pattern = "*CARIT.*run[12]_wide.csv"){
   #List all of the CARIT task files in the data directory
   fnames <- dir(data_path, 
@@ -132,6 +144,23 @@ if(!file.exists(workspace_fname)){
   #aggTrialN is trial number across both runs
   carit[, aggTrialN := trialNum + 92*(runN - 1)]
   carit[, RT.shape := trialResp.firstRt - shapeStartTime]
+  
+  carit[
+    stringi::stri_cmp_eq(filename, '/ncf/hcp/data/CCF_HCD_STG_PsychoPy_files//HCD0197045/tfMRI_CARIT_AP/CARIT_HCD0197045_V1_A_run1_wide.csv'),
+    runN := 2]
+  carit[, wave := stringi::stri_match(sessionID, regex = '.*_V([123]{1})_\\w$')[,2]]
+  setorder(carit, sID, wave, runN, trialNum)
+  carit[, corrRespTrialType_diff := lag1_num_fac_diff(corrRespTrialType, levels = c("", "corReject", "falseAlarm", "Hit", "Miss")), by = c('sID', 'runN')]
+  carit[, chunkID := cumsum(corrRespTrialType_diff)]
+  carit[, N_of_corrRespTrialType := 1:.N, by = c('sID', 'runN', 'chunkID')]
+  carit[, prev_corrRespTrialType := shift(corrRespTrialType, type = 'lag'), by = c('sID', 'runN')]
+  carit[corrRespTrialType == 'Hit', exact_prepotency := shift(N_of_corrRespTrialType, type = 'lag', fill = 0), by = c('sID', 'runN', 'chunkID')]
+  carit[, lag_N_of_corrRespTrialType := shift(N_of_corrRespTrialType, type = 'lag'), by = c('sID', 'runN')]
+  carit[trialType == 'nogo' & prev_corrRespTrialType == 'Miss', exact_prepotency := 0]
+  carit[trialType == 'nogo' & prev_corrRespTrialType == 'Hit', exact_prepotency := lag_N_of_corrRespTrialType]
+  #View(carit[, c('sID', 'runN', 'corrRespTrialType', 'exact_prepotency', 'corrRespTrialType_diff', 'chunkID', 'N_of_corrRespTrialType', 'prev_corrRespTrialType', 'lag_N_of_corrRespTrialType')])
+  #View(carit[trialType == 'nogo' & prev_corrRespTrialType == 'Hit', c('sID', 'runN', 'corrRespTrialType', 'corrRespTrialType_diff', 'chunkID', 'N_of_corrRespTrialType', 'prev_corrRespTrialType', 'hit_prepotency', 'lag_N_of_corrRespTrialType', 'prepotency')])
+  #unique(carit[, 'exact_prepotency'])
   
   carit_by_run_SDT <- dcast(carit[, .N, by = c('sID', 'runN', 'corrRespTrialType') ], ... ~ corrRespTrialType, value.var = 'N', fill =  0) 
   carit_by_run_SDT[, c('dprime', 'beta', 'aprime', 'bppd', 'c') := psycho::dprime(Hit, falseAlarm, Miss, corReject)]
