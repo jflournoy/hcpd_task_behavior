@@ -1,5 +1,6 @@
-.libPaths(c('/ncf/mclaughlin/users/jflournoy/R/x86_64-pc-linux-gnu-library/verse-4.2.1', .libPaths()))
+.libPaths(c('/ncf/mclaughlin/users/jflournoy/R/x86_64-pc-linux-gnu-library/verse-4.1.1', .libPaths()))
 
+library(tidyverse)
 library(data.table)
 library(brms)
 library(argparse)
@@ -10,13 +11,13 @@ parser <- ArgumentParser()
 # specify our desired options 
 # by default ArgumentParser will add an help option 
 parser$add_argument("--model", type = "character", default = 'rtage',
-                    help="Which model to fit. Options are [rtage|rtagepropot|rtagepropotnull|accage|accprepotlin|accprevcond]")
+                    help="Which model to fit. Options are [rtage|rtagepropot|rtagepropotnull|accage|accprepot|accprevcond]")
 parser$add_argument('--id', type = "integer", default = '1', help = 'Chain ID')
 parser$add_argument("--test", action = "store_true", 
                     help="Run on small subset of data?")
 
-#args <- parser$parse_args()
-args <- parser$parse_args(c('--model', 'rtage', '--test', '--id', '1'))
+args <- parser$parse_args()
+#args <- parser$parse_args(c('--model', 'rtage', '--test', '--id', '1'))
 
 MODEL <- args$model
 TEST <- args$test
@@ -31,8 +32,8 @@ carit$runN_factor <- as.factor(carit$runN)
 
 if(TEST){
   set.seed(10) 
-  traintest.sID <- unique(carit[, 'sID'])[, train := rbinom(length(sID), 1, .0125)]
-  carit <- merge(carit, traintest.sID, by = "sID")[train==1]
+  traintest.sID <- carit %>% distinct(sID) %>% mutate(train = rbinom(length(sID), 1, .0125))  
+  carit <- merge(carit, traintest.sID, by = "sID") %>% filter(train==1)
 }
 
 #some timing tests
@@ -63,9 +64,6 @@ carit.acc.pc <- carit[trialType == 'nogo',
                              'runN_factor',
                              'nogoCondition')]
 carit.RT.acc <- data.table::rbindlist(list(RT = carit.hits, ACC = carit.acc), fill = TRUE, idcol = 'subset')
-carit.RT.acc[, c('subsetRT', 'subsetACC') :=
-               list(subset == 'RT',
-                    subset == 'ACC')]
 
 if (MODEL %in% c('rtage',
                  'rtagepropot',
@@ -73,7 +71,7 @@ if (MODEL %in% c('rtage',
   model_data <- carit.hits 
 } else if (MODEL %in% 'accage') {
   model_data <- carit.acc
-} else if (MODEL %in% 'accprepotlin') {
+} else if (MODEL %in% 'accprepot') {
   model_data <- carit.RT.acc
 } else if (MODEL %in% 'accprevcond'){
   model_data <- carit.acc.pc
@@ -99,24 +97,18 @@ brm_model_options <- list(rtage = list(formula = bf(RT.shape ~ s(age) + (1 | sID
                                   family = binomial(), 
                                   file = file.path(fit_dir, 'accage')),
                     
-                    accprepotlin = list(formula = bf(RT.shape | subset(subsetRT) ~ s(age, exact_prepotency) + 
+                    accprepot = list(formula = bf(RT.shape | subset(subset == 'RT') ~ age*exact_prepotency + 
                                                    (1 + exact_prepotency |ID1| sID_factor) + 
                                                    (1 + exact_prepotency | sID_factor:runN_factor),
                                                  family = brms::shifted_lognormal()) + 
-                                       bf(corReject.total | trials(nogo.total) + subset(subsetACC) ~ 1 + s(age_ACC) + (1 |ID1| sID_factor),
+                                       bf(corReject.total | trials(nogo.total) + subset(subset == 'ACC') ~ 1 + age_ACC + (1 |ID1| sID_factor),
                                           family = binomial()) + 
                                        set_rescor(rescor = FALSE),
-                                     file = file.path(fit_dir, 'accprepotlin')),
+                                     file = file.path(fit_dir, 'accprepot')),
                     
-                    accprevcond = list(formula = bf(corReject.total | trials(nogo.total) ~ 
-                                                      1 + prevcond + s(age_ACC, by = prevcond) + (1 | sID_factor)),
+                    accprevcond = list(formula = bf(corReject.total | trials(nogo.total) ~ 1 + s(age_ACC) + (1 | sID)),
                                        family = binomial(), 
-                                       file = file.path(fit_dir, 'accprevcond')),
-                    
-                    accprevcondnull = list(formula = bf(corReject.total | trials(nogo.total) ~ 
-                                                      1 + prevcond + s(age_ACC) + (1 | sID_factor)),
-                                       family = binomial(), 
-                                       file = file.path(fit_dir, 'accprevcondnull')))[[MODEL]]
+                                       file = file.path(fit_dir, 'accprevcond')))[[MODEL]]
 
 brm_model_options$file <- sprintf('%s_c%02d', brm_model_options$file, CHAINID)
 brm_options <- c(brm_model_options, 
