@@ -4,7 +4,7 @@ library(data.table)
 library(brms)
 library(stringi)
 
-model_fits <- data.table(file = dir('fits', pattern = '.*_c.*.rds', full.names = TRUE))
+model_fits <- data.table(file = dir('fits', pattern = '^[a-z]+_c\\d{2}.rds', full.names = TRUE))
 model_fits[, c('model', 'chain') := list(stri_match(file, regex = '.*/(.*)_(.*).rds')[,2],
                                                  stri_match(file, regex = '.*/(.*)_(.*).rds')[, 3])]
 
@@ -12,4 +12,5 @@ model_fits[, c('model', 'chain') := list(stri_match(file, regex = '.*/(.*)_(.*).
 model_fit_objects <- lapply(split(model_fits, model_fits$model)$rtagepropot$file, readRDS)
 fit <- do.call(combine_models, model_fit_objects)
 summary(fit)
-plot(conditional_smooths(fit))
+
+

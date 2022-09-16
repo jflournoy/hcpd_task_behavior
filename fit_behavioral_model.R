@@ -15,14 +15,14 @@ parser$add_argument('--id', type = "integer", default = '1', help = 'Chain ID')
 parser$add_argument("--test", action = "store_true", 
                     help="Run on small subset of data?")
 
-#args <- parser$parse_args()
-args <- parser$parse_args(c('--model', 'rtage', '--test', '--id', '1'))
+args <- parser$parse_args()
+#args <- parser$parse_args(c('--model', 'accprevcond', '--test', '--id', '1'))
 
 MODEL <- args$model
 TEST <- args$test
 CHAINID <- args$id
 
-source('process_carit.R') #delete this and load your data here
+source('process_carit.R')
 
 carit$sID_factor <- as.factor(carit$sID)
 carit$runN_factor <- as.factor(carit$runN)
@@ -83,7 +83,7 @@ if (MODEL %in% c('rtage',
   model_data <- carit.hits 
 } else if (MODEL %in% 'accage') {
   model_data <- carit.acc
-} else if (MODEL %in% 'accprepot') {
+} else if (MODEL %in% c('accprepot', 'accprepotlin')) {
   model_data <- carit.RT.acc
 } else if (MODEL %in% c('accprevcond', 'accprevcondnull')){
   model_data <- carit.acc.pc
@@ -131,18 +131,18 @@ brm_model_options <- list(
   #5. How does accuracy vary with previous conditioning (rewarded or punished
   #shapes from the Guessing task)?
   accprevcond = list(formula = bf(corReject.total | trials(nogo.total) ~ 
-                                    1 + prevcond + s(age_ACC, by = prevcond) + (1 | sID_factor)),
+                                    1 + nogoCondition + s(age_ACC, by = nogoCondition) + (1 | sID_factor)),
                      family = binomial(), 
                      file = file.path(fit_dir, 'accprevcond')),
   
   #5. How does accuracy vary with previous conditioning (rewarded or punished
   #shapes from the Guessing task)? (null model for LOOIC comparison)
   accprevcondnull = list(formula = bf(corReject.total | trials(nogo.total) ~ 
-                                        1 + prevcond + s(age_ACC) + (1 | sID_factor)),
+                                        1 + nogoCondition + s(age_ACC) + (1 | sID_factor)),
                          family = binomial(), 
                          file = file.path(fit_dir, 'accprevcondnull')))[[MODEL]]
 
-brm_model_options$file <- sprintf('%s_c%02d', brm_model_options$file, CHAINID)
+brm_model_options$file <- sprintf('%s%s_c%02d', brm_model_options$file, ifelse(TEST, '_test', ''), CHAINID)
 brm_options <- c(brm_model_options, 
                  list(data = model_data,
                       file_refit = 'on_change',
@@ -154,3 +154,4 @@ brm_options <- c(brm_model_options,
 fit <- do.call(brm, brm_options)
 summary(fit)
 sessionInfo()
+
