@@ -1,16 +1,10 @@
-.libPaths(c('/ncf/mclaughlin/users/jflournoy/R/x86_64-pc-linux-gnu-library/verse-4.2.1', .libPaths()))
+#----functions----
 
-library(data.table)
-library(brms)
-library(stringi)
-
-model_fits <- data.table(file = dir('fits', pattern = '^[a-z]+_c\\d{2}.rds', full.names = TRUE))
-model_fits[, c('model', 'chain') := list(stri_match(file, regex = '.*/(.*)_(.*).rds')[,2],
-                                                 stri_match(file, regex = '.*/(.*)_(.*).rds')[, 3])]
-
-
-model_fit_objects <- lapply(split(model_fits, model_fits$model)$rtagepropot$file, readRDS)
-fit <- do.call(combine_models, model_fit_objects)
-summary(fit)
-
-
+read_fit_models <- function(model_name, model_dir = 'fits'){
+  #model_name <- 'rtage'
+  require(brms)
+  fnames <- file.path(model_dir, sprintf('%s_c%02d.rds', model_name, 1:4))
+  models <- lapply(fnames, readRDS)
+  fit <- do.call(combine_models, models)
+  return(fit)
+}

@@ -1,0 +1,384 @@
+---
+title: "CARIT & Guessing Behavior"
+format: 
+  html:
+    self-contained: true
+    code-fold: true
+    code-tools: true
+    toc: true
+execute: 
+  warning: false
+  message: false
+  error: false
+---
+
+# To do
+
+1. Add time to all models
+2. Add prepotency to accuracy models
+3. allow prepotency to correlate across accuracy and RT models.
+
+```{r libs, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+CPUs=4
+library(brms)
+library(ggplot2)
+library(bayesplot)
+library(modelsummary)
+library(curvish)
+```
+
+
+```{r load_report_functions, include=FALSE, cache=FALSE}
+if(interactive()){
+  source('report_functions.R')
+}else{
+  knitr::read_chunk('report_functions.R')
+}
+```
+
+```{r functions}
+```
+
+# H1: How does reaction time vary across age? 
+
+::: {.panel-tabset}
+
+## Plot age effect
+
+```{r}
+rtage_fit <- read_fit_models('rtage')
+plot_cond_eff(rtage_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time')
+
+print(plot_cond_eff(fit = rtage_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+                    condition_title = 'N prev "Go" trials', mean_center_y = FALSE,
+                    method = 'posterior_epred') +
+        geom_hex(data = rtage_fit$data,
+                 binwidth = c(.5, .05), alpha = .5,
+                 aes(x = age, y = RT.shape,
+                     fill = log(..count..))))
+```
+## Model summary
+
+```{r}
+summary(rtage_fit)
+```
+
+## PP Check
+
+```{r}
+brms::pp_check(rtage_fit) + theme_minimal()
+```
+
+## Plot age derivative
+
+```{r}
+rtage_fit_deriv <- curvish::derivatives(rtage_fit, term = 's(age, k = 10)', order = 1)
+plot(rtage_fit_deriv, robust = TRUE, deriv = 1, outer = FALSE)
+```
+
+## Plot slope = 0 posterior
+
+```{r}
+rtage_fit_0 <- curvish::posterior_x_at_yequalto(rtage_fit, term = 's(age,k=10)', n = 100, eps = .001, value = 0, multimodal = TRUE)
+plot(rtage_fit_0, robust = TRUE, mode = TRUE)
+```
+
+## Plot slope min posterior
+
+```{r}
+rtage_fit_min <- curvish::posterior_x_at_miny(rtage_fit, term = 'age', n = 100, eps = .001, multimodal = TRUE)
+plot(rtage_fit_min, robust = TRUE, mode = TRUE)
+```
+:::
+
+# H2: How does the effect of prepotency vary across age?
+
+::: {.panel-tabset}
+
+## Plot age x prepotency effect
+
+```{r}
+library(bayesplot)
+library(data.table)
+rtageprepot_fit <- read_fit_models('rtageprepotalt_old')
+rtageprepot_null_fit <- read_fit_models('rtageprepotnull')
+
+print(plot_cond_eff(fit = rtageprepot_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+                    conditions = data.frame(exact_prepotency_ofactor = 0:3), 
+                    condition_title = 'N prev "Go" trials', mean_center_y = FALSE,
+                    method = 'posterior_epred', points = TRUE))
+
+```
+
+## testing
+
+```{r eval=FALSE}
+rtageprepot_newdata_by_cols <- names(rtageprepot_fit$data)
+rtageprepot_newdata_by_cols <- rtageprepot_newdata_by_cols[rtageprepot_newdata_by_cols != 'RT.shape']
+rtageprepot_newdata <- as.data.table(rtageprepot_fit$data)[, .(y_med = median(RT.shape),
+                                                               y_upper = quantile(RT.shape, .8),
+                                                               y_lower = quantile(RT.shape, .2)),
+                                                           by = rtageprepot_newdata_by_cols]
+rtageprepot_yrep_ <- as.data.table(posterior_summary(posterior_epred(rtageprepot_fit, 
+                                                                     newdata = rtageprepot_newdata)))
+rtageprepot_yrep <- cbind(rtageprepot_yrep_, rtageprepot_newdata)
+ggplot(rtageprepot_yrep, 
+       aes(x = y_med, xmin = y_lower, xmax = y_upper,
+           y = Estimate, ymin = Q2.5, ymax = Q97.5,
+           color = age)) + 
+  geom_errorbar(aes(fill = NULL, color = NULL), alpha = .15) +
+  geom_errorbarh(aes(fill = NULL, color = NULL), alpha = .15) +
+  # geom_rect(aes(fill = NULL, color = NULL), alpha = .15) + 
+  geom_point(size = .5) + 
+  geom_abline(intercept = 0, slope = 1) + 
+  facet_grid(~ exact_prepotency_ofactor) + 
+  theme_minimal() + 
+  theme(panel.grid = element_blank())
+
+
+plot(conditional_effects(rtageprepot_fit), ask = FALSE)
+```
+
+## Model summary
+
+```{r}
+summary(rtagepropot_fit)
+```
+
+## Posterior predictive check
+
+```{r}
+pp_check(rtagepropot_fit) + theme_minimal()
+```
+
+
+## (normalized) Plot age x prepotency effect 
+
+Mean across levels of prepotency subtracted out at each age.
+
+```{r}
+rtagepropot_fit <- read_fit_models('rtagepropot')
+rtagepropot_null_fit <- read_fit_models('rtagepropotnull')
+
+print(plot_cond_eff(fit = rtagepropot_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+                    conditions = data.frame(exact_prepotency = 0:3), 
+                    condition_title = 'N prev "Go" trials', mean_center_y = TRUE))
+```
+
+## Plot prepotency x age effect
+
+```{r}
+print(plot_cond_eff(fit = rtagepropot_fit, xvar = 'exact_prepotency', xname = 'exact_prepotency', yname = 'Reaction Time',
+                    conditions = data.frame(age = c(8, 11, 14, 17)), 
+                    condition_title = 'Age (years)'))
+```
+
+:::
+
+# H3: How does accuracy vary across age?
+
+::: {.panel-tabset}
+
+## Plot age effect
+
+```{r}
+accage_fit <- read_fit_models('accage')
+
+print(plot_cond_eff(fit = accage_fit, xvar = 'age_ACC', xname = 'Age', yname = 'Accuracy'))
+```
+
+## Plot age derivative
+
+```{r}
+accage_fit_deriv <- curvish::derivatives(accage_fit, term = 'age_ACC', order = 1)
+plot(accage_fit_deriv, robust = TRUE, deriv = 1, outer = FALSE)
+```
+
+## Plot slope = 0 posterior
+
+```{r}
+accage_fit_0 <- curvish::posterior_x_at_yequalto(accage_fit, term = 'age_ACC', n = 100, eps = .001, value = 0, multimodal = TRUE)
+plot(accage_fit_0, robust = TRUE, mode = TRUE)
+```
+
+## Plot slope = min slope posterior
+
+```{r}
+accage_fit_max <- curvish::posterior_x_at_maxy(accage_fit, term = 'age_ACC', n = 100, eps = .001, multimodal = TRUE)
+plot(accage_fit_max, robust = TRUE, mode = TRUE)
+```
+## Model summary
+
+```{r}
+summary(accage_fit)
+```
+
+:::
+
+# H4: How does change in reaction time across sequential Go-trials predict accuracy?
+
+::: {.panel-tabset}
+
+## Plot effect
+
+The plots here show the correlations between the random effects from two models. The _prepotency_ random effect is the random slope of the effect of the number of previous Go trials on the reaction time---that is, how much does a previous Go trial increase or decrease the RT, for each person. The _accuracy_ random effect is the random intercept from the model of accuracy predicted by age, meaning it's each person's average accuracy after accounting for age (that is, a person's deviation from the age trend). The top density in the plot represents the posterior probability distribution for the size of the correlation between these two random effects, with shading up to the 95% credible interval, and lines out to the `r sprintf('%0.1f', 100*(1-.001))`% credible interval.
+
+A positive correlation between these random effects would indicate that people who have a greater tendency to speed up with each Go (smaller RTs) also tend to have lower accuracy.
+
+
+```{r}
+accprepot_fit <- read_fit_models('accprepot')
+
+p <- brms::mcmc_plot(accprepot_fit, 
+                variable = '^cor_sID_factor__.*',
+                regex = TRUE, type = 'areas', area_method = 'equal height',
+                prob = 1-.05, prob_outer = 1-.001)
+p + scale_y_discrete(labels = c(expression(cor(bar(textstyle("RT")), textstyle("Prepotency"))), 
+                                expression(cor(bar(textstyle("RT")), textstyle("Accuracy"))),
+                                expression(cor(textstyle("Prepotency"), textstyle("Accuracy"))))) + 
+  coord_cartesian(x = c(-1, 1)) + 
+  theme_minimal()
+```
+We see no credibly positive or negative association between prepotency effect and accuracy. The second two posterior densities represent correlations that weren't of focal interest. The first is between average reaction time and average accuracy (after accounting for age), while the final is between average reaction time and the degree of prepotency effect (again, after accounting for age). The former suggests that people with higher average reaction times are more accurate (i.e., taking one's time improves accuracy). In light of the average prepotency effect being _positive_ (people strategically slow down with every go trial), the latter negative correlation suggests that people with higher reaction times show a reduced prepotency effect; that is, less strategic participants are slower. 
+
+## Age $\rightarrow$ cor(Prepotency, Accuracy)
+
+EXTREMELY ROUGH EXPLORATORY ANALYSIS  
+
+```{r}
+accprepot_ranef <- ranef(accprepot_fit)
+dimnames(accprepot_ranef$sID_factor[, 'Estimate', ])[[2]]
+accprepot_ranef_df <- as.data.frame(accprepot_ranef$sID_factor[, 'Estimate', c('RTshape_exact_prepotency', 'corRejecttotal_Intercept')])
+accprepot_ranef_df$id <- rownames(accprepot_ranef_df)
+demos <- data.table::fread('HCPD_COMBINED20200608.csv',
+                           select = c('id', 'age', 'gender', 'site', 'RACE', 'SES_PLVL', 'SES_RLVL', 'income'))
+accprepot_ranef_df <- merge(accprepot_ranef_df, demos, on = c('id'))
+summary(lm(corRejecttotal_Intercept ~ age*RTshape_exact_prepotency, data = accprepot_ranef_df))
+ggplot(accprepot_ranef_df,
+       aes(x = RTshape_exact_prepotency, y = corRejecttotal_Intercept, color = age)) + 
+  geom_point()
+```
+
+
+## Model summary
+
+```{r}
+summary(accprepot_fit)
+```
+
+## Posterior predictive check
+
+```{r}
+pp_check(accprepot_fit, resp = 'RTshape') + theme_minimal()
+pp_check(accprepot_fit, resp = 'corRejecttotal') + theme_minimal()
+```
+
+:::
+
+# H5: How does accuracy vary with previous reward history, conditional on age?
+
+::: {.panel-tabset}
+
+## Plot accuracy x age x reward history effect
+
+```{r}
+accprevcond_fit <- read_fit_models('accprevcond')
+
+print(plot_cond_eff(fit = accprevcond_fit, xvar = 'age_ACC', xname = 'Age', yname = 'Accuracy',
+                    conditions = data.frame(nogoCondition = c('prevLossNogo', 'prevRewNogo')), 
+                    condition_title = 'Previous conditioning'))
+```
+## Effect size
+
+```{r}
+age_ACC_10_18 <- posterior_effect_size(fit = accprevcond_fit, 
+                                       es_name = 'Change in accuracy Age 10 - Age 18',
+                                       newdata = 
+                                         as.data.frame(expand.grid(nogo.total = 1, 
+                                                                   nogoCondition = 'prevRewNogo', 
+                                                                   age_ACC = c(10, 18))))
+mcmc_areas(age_ACC_10_18$posterior, prob = .95, prob_outer = .99) + theme_minimal()
+```
+
+
+## Model summary
+
+```{r}
+summary(accprevcond_fit)
+```
+
+:::
+
+# H6: How do Guessing RTs vary between high and low magnitude blocks, conditional on age?
+
+::: {.panel-tabset}
+
+## Plot accuracy x age x reward history effect
+
+```{r}
+rtguessing_fit <- read_fit_models('rtguessing')
+
+print(plot_cond_eff(fit = rtguessing_fit, xvar = 'age', xname = 'Age', yname = 'RT',
+                    conditions = data.frame(valueCondition = c('high', 'low')), 
+                    condition_title = 'Reward Magnitude'))
+```
+
+## Effect size
+
+```{r}
+rt_guess_10_18 <- posterior_effect_size(fit = rtguessing_fit, 
+                                        es_name = 'Change in RT Age 10 - Age 18',
+                                        newdata = 
+                                          as.data.frame(expand.grid(valueCondition = 'high', 
+                                                                    age = c(10, 18))))
+mcmc_areas(rt_guess_10_18$posterior, prob = .95, prob_outer = .99) + theme_minimal()
+```
+
+## Model summary
+
+```{r}
+summary(rtguessing_fit)
+```
+
+:::
+
+# Hxx: How does accuracy vary across age and trial?
+
+::: {.panel-tabset}
+
+## Plot age x time effect
+
+```{r}
+acctrial_fit <- read_fit_models('acctrial')
+conditional_effects(acctrial_fit)
+print(plot_cond_eff(fit = acctrial_fit, xvar = 'age', xname = 'Age', yname = 'Accuracy',
+                    conditions = data.frame(time = c(-75, 0, 75))))
+```
+
+## Plot age derivative
+
+```{r}
+accage_fit_deriv <- curvish::derivatives(accage_fit, term = 'age_ACC', order = 1)
+plot(accage_fit_deriv, robust = TRUE, deriv = 1, outer = FALSE)
+```
+
+## Plot slope = 0 posterior
+
+```{r}
+accage_fit_0 <- curvish::posterior_x_at_yequalto(accage_fit, term = 'age_ACC', n = 100, eps = .001, value = 0, multimodal = TRUE)
+plot(accage_fit_0, robust = TRUE, mode = TRUE)
+```
+
+## Plot slope = min slope posterior
+
+```{r}
+accage_fit_max <- curvish::posterior_x_at_maxy(accage_fit, term = 'age_ACC', n = 100, eps = .001, multimodal = TRUE)
+plot(accage_fit_max, robust = TRUE, mode = TRUE)
+```
+## Model summary
+
+```{r}
+summary(accage_fit)
+```
+
+:::

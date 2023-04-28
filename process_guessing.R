@@ -43,11 +43,12 @@ workspace_fname <- 'process_guessing.rda'
 if(!file.exists(workspace_fname)){
   
   data_path <- '/ncf/hcp/data/CCF_HCD_STG_PsychoPy_files/'
-  intake_data_path <- '/ncf/hcp/data/intradb_intake/'
   
-  d <- read_carit_dir(data_path)
+  guessing_data <- read_carit_dir(data_path)
   
   save.image(file = workspace_fname)
 } else {
   load(workspace_fname)
 }
+
+saveRDS(guessing_data, '/ncf/hcp/data/analyses/mayalrosen/guessing_data.rds')

@@ -22,6 +22,7 @@ pre code {
 ```
 
 ```{r setup, include=FALSE}
+install.packages(c('showtext'), Ncpus = 4)
 library(showtext)
 library(ggplot2)
 library(data.table)

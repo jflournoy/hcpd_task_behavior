@@ -10,12 +10,36 @@ lag1_num_fac_diff <- function(x, levels = NULL){
   return(y)
 }
 
-source('process_carit.R')
+#read data
+initial_options <- commandArgs(trailingOnly = FALSE)
+file_arg_name <- "--file="
+script_name <- sub(file_arg_name, '', initial_options[grep(file_arg_name, initial_options)])
+script_basename <- dirname(script_name)
+load_data <- 'process_carit.R'
+if(length(script_basename) != 0){
+  load_data <- file.path(script_basename, load_data)
+}
+source(load_data, echo = TRUE)
+
+scanner_ids <- fread('plenzini_9_29_2022_13_46_20.csv',
+                     select = c('MR ID', 'Scanner'),
+                     col.names = c('sessionID', 'scanner'))
+scanner_ids[, SCANNER_JOIN_ID := stringi::stri_replace(sessionID, regex = '_[A-z]{1,2}$', replacement = '')]
+scanner_ids[, sessionID := NULL]
+carit[, SCANNER_JOIN_ID := stringi::stri_replace(sessionID, regex = '_[A-z]$', replacement = '')]
+carit <- merge(carit, scanner_ids, by = 'SCANNER_JOIN_ID', all.x = TRUE)
+
+FD_covar <- fread('FD_covar.csv', select = c('Subject', 'Visit', 'DB_SeriesDesc', 'ABS_MEAN_RMS'))
+FD_covar[, SCANNER_JOIN_ID := paste(Subject, Visit, sep = '_')]
+carit[, DB_SeriesDesc := stringi::stri_extract_first_regex(filename, 'tfMRI_CARIT_(AP|PA)')]
+carit <- merge(carit, FD_covar, by = c('SCANNER_JOIN_ID', 'DB_SeriesDesc'), all.x = TRUE, all.y = FALSE)
+
+
 #remove longitudinal subjects:
 carit <- carit[!grepl('_V[2-9]_', filename),]
 duplicate_run_ids <- unique(carit[, .N, by = c('sID', 'runN')][N > 92, sID])
 carit <- carit[!sID %in% duplicate_run_ids]
-carit_pr_scan <- carit[public_release, on = 'sID', nomatch = 0]
+carit_pr_scan <- copy(carit) #[public_release, on = 'sID', nomatch = 0]
 carit_pr_scan <- staged_dlmri[carit_pr_scan, on = 'sID'][has_carit == TRUE]
 #Account for 10 dropped volumes at TR=0.8
 carit_pr_scan[, evtime := round(shapeStartTime - 8, 6)]
