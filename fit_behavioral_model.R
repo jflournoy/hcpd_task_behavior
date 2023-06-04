@@ -14,19 +14,34 @@ parser$add_argument(
   help = "Which model to fit. Options are [rtage|rtageprepot|rtageprepotalt|rtageprepotnull|accage|accprepot|accprevcond|accprevcondnull|rtguessing|rtguessingnull|rtagepropotdist|acctrial|accprepottrial]")
 parser$add_argument('--id', type = "integer", default = '1', help = 'Chain ID')
 parser$add_argument("--test", action = "store_true", 
-                    help = "Run on small subset of data?")
+                    help = "Run on small subset of data.")
 parser$add_argument("--refit", action = "store_true", 
-                    help = "Overwrite existing model?")
+                    help = "Overwrite existing model.")
+parser$add_argument("--kfold", action = "store_true", 
+                    help = "Run k-fold (10-fold) CV using participant clusters.")
+parser$add_argument("--rerun_kfold", action = "store_true", 
+                    help = "Run k-fold (10-fold) CV using participant clusters.")
+parser$add_argument("--par_chains", action = "store_true", 
+                    help = "Ignore `--id` and run 4 parallel chains.")
 if(interactive()){
-  args <- parser$parse_args(c('--model', 'rtageprepotnull', '--id', '1', '--refit', '--test'))
+  args <- parser$parse_args(c('--model', 'rtageprepotaltnull', '--test', '--kfold', '--rerun_kfold', '--par_chains'))
+  CPUS <- 16
 } else {
   args <- parser$parse_args()
+  CPUS <- Sys.getenv('SLURM_CPUS_PER_TASK')
 }
 
 MODEL <- args$model
 TEST <- args$test
 CHAINID <- args$id
 REFIT <- args$refit
+PARCHAINS <- args$par_chains
+REKFOLD <- args$rerun_kfold
+
+if(PARCHAINS){
+  message('Ignoring `--id` option, running 4 parallel chains...')
+  CHAINID <- 1234
+}
 
 get_model_data_name <- function(model){
   if (model %in% c('rtage',
@@ -51,6 +66,8 @@ get_model_data_name <- function(model){
   }
   return(model_data_name)
 }
+
+source('local_kfold.R')
 
 MODEL_DATA_NAME <- get_model_data_name(MODEL)
   
@@ -77,9 +94,9 @@ guessing_data <- merge(guessing_data, unique(carit[, c('sessionID', 'age')]), al
 
 if(TEST){
   set.seed(10) 
-  traintest.sID <- unique(carit[, 'sID'])[, train := rbinom(length(sID), 1, .0125)]
+  traintest.sID <- unique(carit[, 'sID'])[, train := rbinom(length(sID), 1, .0125 * .75)]
   carit <- merge(carit, traintest.sID, by = "sID")[train==1]
-  traintest.sID.g <- unique(guessing_data[, 'sID'])[, train := rbinom(length(sID), 1, .0125)]
+  traintest.sID.g <- unique(guessing_data[, 'sID'])[, train := rbinom(length(sID), 1, .0125 * .75)]
   guessing_data <- merge(guessing_data, traintest.sID.g, by = "sID")[train==1]
 }
 
@@ -88,7 +105,7 @@ if(TEST){
 #Just the "hit" trials (go trials with reaction times). We exclude trials that
 #have RTs that are outside the possible response window. This is about 72
 #trials, so a drop in the bucket
-carit[, time := shapeStartTime - mean(shapeStartTime, na.rm = TRUE), by = c('sID_factor')]
+carit[, time := (shapeStartTime - mean(shapeStartTime, na.rm = TRUE)) / 100, by = c('sID_factor')]
 carit.hits <- na.omit(carit[corrRespTrialType == 'Hit' & RT.shape > 0 & RT.shape <= .8, 
                             c('RT.shape', 'age', 
                               'exact_prepotency', 'exact_prepotency_factor', 'exact_prepotency_ofactor',
@@ -156,6 +173,20 @@ default_prior <- c(prior('normal(0,1)', class = 'b'),
                    prior('student_t(3, 0, 1.25)', class = 'sd'),
                    prior('student_t(3, 0, 2)', class = 'sds'),
                    prior('student_t(3, 0, 1.25)', class = 'sigma'))
+default_cor_prior <- c(prior('lkj(2)', class = 'cor'))
+distmodel_prior <- c(prior('normal(0,1)', class = 'b'), 
+                     prior('student_t(3, 0, 1.25)', class = 'sd'),
+                     prior('student_t(3, 0, 2)', class = 'sds'),
+                     prior('student_t(3, 0, 1.25)', class = 'Intercept', dpar = 'sigma'))
+
+if(FALSE){
+  library(ggplot2)
+  ggplot(model_data, aes(x = time, y = RT.shape, group = sID_factor)) + 
+    geom_line(stat = 'smooth', method = 'gam', formula = y ~ s(x), alpha = .8) + 
+    geom_smooth(aes(group = NULL), method = 'gam', formula = y ~ s(x), alpha = .8) +
+    facet_grid(~runN_factor)
+  
+}
 
 #This sets up the specification for all models described in the preregistration.
 brm_model_options <- list(
@@ -179,13 +210,21 @@ brm_model_options <- list(
                         prior = default_prior,
                         file = file.path(fit_dir, 'rtageprepotalt')),
   #2. How does sensitivity to prepotency vary across age? Distributional model.
-  rtageprepotdist = list(formula = bf(RT.shape | trunc(ub = .8) ~ t2(age, exact_prepotency, k = c(10,4)) +
-                                        (1 | sID_factor:runN_factor) + 
-                                        (1 + exact_prepotency | sID_factor),
-                                      sigma ~ 1 + s(age) + (1 | sID_factor/runN_factor)),
-                         prior = default_prior,
-                         family = brms::lognormal(), 
-                         file = file.path(fit_dir, 'rtageprepotdist')),
+  rtageprepotaltnull = list(formula = bf(RT.shape | trunc(ub = .8) ~ exact_prepotency_ofactor + s(age) + 
+                                           s(time, by = 'sID_runN_factor', bs = 'fs') + 
+                                           (1 | sID_factor:runN_factor) + 
+                                           (1 + exact_prepotency_ofactor | sID_factor)),
+                            family = brms::lognormal(), 
+                            prior = c(default_prior, default_cor_prior),
+                            file = file.path(fit_dir, 'rtageprepotaltnull')),
+  #2. How does sensitivity to prepotency vary across age? Distributional model.
+  rtageprepotaltnulldist = list(formula = bf(RT.shape | trunc(ub = .8) ~ exact_prepotency_ofactor + s(age) + 
+                                  (1 | sID_factor:runN_factor) + 
+                                  (1 + exact_prepotency_ofactor | sID_factor),
+                                  sigma ~ 1 + exact_prepotency_ofactor + s(age) + (1 | sID_factor/runN_factor)),
+                                prior = distmodel_prior,
+                                family = brms::lognormal(), 
+                                file = file.path(fit_dir, 'rtageprepotaltnulldist')),
   #2. How does sensitivity to prepotency vary across age? (null model for LOOIC
   #comparison)
   rtageprepotnull = list(formula = bf(RT.shape | trunc(ub = .8) ~ s(age, k = 10) + s(exact_prepotency, k = 4) +
@@ -251,21 +290,49 @@ brm_model_options <- list(
 file_refit <- ifelse(REFIT, 'always', 'on_change')
 
 brm_model_options$file <- sprintf('%s%s_c%02d', brm_model_options$file, ifelse(TEST, '_test', ''), CHAINID)
-brm_options <- c(brm_model_options, 
+
+if(PARCHAINS){
+  chain_opts <- list(chains = 4, cores = 4)
+  if(CPUS > 4){
+    chain_opts <- c(chain_opts, list(threads = CPUS / 4))
+  }
+} else {
+  chain_opts <- list(chains = 1, cores = 1, threads = 48, chain_ids = chain_ids)
+  if(TEST){
+    chain_opts$threads <- 4
+  }
+}
+
+brm_options <- c(brm_model_options, chain_opts,
                  list(data = model_data,
                       file_refit = file_refit,
                       backend = 'cmdstanr',
                       iter = 2500, warmup = 1500, 
-                      chain_ids = CHAINID, chains = 1, cores = 1, threads = ifelse(TEST, 4, 48),
                       control = list(adapt_delta = .9999999999999, max_treedepth = 20)))
+print('\n\nbrms options ///')
 print(brm_options)
+print('\n\nDefault priors ///')
 print(get_prior(formula = brm_options$formula, data = brm_options$data))
+print('\n\nOur priors ///')
 print(brm_options$prior)
+if(file.exists(sprintf('%s.rds', brm_options$file))){
+  message(sprintf('Model already exists. %s', 
+                  ifelse(REFIT, 
+                         'Refitting and overwriting...',
+                         'Will refit only if model has changed...')))
+}
 fit <- do.call(brm, brm_options)
 summary(fit)
-sessionInfo()
-brms::add_criterion(fit, c('loo', 'bayes_R2'))
 
+local_kfold_args <- c(list(x = fit, folds = 'grouped', K = 10,
+                           group = 'sID_factor', resp = fit$formula$resp[[1]]), 
+                      chain_opts)
+
+fit_kfold <- do.call(local_kfold, local_kfold_args)
+fit$criteria[['kfold']] <- fit_kfold
+saveRDS(fit, fit$file)
+
+sessionInfo()
 
 ##
 # plot(conditional_effects(fit), points = FALSE, ask = FALSE)

@@ -25,6 +25,7 @@ library(ggplot2)
 library(bayesplot)
 library(modelsummary)
 library(curvish)
+library(priorsense)
 ```
 
 
@@ -47,20 +48,25 @@ if(interactive()){
 
 ```{r}
 rtage_fit <- read_fit_models('rtage')
-plot_cond_eff(rtage_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time')
 
 print(plot_cond_eff(fit = rtage_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
                     condition_title = 'N prev "Go" trials', mean_center_y = FALSE,
-                    method = 'posterior_epred') +
-        geom_hex(data = rtage_fit$data,
-                 binwidth = c(.5, .05), alpha = .5,
-                 aes(x = age, y = RT.shape,
-                     fill = log(..count..))))
+                    method = 'posterior_epred', hex = TRUE, line_color = 'white', ribbon_color = 'white',
+                    hex_args = list(binwidth = c(.2, .015), alpha = .8),
+                    hex_log = TRUE))
 ```
 ## Model summary
 
 ```{r}
 summary(rtage_fit)
+prior_summary(rtage_fit)
+```
+
+## Prior Sensitivity
+
+```{r}
+rtage_psp <- powerscale_sequence_pred(rtage_fit, x_var = 'age', res = 20)
+rtage_psp$plot
 ```
 
 ## PP Check
@@ -91,65 +97,80 @@ plot(rtage_fit_min, robust = TRUE, mode = TRUE)
 ```
 :::
 
+# Test
+
+```{r}
+rtageprepotalt_null_test_c01_fit <- readRDS('fits/rtageprepotaltnull_test_c01.rds')
+rtageprepotalt_null_test_c02_fit <- readRDS('fits/rtageprepotaltnull_test_c02.rds')
+rtageprepotalt_null_test_c03_fit <- readRDS('fits/rtageprepotaltnull_test_c03.rds')
+rtageprepotalt_null_test_c04_fit <- readRDS('fits/rtageprepotaltnull_test_c04.rds')
+rtageprepotalt_null_test_fit <- read_fit_models(model_name = 'rtageprepotaltnull_test')
+length(rtageprepotalt_null_test_c01_fit$criteria$kfold$pointwise)
+length(rtageprepotalt_null_test_c02_fit$criteria$kfold)
+length(rtageprepotalt_null_test_c03_fit$criteria$kfold)
+length(rtageprepotalt_null_test_c04_fit$criteria$kfold$pointwise)
+length(rtageprepotalt_null_test_fit$criteria$kfold$pointwise)
+#str(rtageprepotalt_null_test_fit$criteria$kfold$fits)
+```
+
+
 # H2: How does the effect of prepotency vary across age?
 
 ::: {.panel-tabset}
 
+## Model Comparison
+
+```{r}
+if(!any(grepl('rtage_fit', ls()))){
+  rtage_fit <- read_fit_models('rtage')
+}
+rtageprepot_fit <- read_fit_models('rtageprepot')
+#rtageprepotdist_fit <- read_fit_models('rtagepropotdist')
+rtageprepotalt_fit <- read_fit_models('rtageprepotalt')
+rtageprepot_null_fit <- read_fit_models('rtageprepotnull')
+rtageprepotalt_null_fit <- read_fit_models('rtageprepotaltnull')
+
+loo_compare(rtage_fit, rtageprepot_fit, rtageprepotalt_fit, rtageprepot_null_fit, rtageprepotalt_null_fit)
+```
+
 ## Plot age x prepotency effect
 
 ```{r}
-library(bayesplot)
-library(data.table)
-rtageprepot_fit <- read_fit_models('rtageprepotalt_old')
-rtageprepot_null_fit <- read_fit_models('rtageprepotnull')
-
-print(plot_cond_eff(fit = rtageprepot_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+print(plot_cond_eff(fit = rtageprepotalt_null_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
                     conditions = data.frame(exact_prepotency_ofactor = 0:3), 
                     condition_title = 'N prev "Go" trials', mean_center_y = FALSE,
-                    method = 'posterior_epred', points = TRUE))
-
+                    method = 'posterior_epred', hex = TRUE, hex_log = TRUE, 
+                    hex_args = list(alpha = .9, binwidth = c(.25, .02))))
 ```
+## Prior Sensitivity
 
-## testing
-
-```{r eval=FALSE}
-rtageprepot_newdata_by_cols <- names(rtageprepot_fit$data)
-rtageprepot_newdata_by_cols <- rtageprepot_newdata_by_cols[rtageprepot_newdata_by_cols != 'RT.shape']
-rtageprepot_newdata <- as.data.table(rtageprepot_fit$data)[, .(y_med = median(RT.shape),
-                                                               y_upper = quantile(RT.shape, .8),
-                                                               y_lower = quantile(RT.shape, .2)),
-                                                           by = rtageprepot_newdata_by_cols]
-rtageprepot_yrep_ <- as.data.table(posterior_summary(posterior_epred(rtageprepot_fit, 
-                                                                     newdata = rtageprepot_newdata)))
-rtageprepot_yrep <- cbind(rtageprepot_yrep_, rtageprepot_newdata)
-ggplot(rtageprepot_yrep, 
-       aes(x = y_med, xmin = y_lower, xmax = y_upper,
-           y = Estimate, ymin = Q2.5, ymax = Q97.5,
-           color = age)) + 
-  geom_errorbar(aes(fill = NULL, color = NULL), alpha = .15) +
-  geom_errorbarh(aes(fill = NULL, color = NULL), alpha = .15) +
-  # geom_rect(aes(fill = NULL, color = NULL), alpha = .15) + 
-  geom_point(size = .5) + 
-  geom_abline(intercept = 0, slope = 1) + 
-  facet_grid(~ exact_prepotency_ofactor) + 
-  theme_minimal() + 
-  theme(panel.grid = element_blank())
-
-
-plot(conditional_effects(rtageprepot_fit), ask = FALSE)
+```{r}
+rtageprepotalt_null_psp <- powerscale_sequence_pred(rtageprepotalt_null_fit, x_var = 'age', res = 20)
+rtageprepotalt_null_psp$plot
+powerscale_sensitivity(rtageprepotalt_null_fit, variable = variables(rtageprepotalt_null_fit)[c(1:4, 18)])
 ```
 
 ## Model summary
 
 ```{r}
-summary(rtagepropot_fit)
+summary(rtageprepotalt_null_fit)
 ```
 
 ## Posterior predictive check
 
 ```{r}
-pp_check(rtagepropot_fit) + theme_minimal()
+pp_check(rtageprepotalt_null_fit) + theme_minimal()
 ```
+
+## Prior sensitivity
+
+```{r}
+library(priorsense)
+rtageprepotalt_null_psps <- priorsense::powerscale(rtageprepotalt_null_fit, 'prior', alpha = 0.9, prediction = posterior_epred)
+str(rtageprepotalt_null_psps)
+class(rtageprepotalt_null_psps)
+```
+
 
 
 ## (normalized) Plot age x prepotency effect 

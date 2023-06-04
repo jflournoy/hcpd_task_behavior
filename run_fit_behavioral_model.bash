@@ -10,7 +10,7 @@
 #SBATCH -o /n/home_fasse/jflournoy/data/containers/log/%A_%a-%x.out
 
 #models=(rtage rtagepropot rtageprepotalt rtageprepotdist rtageprepotnull accage accprepot accprepotlin accprevcond accprevcondnull rtguessing rtguessingnull acctrial accprepottrial)
-models=(rtage rtageprepot rtageprepotalt rtageprepotnull rtageprepotdist)
+models=(rtageprepotaltnull)
 chains=(1 2 3 4)
 #INDEX BY 0
 Nmodels=${#models[@]}
@@ -38,7 +38,8 @@ else
   cmd+=" fit_behavioral_model.R"
   cmd+=" --model $model"
   cmd+=" --id $chain"
-  cmd+=" --refit"
+  cmd+=" --kfold"
+  cmd+=" --test"
   echo "Command: $cmd"
   exec $cmd
 fi
