@@ -1,0 +1,206 @@
+---
+title: "HCP-D: Cognitive Control Behavior in Adolescence and the Role of Reward"
+format: 
+  html:
+    self-contained: true
+    code-fold: true
+    code-tools: true
+    toc: true
+execute: 
+  warning: false
+  message: false
+  error: false
+---
+
+[Email Me](mailto:jcflournoyphd@proton.me)
+
+```{r libs, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+CPUs=4
+library(brms)
+library(ggplot2)
+library(bayesplot)
+library(modelsummary)
+library(curvish)
+library(priorsense)
+```
+
+
+```{r load_report_functions, include=FALSE, cache=FALSE}
+if(interactive()){
+  source('report_functions.R')
+}else{
+  knitr::read_chunk('report_functions.R')
+}
+```
+
+```{r functions}
+```
+
+# How does accuracy vary across age and prepotency?
+
+::: {.panel-tabset}
+
+## Plot age effect
+
+```{r}
+acc_age_prepotofac_fit <- read_fit_models('acc_age_prepotofac')
+
+print(plot_cond_eff(fit = acc_age_prepotofac_fit, xvar = 'age', xname = 'Age', yname = 'Accuracy',
+                    conditions = data.frame(exact_prepotency_ofactor = 0:4), 
+                    condition_title = 'Previous\n"Go" trials', mean_center_y = FALSE,
+                    method = 'posterior_epred', hex = TRUE, hex_log = TRUE, 
+                    hex_args = list(alpha = .9, binwidth = c(.25, .02))))
+
+#ggsave(filename = 'acc_age_prepotofac_fit.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+```
+
+## Posterior predictive check
+
+```{r}
+pp_check(acc_age_prepotofac_fit)
+```
+
+
+## Model summary
+
+```{r}
+summary(acc_age_prepotofac_fit)
+```
+
+:::
+
+
+# How does reaction time vary with age and prepotency?
+
+::: {.panel-tabset}
+
+## Plot age x prepotency effect
+
+```{r}
+rt_age_prepotofac_fit <- read_fit_models('rt_age_prepotofac')
+
+print(plot_cond_eff(fit = rt_age_prepotofac_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+                    conditions = data.frame(exact_prepotency_ofactor = 0:3), 
+                    condition_title = 'Previous\n"Go" trials', mean_center_y = FALSE,
+                    method = 'posterior_epred', hex = TRUE, hex_log = TRUE, 
+                    hex_args = list(alpha = .9, binwidth = c(.25, .02))))
+
+#ggsave(filename = 'rt_age_prepotofac.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+```
+
+## Posterior predictive check
+
+```{r}
+pp_check(rt_age_prepotofac_fit) + theme_minimal()
+```
+
+## Model summary
+
+```{r}
+summary(rt_age_prepotofac_fit)
+```
+
+:::
+
+# How does change in reaction time across sequential Go-trials predict accuracy?
+
+::: {.panel-tabset}
+
+## Plot effect
+
+The plots here show the correlations between the random effects from two models. The _prepotency_ random effect is the random slope of the effect of the number of previous Go trials on the reaction time---that is, how much does a previous Go trial increase or decrease the RT, for each person. The _accuracy_ random effect is the random intercept from the model of accuracy predicted by age, meaning it's each person's average accuracy after accounting for age (that is, a person's deviation from the age trend). The top density in the plot represents the posterior probability distribution for the size of the correlation between these two random effects, with shading up to the 95% credible interval, and lines out to the `r sprintf('%0.1f', 100*(1-.001))`% credible interval.
+
+A positive correlation between these random effects would indicate that people who have a greater tendency to speed up with each Go (smaller RTs) also tend to have lower accuracy.
+
+
+```{r}
+accprepot_fit <- read_fit_models('accprepot')
+
+p <- brms::mcmc_plot(accprepot_fit, 
+                variable = '^cor_sID_factor__.*',
+                regex = TRUE, type = 'areas', area_method = 'equal height',
+                prob = 1-.05, prob_outer = 1-.001)
+p + scale_y_discrete(labels = c(expression(cor(bar(textstyle("RT")), textstyle("Prepotency"))), 
+                                expression(cor(bar(textstyle("RT")), textstyle("Accuracy"))),
+                                expression(cor(textstyle("Prepotency"), textstyle("Accuracy"))))) + 
+  coord_cartesian(x = c(-1, 1)) + 
+  geom_vline(xintercept = 0, alpha = .8) +
+  theme_minimal() + 
+  theme(axis.text.y = element_text(size = 24))
+
+#ggsave(filename = 'accprepot_fit.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+```
+We see no credibly positive or negative association between prepotency effect and accuracy. The second two posterior densities represent correlations that weren't of focal interest. The first is between average reaction time and average accuracy (after accounting for age), while the final is between average reaction time and the degree of prepotency effect (again, after accounting for age). The former suggests that people with higher average reaction times are more accurate (i.e., taking one's time improves accuracy). In light of the average prepotency effect being _positive_ (people strategically slow down with every go trial), the latter negative correlation suggests that people with higher reaction times show a reduced prepotency effect; that is, less strategic participants are slower. 
+
+## Posterior predictive check
+
+```{r}
+pp_check(accprepot_fit, resp = 'RTshape') + theme_minimal()
+pp_check(accprepot_fit, resp = 'corRejecttotal') + theme_minimal()
+```
+
+## Model summary
+
+```{r}
+summary(accprepot_fit)
+```
+
+:::
+
+# How does accuracy vary with previous reward history, conditional on age?
+
+::: {.panel-tabset}
+
+## Plot accuracy x age x reward history effect
+
+```{r}
+acc_prevcond_fit <- read_fit_models('acc_prevcond')
+acc_prevcond_null_fit <- read_fit_models('acc_prevcond_null')
+
+print(plot_cond_eff(fit = acc_prevcond_fit, xvar = 'age_ACC', xname = 'Age', yname = 'Accuracy',
+                    conditions = data.frame(nogoCondition = c('prevLossNogo', 'prevRewNogo'),
+                                            nogo.total = c(12,12)), 
+                    condition_title = 'Previous\nconditioning',
+                    breaks = c('prevLossNogo', 'prevRewNogo'),
+                    labels = c('Loss', 'Reward'),
+                    hex = TRUE, hex_log = TRUE, 
+                    hex_args = list(alpha = .9, binwidth = c(.5, 1))))
+#ggsave(filename = 'acc_prevcond_fit.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+```
+
+## Plot best fitting model
+
+```{r}
+print(plot_cond_eff(fit = acc_prevcond_null_fit, xvar = 'age_ACC', xname = 'Age', yname = 'Accuracy',
+                    conditions = data.frame(nogoCondition = c('prevLossNogo', 'prevRewNogo'),
+                                            nogo.total = c(12,12)), 
+                    condition_title = 'Previous\nconditioning',
+                    breaks = c('prevLossNogo', 'prevRewNogo'),
+                    labels = c('Loss', 'Reward'),
+                    hex = TRUE, hex_log = TRUE, 
+                    hex_args = list(alpha = .9, binwidth = c(.5, 1))))
+#ggsave(filename = 'acc_prevcond_null_fit.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+```
+
+## LOO Compare
+
+```{r}
+loo_compare(loo(acc_prevcond_fit), loo(acc_prevcond_null_fit))
+```
+
+
+## Model summary
+
+```{r}
+summary(acc_prevcond_fit)
+```
+
+## Best fitting model summary
+
+```{r}
+summary(acc_prevcond_null_fit)
+```
+
+
+:::
+
