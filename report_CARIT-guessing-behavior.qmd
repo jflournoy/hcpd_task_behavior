@@ -47,9 +47,9 @@ if(interactive()){
 ## Plot age effect
 
 ```{r}
-rtage_fit <- read_fit_models('rtage')
+rt_age_fit <- read_fit_models('rt_age')
 
-print(plot_cond_eff(fit = rtage_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+print(plot_cond_eff(fit = rt_age_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
                     condition_title = 'N prev "Go" trials', mean_center_y = FALSE,
                     method = 'posterior_epred', hex = TRUE, line_color = 'white', ribbon_color = 'white',
                     hex_args = list(binwidth = c(.2, .015), alpha = .8),
@@ -58,60 +58,31 @@ print(plot_cond_eff(fit = rtage_fit, xvar = 'age', xname = 'Age', yname = 'React
 ## Model summary
 
 ```{r}
-summary(rtage_fit)
-prior_summary(rtage_fit)
+summary(rt_age_fit)
+prior_summary(rt_age_fit)
 ```
 
 ## Prior Sensitivity
 
-```{r}
-rtage_psp <- powerscale_sequence_pred(rtage_fit, x_var = 'age', res = 20)
+```{r, eval = FALSE}
+rtage_psp <- powerscale_sequence_pred(rt_age_fit, x_var = 'age', res = 20)
 rtage_psp$plot
 ```
 
 ## PP Check
 
 ```{r}
-brms::pp_check(rtage_fit) + theme_minimal()
+brms::pp_check(rt_age_fit) + theme_minimal()
 ```
 
 ## Plot age derivative
 
 ```{r}
-rtage_fit_deriv <- curvish::derivatives(rtage_fit, term = 's(age, k = 10)', order = 1)
-plot(rtage_fit_deriv, robust = TRUE, deriv = 1, outer = FALSE)
+rt_age_fit_deriv <- curvish::derivatives(rt_age_fit, term = 's(age, k = 10)', order = 1)
+plot(rt_age_fit_deriv, robust = TRUE, deriv = 1, outer = FALSE)
 ```
 
-## Plot slope = 0 posterior
-
-```{r}
-rtage_fit_0 <- curvish::posterior_x_at_yequalto(rtage_fit, term = 's(age,k=10)', n = 100, eps = .001, value = 0, multimodal = TRUE)
-plot(rtage_fit_0, robust = TRUE, mode = TRUE)
-```
-
-## Plot slope min posterior
-
-```{r}
-rtage_fit_min <- curvish::posterior_x_at_miny(rtage_fit, term = 'age', n = 100, eps = .001, multimodal = TRUE)
-plot(rtage_fit_min, robust = TRUE, mode = TRUE)
-```
 :::
-
-# Test
-
-```{r}
-rtageprepotalt_null_test_c01_fit <- readRDS('fits/rtageprepotaltnull_test_c01.rds')
-rtageprepotalt_null_test_c02_fit <- readRDS('fits/rtageprepotaltnull_test_c02.rds')
-rtageprepotalt_null_test_c03_fit <- readRDS('fits/rtageprepotaltnull_test_c03.rds')
-rtageprepotalt_null_test_c04_fit <- readRDS('fits/rtageprepotaltnull_test_c04.rds')
-rtageprepotalt_null_test_fit <- read_fit_models(model_name = 'rtageprepotaltnull_test')
-length(rtageprepotalt_null_test_c01_fit$criteria$kfold$pointwise)
-length(rtageprepotalt_null_test_c02_fit$criteria$kfold)
-length(rtageprepotalt_null_test_c03_fit$criteria$kfold)
-length(rtageprepotalt_null_test_c04_fit$criteria$kfold$pointwise)
-length(rtageprepotalt_null_test_fit$criteria$kfold$pointwise)
-#str(rtageprepotalt_null_test_fit$criteria$kfold$fits)
-```
 
 
 # H2: How does the effect of prepotency vary across age?
@@ -121,75 +92,87 @@ length(rtageprepotalt_null_test_fit$criteria$kfold$pointwise)
 ## Model Comparison
 
 ```{r}
-if(!any(grepl('rtage_fit', ls()))){
-  rtage_fit <- read_fit_models('rtage')
+if(!any(grepl('rt_age_fit', ls()))){
+  rt_age_fit <- read_fit_models('rtage')
 }
-rtageprepot_fit <- read_fit_models('rtageprepot')
-#rtageprepotdist_fit <- read_fit_models('rtagepropotdist')
-rtageprepotalt_fit <- read_fit_models('rtageprepotalt')
-rtageprepot_null_fit <- read_fit_models('rtageprepotnull')
-rtageprepotalt_null_fit <- read_fit_models('rtageprepotaltnull')
-
-loo_compare(rtage_fit, rtageprepot_fit, rtageprepotalt_fit, rtageprepot_null_fit, rtageprepotalt_null_fit)
+rt_age_prepotofac_fit <- read_fit_models('rt_age_prepotofac')
+rt_age_prepotofac_null_fit <- read_fit_models('rt_age_prepotofac_null')
+rt_age_prepotofac_null_sigma_fit <- read_fit_models('rt_age_prepotofac_null_sigma')
 ```
 
 ## Plot age x prepotency effect
 
-```{r}
-print(plot_cond_eff(fit = rtageprepotalt_null_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
-                    conditions = data.frame(exact_prepotency_ofactor = 0:3), 
-                    condition_title = 'N prev "Go" trials', mean_center_y = FALSE,
-                    method = 'posterior_epred', hex = TRUE, hex_log = TRUE, 
-                    hex_args = list(alpha = .9, binwidth = c(.25, .02))))
-```
-## Prior Sensitivity
+::: {.panel-tabset}
+
+### Unconstrained
 
 ```{r}
-rtageprepotalt_null_psp <- powerscale_sequence_pred(rtageprepotalt_null_fit, x_var = 'age', res = 20)
-rtageprepotalt_null_psp$plot
-powerscale_sensitivity(rtageprepotalt_null_fit, variable = variables(rtageprepotalt_null_fit)[c(1:4, 18)])
+print(plot_cond_eff(fit = rt_age_prepotofac_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+                    conditions = data.frame(exact_prepotency_ofactor = 0:3), 
+                    condition_title = 'Previous\n"Go" trials', mean_center_y = FALSE,
+                    method = 'posterior_epred', hex = FALSE, hex_log = TRUE, 
+                    hex_args = list(alpha = .9, binwidth = c(.25, .02))))
+
+ggsave(filename = 'rt_age_prepotofac.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+```
+
+### Null
+
+```{r}
+print(plot_cond_eff(fit = rt_age_prepotofac_null_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+                    conditions = data.frame(exact_prepotency_ofactor = 0:3), 
+                    condition_title = 'Previous\n"Go" trials', mean_center_y = FALSE,
+                    method = 'posterior_epred', hex = FALSE, hex_log = TRUE, 
+                    hex_args = list(alpha = .9, binwidth = c(.25, .02))))
+
+ggsave(filename = 'rt_age_prepotofac_null.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+```
+
+:::
+
+## Prior Sensitivity
+
+```{r,eval = FALSE}
+rt_age_prepotofac_psp <- powerscale_sequence_pred(rt_age_prepotofac_fit, x_var = 'age', res = 20)
+rt_age_prepotofac_psp$plot
+powerscale_sensitivity(rt_age_prepotofac_fit, variable = variables(rt_age_prepotofac_fit)[c(1:4, 18)])
 ```
 
 ## Model summary
 
 ```{r}
-summary(rtageprepotalt_null_fit)
+summary(rt_age_prepotofac_fit)
 ```
 
 ## Posterior predictive check
 
 ```{r}
-pp_check(rtageprepotalt_null_fit) + theme_minimal()
+pp_check(rt_age_prepotofac_fit) + theme_minimal()
 ```
 
 ## Prior sensitivity
 
-```{r}
+```{r, eval = FALSE}
 library(priorsense)
 rtageprepotalt_null_psps <- priorsense::powerscale(rtageprepotalt_null_fit, 'prior', alpha = 0.9, prediction = posterior_epred)
 str(rtageprepotalt_null_psps)
 class(rtageprepotalt_null_psps)
 ```
 
-
-
 ## (normalized) Plot age x prepotency effect 
 
 Mean across levels of prepotency subtracted out at each age.
 
 ```{r}
-rtagepropot_fit <- read_fit_models('rtagepropot')
-rtagepropot_null_fit <- read_fit_models('rtagepropotnull')
-
-print(plot_cond_eff(fit = rtagepropot_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
-                    conditions = data.frame(exact_prepotency = 0:3), 
+print(plot_cond_eff(fit = rt_age_prepotofac_fit, xvar = 'age', xname = 'Age', yname = 'Reaction Time',
+                    conditions = data.frame(exact_prepotency_ofactor = 0:3), 
                     condition_title = 'N prev "Go" trials', mean_center_y = TRUE))
 ```
 
 ## Plot prepotency x age effect
 
 ```{r}
-print(plot_cond_eff(fit = rtagepropot_fit, xvar = 'exact_prepotency', xname = 'exact_prepotency', yname = 'Reaction Time',
+print(plot_cond_eff(fit = rt_age_prepotofac_fit, xvar = 'exact_prepotency_ofactor', xname = 'exact_prepotency_ofactor', yname = 'Reaction Time',
                     conditions = data.frame(age = c(8, 11, 14, 17)), 
                     condition_title = 'Age (years)'))
 ```
@@ -203,9 +186,15 @@ print(plot_cond_eff(fit = rtagepropot_fit, xvar = 'exact_prepotency', xname = 'e
 ## Plot age effect
 
 ```{r}
-accage_fit <- read_fit_models('accage')
+acc_age_prepotofac_fit <- read_fit_models('acc_age_prepotofac')
 
-print(plot_cond_eff(fit = accage_fit, xvar = 'age_ACC', xname = 'Age', yname = 'Accuracy'))
+print(plot_cond_eff(fit = acc_age_prepotofac_fit, xvar = 'age', xname = 'Age', yname = 'Accuracy',
+                    conditions = data.frame(exact_prepotency_ofactor = 0:4), 
+                    condition_title = 'Previous\n"Go" trials', mean_center_y = FALSE,
+                    method = 'posterior_epred', hex = FALSE, hex_log = TRUE, 
+                    hex_args = list(alpha = .9, binwidth = c(.25, .02))))
+
+ggsave(filename = 'acc_age_prepotofac_fit.png', width = 11, height = 6.95, units = 'in', dpi = 300)
 ```
 
 ## Plot age derivative
@@ -258,7 +247,11 @@ p + scale_y_discrete(labels = c(expression(cor(bar(textstyle("RT")), textstyle("
                                 expression(cor(bar(textstyle("RT")), textstyle("Accuracy"))),
                                 expression(cor(textstyle("Prepotency"), textstyle("Accuracy"))))) + 
   coord_cartesian(x = c(-1, 1)) + 
-  theme_minimal()
+  geom_vline(xintercept = 0, alpha = .8) +
+  theme_minimal() + 
+  theme(axis.text.y = element_text(size = 24))
+
+ggsave(filename = 'accprepot_fit.png', width = 11, height = 6.95, units = 'in', dpi = 300)
 ```
 We see no credibly positive or negative association between prepotency effect and accuracy. The second two posterior densities represent correlations that weren't of focal interest. The first is between average reaction time and average accuracy (after accounting for age), while the final is between average reaction time and the degree of prepotency effect (again, after accounting for age). The former suggests that people with higher average reaction times are more accurate (i.e., taking one's time improves accuracy). In light of the average prepotency effect being _positive_ (people strategically slow down with every go trial), the latter negative correlation suggests that people with higher reaction times show a reduced prepotency effect; that is, less strategic participants are slower. 
 
@@ -303,12 +296,31 @@ pp_check(accprepot_fit, resp = 'corRejecttotal') + theme_minimal()
 ## Plot accuracy x age x reward history effect
 
 ```{r}
-accprevcond_fit <- read_fit_models('accprevcond')
+acc_prevcond_fit <- read_fit_models('acc_prevcond')
+acc_prevcond_null_fit <- read_fit_models('acc_prevcond_null')
 
-print(plot_cond_eff(fit = accprevcond_fit, xvar = 'age_ACC', xname = 'Age', yname = 'Accuracy',
+print(plot_cond_eff(fit = acc_prevcond_fit, xvar = 'age_ACC', xname = 'Age', yname = 'Accuracy',
                     conditions = data.frame(nogoCondition = c('prevLossNogo', 'prevRewNogo')), 
-                    condition_title = 'Previous conditioning'))
+                    condition_title = 'Previous\nconditioning',
+                    breaks = c('prevLossNogo', 'prevRewNogo'),
+                    labels = c('Loss', 'Reward')))
+ggsave(filename = 'acc_prevcond_fit.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+print(plot_cond_eff(fit = acc_prevcond_null_fit, xvar = 'age_ACC', xname = 'Age', yname = 'Accuracy',
+                    conditions = data.frame(nogoCondition = c('prevLossNogo', 'prevRewNogo')), 
+                    condition_title = 'Previous\nconditioning',
+                    breaks = c('prevLossNogo', 'prevRewNogo'),
+                    labels = c('Loss', 'Reward')))
+ggsave(filename = 'acc_prevcond_null_fit.png', width = 11, height = 6.95, units = 'in', dpi = 300)
+
 ```
+
+## LOO Compare
+
+```{r}
+loo_compare(loo(acc_prevcond_fit), loo(acc_prevcond_null_fit))
+```
+
+
 ## Effect size
 
 ```{r}

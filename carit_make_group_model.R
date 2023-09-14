@@ -140,7 +140,7 @@ prep_data <- function(covars){
                                                 sprintf('%s_%s', sID, session_label),
                                                 'MNINonLinear', 'Results',
                                                 sprintf('tfMRI_%s_%s', task_name, direction),
-                                                sprintf('tfMRI_%s_%s_hp200_s4_level1_hp0_clean.feat', task_name, direction),
+                                                sprintf('tfMRI_%s_PREPOT_%s_hp200_s4_level1_hp0_clean.feat', task_name, direction),
                                                 'GrayordinatesStats')]
   #Collect the actual copes we have on disk.
   copes_rds <- 'carit_copes.rds'
@@ -245,8 +245,8 @@ parser$add_argument('++covariates', type = 'character', nargs = '+')
 if(!TEST){
   args <- parser$parse_args()  
 } else {
-  args <- parser$parse_args(c('++name', 'full_design2',
-                              '++outdir', '/ncf/mclaughlin/users/jflournoy/code/hcpd_tfMRI/group_level_vwise',
+  args <- parser$parse_args(c('++name', 'cell_coded',
+                              '++outdir', '/ncf/mclaughlin/users/jflournoy/code/hcpd_tfMRI/test',
                               '++design', 'interaction',
                               '++covariates', 'scanner', 'RelativeRMS_mean_c'))
 }
@@ -286,7 +286,8 @@ outdir))
 
 #xx <- prep_data()
 #x = copy(xx)
-CR_m_Go <- create_group_model(x = prep_data(covars), 
+x <- prep_data(covars)
+CR_m_Go <- create_group_model(x = x, 
                               design = design,
                               covars = covars,
                               outdir = outdir)

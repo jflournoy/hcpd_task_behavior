@@ -198,7 +198,7 @@ summary(acc_prevcond_fit)
 ## Best fitting model summary
 
 ```{r}
-summary(acc_prevcond_null_         fit)
+summary(acc_prevcond_null_fit)
 ```
 
 

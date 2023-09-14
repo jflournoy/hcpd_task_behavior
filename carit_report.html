@@ -11,16 +11,26 @@
 
 <meta name="author" content="John Flournoy" />
 
-<meta name="date" content="2021-01-29" />
+<meta name="date" content="2023-08-16" />
 
 <title>CARIT Report</title>
 
-<script src="carit_report_files/jquery-1.12.4/jquery.min.js"></script>
+<script src="carit_report_files/header-attrs-2.16/header-attrs.js"></script>
+<script src="carit_report_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="carit_report_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="carit_report_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="carit_report_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="carit_report_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="carit_report_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="carit_report_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="carit_report_files/tocify-1.9.1/jquery.tocify.js"></script>
@@ -28,24 +38,23 @@
 <script src="carit_report_files/navigation-1.1/codefolding.js"></script>
 <link href="carit_report_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="carit_report_files/highlightjs-9.12.0/highlight.js"></script>
-<script src="carit_report_files/htmlwidgets-1.3/htmlwidgets.js"></script>
+<script src="carit_report_files/htmlwidgets-1.5.4/htmlwidgets.js"></script>
 <link href="carit_report_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="carit_report_files/datatables-binding-0.16/datatables.js"></script>
-<link href="carit_report_files/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="carit_report_files/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
-<script src="carit_report_files/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
-<link href="carit_report_files/dt-ext-buttons-1.10.20/css/buttons.dataTables.min.css" rel="stylesheet" />
-<script src="carit_report_files/dt-ext-buttons-1.10.20/js/dataTables.buttons.min.js"></script>
-<script src="carit_report_files/dt-ext-buttons-1.10.20/js/buttons.flash.min.js"></script>
-<script src="carit_report_files/dt-ext-buttons-1.10.20/js/buttons.html5.min.js"></script>
-<script src="carit_report_files/dt-ext-buttons-1.10.20/js/buttons.colVis.min.js"></script>
-<script src="carit_report_files/dt-ext-buttons-1.10.20/js/buttons.print.min.js"></script>
+<script src="carit_report_files/datatables-binding-0.24/datatables.js"></script>
+<link href="carit_report_files/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="carit_report_files/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="carit_report_files/dt-core-1.11.3/js/jquery.dataTables.min.js"></script>
+<link href="carit_report_files/dt-ext-buttons-1.11.3/css/buttons.dataTables.min.css" rel="stylesheet" />
+<script src="carit_report_files/dt-ext-buttons-1.11.3/js/dataTables.buttons.min.js"></script>
+<script src="carit_report_files/dt-ext-buttons-1.11.3/js/buttons.html5.min.js"></script>
+<script src="carit_report_files/dt-ext-buttons-1.11.3/js/buttons.colVis.min.js"></script>
+<script src="carit_report_files/dt-ext-buttons-1.11.3/js/buttons.print.min.js"></script>
 <link href="carit_report_files/nouislider-7.0.10/jquery.nouislider.min.css" rel="stylesheet" />
 <script src="carit_report_files/nouislider-7.0.10/jquery.nouislider.min.js"></script>
 <link href="carit_report_files/selectize-0.12.0/selectize.bootstrap3.css" rel="stylesheet" />
 <script src="carit_report_files/selectize-0.12.0/selectize.min.js"></script>
-<link href="carit_report_files/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
-<script src="carit_report_files/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<link href="carit_report_files/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="carit_report_files/crosstalk-1.2.0/js/crosstalk.min.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -54,14 +63,9 @@
   div.column{display: inline-block; vertical-align: top; width: 50%;}
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
-      </style>
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -74,32 +78,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -109,10 +89,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -129,6 +105,12 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
@@ -141,7 +123,6 @@ summary {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -270,7 +251,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -281,11 +262,11 @@ div.tocify {
 
 
 
-<div class="fluid-row" id="header">
+<div id="header">
 
-<div class="btn-group pull-right">
-<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu" style="min-width: 50px;">
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
 <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
 <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
 </ul>
@@ -295,7 +276,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">CARIT Report</h1>
 <h4 class="author">John Flournoy</h4>
-<h4 class="date">2021-01-29</h4>
+<h4 class="date">2023-08-16</h4>
 
 </div>
 
@@ -314,7 +295,7 @@ pre code {
 <h1>Process data</h1>
 <pre class="r"><code>library(data.table)
 library(psycho)
-data.table::setDTthreads(3)
+data.table::setDTthreads(1)
 
 modal &lt;- function(x){
   t &lt;- table(unlist(x))
@@ -322,12 +303,27 @@ modal &lt;- function(x){
   return(n[which(t == max(t))])
 }
 
+num_fac &lt;- function(x, levels = NULL){
+  if(is.null(levels)){
+    as.numeric(factor(x))
+  } else {
+    as.numeric(factor(x, levels = levels))
+  }
+}
+lag1_num_fac_diff &lt;- function(x, levels = NULL){
+  y &lt;- abs(num_fac(x, levels = levels) - num_fac(shift(x, fill = x[[1]], type = &#39;lag&#39;), levels = levels))
+  return(y)
+}
+
 read_carit_dir &lt;- function(data_path, pattern = &quot;*CARIT.*run[12]_wide.csv&quot;){
   #List all of the CARIT task files in the data directory
-  fnames &lt;- dir(data_path, 
-                pattern = pattern, 
-                recursive = TRUE, 
-                full.names = TRUE)
+  hcd_dirs &lt;- dir(data_path, pattern = &#39;^HCD.*&#39;, full.names = TRUE)
+  carit_dirs &lt;- unlist(lapply(hcd_dirs, dir, pattern = &#39;^tfMRI_CARIT_(AP|PA)$&#39;, full.names = TRUE))
+  fnames &lt;- unlist(lapply(carit_dirs, 
+                          dir,
+                          pattern = pattern, 
+                          recursive = TRUE, 
+                          full.names = TRUE))
   names(fnames) &lt;- 1:length(fnames)
   
   #Set the column names we want from each csv file
@@ -364,23 +360,33 @@ read_carit_dir &lt;- function(data_path, pattern = &quot;*CARIT.*run[12]_wide.cs
 workspace_fname &lt;- &#39;process_carit.rda&#39;
 if(!file.exists(workspace_fname)){
   
-  data_path &lt;- &#39;/ncf/hcp/data/CCF_HCD_STG_PsychoPy_files/&#39;
-  intake_data_path &lt;- &#39;/ncf/hcp/data/intradb_intake/&#39;
+  data_path &lt;- &#39;/ncf/hcp/data/intradb_multiprocfix/&#39;
   
   d &lt;- read_carit_dir(data_path)
-  d_intake &lt;- read_carit_dir(intake_data_path)
-  #remove long
-  
+  #use the condition file name to figure out the run number
+  setnames(d, &#39;condFile&#39;, &#39;runN&#39;)
+  d[, runN := as.numeric(gsub(&#39;.*/scan([12])\\.csv&#39;, &#39;\\1&#39;, runN))]
+  d &lt;- d[ 
+    !filename %in% 
+      c(&#39;/ncf/hcp/data/intradb_multiprocfix//HCD0353538_V1_MR/tfMRI_CARIT_PA/LINKED_DATA/PSYCHOPY/CARIT_HCD0353538_V1_A_run1_wide.csv&#39;)
+  ]
+  d[
+    filename == &#39;/ncf/hcp/data/intradb_multiprocfix//HCD2776374_V1_MR/tfMRI_CARIT_AP/LINKED_DATA/PSYCHOPY/CARIT_HCD2776374_V1_A_run1_wide.csv&#39;,
+    runN := 2
+  ]
   readr::write_csv(d, &#39;CARIT_allRaw.csv&#39;)
+  demos &lt;- fread(&#39;HCD_Inventory_2022-04-12.csv&#39;, 
+                         select = c(&#39;subject&#39;, &#39;site&#39;, &#39;race&#39;, &#39;ethnic_group&#39;, &#39;M/F&#39;,
+                                    &#39;event_age&#39;, &#39;redcap_event&#39;))[redcap_event == &#39;V1&#39;]
+  setnames(demos, &#39;subject&#39;, &#39;sID&#39;)
+  setnames(demos, &#39;event_age&#39;, &#39;age&#39;)
+  setnames(demos, &#39;M/F&#39;, &#39;gender&#39;)
   
-  demos &lt;- data.table::fread(&#39;HCPD_COMBINED20200608.csv&#39;,
-                             select = c(&#39;id&#39;, &#39;age&#39;, &#39;gender&#39;, &#39;site&#39;, &#39;RACE&#39;, &#39;SES_PLVL&#39;, &#39;SES_RLVL&#39;, &#39;income&#39;))
-  staged &lt;- data.table::fread(&#39;ccf_hcd_stg_2020-06-09.csv&#39;, 
+  staged &lt;- data.table::fread(&#39;HCP_Staged_20230314.csv&#39;, 
                               select = &#39;Subject&#39;)
-  public_release &lt;- data.table::fread(&#39;HCD_V1_Release_Struct+fMRI_Merged_Adj.txt&#39;, header = FALSE, col.names = &#39;sID&#39;)
   
-  long &lt;- data.table::fread(&#39;HCPD_LONGITUDINAL20200608.csv&#39;,
-                            select = c(&#39;id&#39;, &#39;LONG_AGE&#39;))
+  # long &lt;- data.table::fread(&#39;HCPD_LONGITUDINAL20200608.csv&#39;,
+  #                           select = c(&#39;id&#39;, &#39;LONG_AGE&#39;))
   staged_dlmri &lt;- data.table(sessionID = dir(&#39;/ncf/hcp/data/intradb_multiprocfix/&#39;, pattern = &quot;HCD.*&quot;))
   
   staged_dlmri[, &#39;has_task_scan&#39;] &lt;-  unlist(lapply(staged_dlmri$sessionID, function(sess){
@@ -408,9 +414,8 @@ if(!file.exists(workspace_fname)){
   }))
   
   staged_dlmri[, sID := gsub(&#39;.*(HCD[A-Za-z0-9]+)_V1_MR.*&#39;, &#39;\\1&#39;, sessionID)]
-  setnames(demos, &#39;id&#39;, &#39;sID&#39;)
   setnames(staged, &#39;Subject&#39;, &#39;sID&#39;)
-  setnames(long, &#39;id&#39;, &#39;sID&#39;)
+  #setnames(long, &#39;id&#39;, &#39;sID&#39;)
   
   #Some columns should be factors
   factor_vars &lt;- c(&#39;sessionID&#39;,
@@ -423,16 +428,14 @@ if(!file.exists(workspace_fname)){
                    &#39;corrRespMsg&#39;,
                    &#39;corrRespTrialType&#39;)
   d[, (factor_vars) := lapply(.SD, as.factor), .SDcols = factor_vars]
-  d_intake[, (factor_vars) := lapply(.SD, as.factor), .SDcols = factor_vars]
+  #d_intake[, (factor_vars) := lapply(.SD, as.factor), .SDcols = factor_vars]
   
-  d_combined &lt;- data.table::rbindlist(list(staged = d, intake = d_intake), idcol = &quot;data_source&quot;)
+  #d_combined &lt;- data.table::rbindlist(list(staged = d, intake = d_intake), idcol = &quot;data_source&quot;)
+  
+  d_combined &lt;- d
   
   #Integrate demographic variables
   carit &lt;- demos[d_combined, on = &#39;sID&#39;]
-  
-  #use the condition file name to figure out the run number
-  setnames(carit, &#39;condFile&#39;, &#39;runN&#39;)
-  carit[, runN := as.numeric(gsub(&#39;.*/scan([12])\\.csv&#39;, &#39;\\1&#39;, runN))]
   
   #rename corrAns to trialType
   setnames(carit, &#39;corrAns&#39;, &#39;trialType&#39;)
@@ -446,6 +449,23 @@ if(!file.exists(workspace_fname)){
   carit[, aggTrialN := trialNum + 92*(runN - 1)]
   carit[, RT.shape := trialResp.firstRt - shapeStartTime]
   
+  carit[
+    stringi::stri_cmp_eq(filename, &#39;/ncf/hcp/data/intradb_multiprocfix//HCD0197045_V1_MR/tfMRI_CARIT_AP/LINKED_DATA/PSYCHOPY/CARIT_HCD0197045_V1_A_run1_wide.csv&#39;),
+    runN := 2]
+  carit[, wave := stringi::stri_match(sessionID, regex = &#39;.*_V([123]{1})_\\w$&#39;)[,2]]
+  setorder(carit, sID, wave, runN, trialNum)
+  carit[, corrRespTrialType_diff := lag1_num_fac_diff(corrRespTrialType, levels = c(&quot;&quot;, &quot;corReject&quot;, &quot;falseAlarm&quot;, &quot;Hit&quot;, &quot;Miss&quot;)), by = c(&#39;sID&#39;, &#39;runN&#39;)]
+  carit[, chunkID := cumsum(corrRespTrialType_diff)]
+  carit[, N_of_corrRespTrialType := 1:.N, by = c(&#39;sID&#39;, &#39;runN&#39;, &#39;chunkID&#39;)]
+  carit[, prev_corrRespTrialType := shift(corrRespTrialType, type = &#39;lag&#39;), by = c(&#39;sID&#39;, &#39;runN&#39;)]
+  carit[corrRespTrialType == &#39;Hit&#39;, exact_prepotency := shift(N_of_corrRespTrialType, type = &#39;lag&#39;, fill = 0), by = c(&#39;sID&#39;, &#39;runN&#39;, &#39;chunkID&#39;)]
+  carit[, lag_N_of_corrRespTrialType := shift(N_of_corrRespTrialType, type = &#39;lag&#39;), by = c(&#39;sID&#39;, &#39;runN&#39;)]
+  carit[trialType == &#39;nogo&#39; &amp; prev_corrRespTrialType == &#39;Miss&#39;, exact_prepotency := 0]
+  carit[trialType == &#39;nogo&#39; &amp; prev_corrRespTrialType == &#39;Hit&#39;, exact_prepotency := lag_N_of_corrRespTrialType]
+  #View(carit[, c(&#39;sID&#39;, &#39;runN&#39;, &#39;corrRespTrialType&#39;, &#39;exact_prepotency&#39;, &#39;corrRespTrialType_diff&#39;, &#39;chunkID&#39;, &#39;N_of_corrRespTrialType&#39;, &#39;prev_corrRespTrialType&#39;, &#39;lag_N_of_corrRespTrialType&#39;)])
+  #View(carit[trialType == &#39;nogo&#39; &amp; prev_corrRespTrialType == &#39;Hit&#39;, c(&#39;sID&#39;, &#39;runN&#39;, &#39;corrRespTrialType&#39;, &#39;corrRespTrialType_diff&#39;, &#39;chunkID&#39;, &#39;N_of_corrRespTrialType&#39;, &#39;prev_corrRespTrialType&#39;, &#39;hit_prepotency&#39;, &#39;lag_N_of_corrRespTrialType&#39;, &#39;prepotency&#39;)])
+  #unique(carit[, &#39;exact_prepotency&#39;])
+  
   carit_by_run_SDT &lt;- dcast(carit[, .N, by = c(&#39;sID&#39;, &#39;runN&#39;, &#39;corrRespTrialType&#39;) ], ... ~ corrRespTrialType, value.var = &#39;N&#39;, fill =  0) 
   carit_by_run_SDT[, c(&#39;dprime&#39;, &#39;beta&#39;, &#39;aprime&#39;, &#39;bppd&#39;, &#39;c&#39;) := psycho::dprime(Hit, falseAlarm, Miss, corReject)]
   
@@ -454,33 +474,52 @@ if(!file.exists(workspace_fname)){
   save.image(file = workspace_fname)
 } else {
   load(workspace_fname)
-}</code></pre>
-<p>At the moment, there are 2 participants who have too many trials for one run. The raw data file indicates that the same conditions file was used for each one, but it also indicates that only 1 run was run. We may ultimately be able to use these cases but I'm setting them aside for now.</p>
-<pre class="r"><code>#remove longitudinal subjects:
+}
+saveRDS(carit, &#39;/ncf/hcp/data/analyses/taylor/carit_data.rds&#39;)</code></pre>
+<p>At the moment, there are 2 participants who have too many trials for
+one run. The raw data file indicates that the same conditions file was
+used for each one, but it also indicates that only 1 run was run. We may
+ultimately be able to use these cases but I’m setting them aside for
+now.</p>
+<pre class="r"><code>#remove longitudinal sessionsccn:
 carit &lt;- carit[!grepl(&#39;_V[2-9]_&#39;, filename),]
 ###INVESTIGATE FURTHER
 duplicate_run_ids &lt;- unique(carit[, .N, by = c(&#39;sID&#39;, &#39;runN&#39;)][N &gt; 92, sID])
 print(duplicate_run_ids)</code></pre>
-<pre><code>## [1] &quot;HCD0197045&quot; &quot;HCD0353538&quot;</code></pre>
+<pre><code>## character(0)</code></pre>
 <pre class="r"><code>dim(carit)</code></pre>
-<pre><code>## [1] 203035     43</code></pre>
+<pre><code>## [1] 210378     48</code></pre>
 <pre class="r"><code>carit &lt;- carit[!sID %in% duplicate_run_ids]
 dim(carit)</code></pre>
-<pre><code>## [1] 202667     43</code></pre>
+<pre><code>## [1] 210378     48</code></pre>
+<p>Taylor raises the following additional issues:</p>
+<blockquote>
+<p>HCD0353538 - they seem to be getting a zero for the exact prepotency
+score, even though they are correctly pressing the button.</p>
+<p>HCD0353538 - their runN variable is not correctly labeled (both runs
+are marked as ‘1’). I used the file name to check which cases belong to
+run 2.</p>
+</blockquote>
+<p><em>Above has been Fixed</em></p>
+<blockquote>
+<p>Two people do not have any information for their variable
+nogoCondition: HCD1408037 ; HCD2323842</p>
+</blockquote>
 </div>
 <div id="data-cross-check" class="section level1">
 <h1>Data cross-check</h1>
-<p>Total N with CARIT task behavior: 811.</p>
-<p>Number of participants with CARIT task behavior but no demo info: 0.</p>
-<p>Number of participants with demo info but no CARIT task behavior: 411.</p>
-<p>Number of participants with CARIT task behavior but not staged: 0.</p>
-<p>Number of participants staged but no CARIT task behavior: 12. These participants likely did not complete the task, though other data is relevant for staging.</p>
-<p>Number of participants with task behavior not staged, recovered from intake project: 370</p>
-<p>Number of intake participants with no demo info: 1. Participant ids: HCD0425133.</p>
-<p>Number of participants not in either intake or staged CARIT behavior lists: 42.</p>
-<p>List of those:</p>
-<p>HCD0009422, HCD0123824, HCD0147838, HCD0156435, HCD0168442, HCD0191033, HCD0263335, HCD0412629, HCD0505333, HCD0577358, HCD0696265, HCD0874364, HCD1022015, HCD1045128, HCD1136232, HCD1179755, HCD1275347, HCD1406235, HCD1506037, HCD1529756, HCD1581455, HCD1690359, HCD1748768, HCD1790868, HCD1822249, HCD1876272, HCD1985378, HCD2059043, HCD2139748, HCD2162036, HCD2292453, HCD2442446, HCD2519556, HCD2572156, HCD2604749, HCD2779077, HCD2833259, HCD2867478, HCD2868985, HCD2891576, HCD2925769, HCD2944066</p>
-<p>Spot check suggests these sessions may be missing some data for the task, or have other problems.</p>
+<p>Total N with CARIT task behavior: 1245.</p>
+<p>Number of participants with CARIT task behavior but no demo info:
+0.</p>
+<p>Number of participants with demo info but no CARIT task behavior:
+59.</p>
+<p>Number of participants with CARIT task behavior but not staged:
+0.</p>
+<p>Number of participants staged but no CARIT task behavior: 61. These
+participants likely did not complete the task, though other data is
+relevant for staging.</p>
+<p>Spot check suggests these sessions may be missing some data for the
+task, or have other problems.</p>
 <pre class="r"><code>intradb_beh_only_list &lt;- demos[!d, on = &#39;sID&#39;]
 setnames(intradb_beh_only_list, &#39;sID&#39;, &#39;Subject&#39;)
 readr::write_csv(intradb_beh_only_list, &#39;~/code/intradb_sync/HCPD_behavior_only.csv&#39;)</code></pre>
@@ -488,119 +527,141 @@ readr::write_csv(intradb_beh_only_list, &#39;~/code/intradb_sync/HCPD_behavior_o
         c(list(staged[!d, on = &#39;sID&#39;],
                caption = &#39;Pariticipants marked as staged, with no CARIT data.&#39;), 
           dt_options))</code></pre>
-<div id="htmlwidget-44a84b00e9174b6f5a68" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-44a84b00e9174b6f5a68">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Pariticipants marked as staged, with no CARIT data.<\/caption>","data":[["HCD0577358","HCD0696265","HCD1045128","HCD1249649","HCD1336341","HCD1529756","HCD1581455","HCD1638862","HCD1714852","HCD1876272","HCD1985378","HCD2082341"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
-<p>Number of participants with dl'd MRI but not in staging list: 0.</p>
-<p>Number of participants in staging list without any dl'd MRI: 2.</p>
+<div id="htmlwidget-3403fd9d75faa7019ed9" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3403fd9d75faa7019ed9">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Pariticipants marked as staged, with no CARIT data.<\/caption>","data":[["HCD0009422","HCD0099752","HCD0123824","HCD0147838","HCD0156435","HCD0168442","HCD0191033","HCD0263335","HCD0412629","HCD0442739","HCD0505333","HCD0577358","HCD0696265","HCD0786367","HCD0846662","HCD0857162","HCD0874364","HCD0989280","HCD1022015","HCD1045128","HCD1136232","HCD1249649","HCD1266952","HCD1275347","HCD1324839","HCD1335339","HCD1336341","HCD1406235","HCD1454246","HCD1506037","HCD1529756","HCD1566863","HCD1569970","HCD1581455","HCD1714852","HCD1742251","HCD1748768","HCD1790868","HCD1822249","HCD1874066","HCD1876272","HCD1970365","HCD1985378","HCD2030423","HCD2059043","HCD2111625","HCD2139748","HCD2152437","HCD2162036","HCD2170136","HCD2194756","HCD2292453","HCD2519556","HCD2572156","HCD2779077","HCD2833259","HCD2867478","HCD2868985","HCD2891273","HCD2925769","HCD2944066"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<p>Number of participants with dl’d MRI but not in staging list:
+395.</p>
+<p>Number of participants in staging list without any dl’d MRI: 0.</p>
 <p>Personal communication with Mike Hodge:</p>
 <blockquote>
-<p>Sometimes when we find issues with the staging sessions after they’re built, we’ll remove the sessions so they’re not inadvertently released. We’ll often not remove the corresponding subject record because we’ll eventually rebuild that session. I’m sure that’s what happened here.</p>
+<p>Sometimes when we find issues with the staging sessions after they’re
+built, we’ll remove the sessions so they’re not inadvertently released.
+We’ll often not remove the corresponding subject record because we’ll
+eventually rebuild that session. I’m sure that’s what happened here.</p>
 </blockquote>
-<p>Number of participants with (any) dowloaded task MRI, but no CARIT task behavior: 5.</p>
-<p>Number of participants with dowloaded CARIT task MRI, but no CARIT task behavior: 0.</p>
-<p>Number of participants with CARIT task behavior, but no dowloaded task MRI (on this task): 4. This indicates that these participants had problems with their data in the multirun ica fix pipeline (it is possible that this session will eventually get rebuilt, it seems).</p>
+<p>Number of participants with (any) dowloaded task MRI, but no CARIT
+task behavior: 412.</p>
+<p>Number of participants with dowloaded CARIT task MRI, but no CARIT
+task behavior: 393.</p>
+<p>Number of participants with CARIT task behavior, but no dowloaded
+task MRI (on this task): 1. This indicates that these participants had
+problems with their data in the multirun ica fix pipeline (it is
+possible that this session will eventually get rebuilt, it seems).</p>
 <pre class="r"><code>missing_task_mri &lt;- unique(d[, c(&#39;sessionID&#39;, &#39;sID&#39;)])[!staged_dlmri[has_task_scan == TRUE], on = &#39;sID&#39;]
 
 do.call(DT::datatable, 
         c(list(demos[missing_task_mri, on = &#39;sID&#39;],
                caption = &#39;Participants with CARIT task behavior, but no dowloaded task MRI (on this task).&#39;), 
           dt_options))</code></pre>
-<div id="htmlwidget-dc47e17276d380e3a81c" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-dc47e17276d380e3a81c">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"12.15\" data-max=\"14.07\" data-scale=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"disabled\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"disabled\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"disabled\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"0\" data-max=\"1e-15\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;HCD0001305_V1_A&quot;,&quot;HCD0008117_V1_A&quot;,&quot;HCD0015417_V1_A&quot;,&quot;HCD0021614_V1_A&quot;,&quot;HCD0022919_V1_B&quot;,&quot;HCD0026119_V1_A&quot;,&quot;HCD0029630_V1_A&quot;,&quot;HCD0031617_V1_A&quot;,&quot;HCD0036324_V1_A&quot;,&quot;HCD0039128_V1_A&quot;,&quot;HCD0040113_V1_A&quot;,&quot;HCD0041822_V1_A&quot;,&quot;HCD0042420_V1_A&quot;,&quot;HCD0045527_V1_A&quot;,&quot;HCD0051825_V1_A&quot;,&quot;HCD0059235_V1_A&quot;,&quot;HCD0069238_V1_A&quot;,&quot;HCD0071831_V1_A&quot;,&quot;HCD0073431_V1_B&quot;,&quot;HCD0075435_V1_A&quot;,&quot;HCD0100307_V1_A&quot;,&quot;HCD0102210_V1_A&quot;,&quot;HCD0102412_V1_A&quot;,&quot;HCD0110310_V1_A&quot;,&quot;HCD0110411_V1_A&quot;,&quot;HCD0111716_V1_A&quot;,&quot;HCD0113316_V1_A&quot;,&quot;HCD0114419_V1_A&quot;,&quot;HCD0118528_V1_A&quot;,&quot;HCD0119429_V1_A&quot;,&quot;HCD0121719_V1_A&quot;,&quot;HCD0122317_V1_A&quot;,&quot;HCD0123925_V1_A&quot;,&quot;HCD0124725_V1_A&quot;,&quot;HCD0125424_V1_A&quot;,&quot;HCD0128935_V1_A&quot;,&quot;HCD0129937_V1_A&quot;,&quot;HCD0130821_V1_A&quot;,&quot;HCD0131116_V1_A&quot;,&quot;HCD0134526_V1_A&quot;,&quot;HCD0135831_V1_A&quot;,&quot;HCD0143426_V1_A&quot;,&quot;HCD0144125_V1_A&quot;,&quot;HCD0145430_V1_A&quot;,&quot;HCD0145733_V1_A&quot;,&quot;HCD0146331_V1_A&quot;,&quot;HCD0146937_V1_A&quot;,&quot;HCD0147333_V1_A&quot;,&quot;HCD0148537_V1_A&quot;,&quot;HCD0152932_V1_A&quot;,&quot;HCD0154431_V1_A&quot;,&quot;HCD0161327_V1_A&quot;,&quot;HCD0165234_V1_A&quot;,&quot;HCD0165941_V1_A&quot;,&quot;HCD0174235_V1_A&quot;,&quot;HCD0178243_V1_A&quot;,&quot;HCD0178748_V1_A&quot;,&quot;HCD0181838_V1_A&quot;,&quot;HCD0182941_V1_A&quot;,&quot;HCD0183438_V1_A&quot;,&quot;HCD0183539_V1_A&quot;,&quot;HCD0185442_V1_A&quot;,&quot;HCD0185644_V1_A&quot;,&quot;HCD0188549_V1_A&quot;,&quot;HCD0193845_V1_A&quot;,&quot;HCD0197045_V1_A&quot;,&quot;HCD0197348_V1_A&quot;,&quot;HCD0203620_V1_A&quot;,&quot;HCD0214423_V1_A&quot;,&quot;HCD0215829_V1_A&quot;,&quot;HCD0222018_V1_A&quot;,&quot;HCD0224123_V1_A&quot;,&quot;HCD0225529_V1_A&quot;,&quot;HCD0225630_V1_A&quot;,&quot;HCD0232223_V1_A&quot;,&quot;HCD0236130_V1_A&quot;,&quot;HCD0236635_V1_A&quot;,&quot;HCD0244230_V1_A&quot;,&quot;HCD0245030_V1_A&quot;,&quot;HCD0245636_V1_A&quot;,&quot;HCD0247438_V1_A&quot;,&quot;HCD0248440_V1_A&quot;,&quot;HCD0259243_V1_A&quot;,&quot;HCD0259546_V1_A&quot;,&quot;HCD0263032_V1_A&quot;,&quot;HCD0267242_V1_A&quot;,&quot;HCD0267747_V1_A&quot;,&quot;HCD0267848_V1_A&quot;,&quot;HCD0271031_V1_A&quot;,&quot;HCD0276243_V1_B&quot;,&quot;HCD0277447_V1_A&quot;,&quot;HCD0286650_V1_A&quot;,&quot;HCD0288250_V1_A&quot;,&quot;HCD0294245_V1_A&quot;,&quot;HCD0295146_V1_B&quot;,&quot;HCD0295954_V1_A&quot;,&quot;HCD0298758_V1_A&quot;,&quot;HCD0304828_V1_A&quot;,&quot;HCD0305325_V1_A&quot;,&quot;HCD0305628_V1_A&quot;,&quot;HCD0311118_V1_A&quot;,&quot;HCD0311320_V1_A&quot;,&quot;HCD0311421_V1_B&quot;,&quot;HCD0320624_V1_A&quot;,&quot;HCD0328842_V1_A&quot;,&quot;HCD0330021_V1_A&quot;,&quot;HCD0336841_V1_A&quot;,&quot;HCD0338441_V1_A&quot;,&quot;HCD0338744_V1_A&quot;,&quot;HCD0343333_V1_A&quot;,&quot;HCD0353538_V1_A&quot;,&quot;HCD0360838_V1_A&quot;,&quot;HCD0363743_V1_A&quot;,&quot;HCD0367448_V1_A&quot;,&quot;HCD0370639_V1_A&quot;,&quot;HCD0372542_V1_A&quot;,&quot;HCD0378150_V1_A&quot;,&quot;HCD0382343_V1_A&quot;,&quot;HCD0383143_V1_A&quot;,&quot;HCD0392144_V1_A&quot;,&quot;HCD0392649_V1_A&quot;,&quot;HCD0393550_V1_A&quot;,&quot;HCD0394350_V1_A&quot;,&quot;HCD0394754_V1_A&quot;,&quot;HCD0401725_V1_A&quot;,&quot;HCD0403224_V1_A&quot;,&quot;HCD0406230_V1_A&quot;,&quot;HCD0410322_V1_A&quot;,&quot;HCD0413732_V1_A&quot;,&quot;HCD0418338_V1_A&quot;,&quot;HCD0425335_V1_A&quot;,&quot;HCD0429343_V1_A&quot;,&quot;HCD0430530_V1_A&quot;,&quot;HCD0461844_V1_A&quot;,&quot;HCD0462341_V1_A&quot;,&quot;HCD0469658_V1_A&quot;,&quot;HCD0471746_V1_A&quot;,&quot;HCD0474045_V1_A&quot;,&quot;HCD0476352_V1_A&quot;,&quot;HCD0478356_V1_A&quot;,&quot;HCD0486254_V1_A&quot;,&quot;HCD0494354_V1_A&quot;,&quot;HCD0498261_V1_A&quot;,&quot;HCD0498968_V1_A&quot;,&quot;HCD0504735_V1_A&quot;,&quot;HCD0505838_V1_A&quot;,&quot;HCD0508440_V1_A&quot;,&quot;HCD0514738_V1_A&quot;,&quot;HCD0515538_V1_A&quot;,&quot;HCD0517845_V1_A&quot;,&quot;HCD0519849_V1_A&quot;,&quot;HCD0520329_V1_A&quot;,&quot;HCD0526644_V1_A&quot;,&quot;HCD0528850_V1_A&quot;,&quot;HCD0529751_V1_A&quot;,&quot;HCD0534138_V1_A&quot;,&quot;HCD0536142_V1_A&quot;,&quot;HCD0541034_V1_A&quot;,&quot;HCD0541539_V1_A&quot;,&quot;HCD0551239_V1_A&quot;,&quot;HCD0551946_V1_A&quot;,&quot;HCD0555146_V1_A&quot;,&quot;HCD0559760_V1_B&quot;,&quot;HCD0571649_V1_A&quot;,&quot;HCD0574049_V1_A&quot;,&quot;HCD0574756_V1_A&quot;,&quot;HCD0576558_V1_A&quot;,&quot;HCD0577661_V1_A&quot;,&quot;HCD0580751_V1_A&quot;,&quot;HCD0581652_V1_A&quot;,&quot;HCD0583555_V1_A&quot;,&quot;HCD0584860_V1_A&quot;,&quot;HCD0590047_V1_A&quot;,&quot;HCD0605135_V1_A&quot;,&quot;HCD0605438_V1_A&quot;,&quot;HCD0614035_V1_A&quot;,&quot;HCD0614237_V1_A&quot;,&quot;HCD0616342_V1_A&quot;,&quot;HCD0619247_V1_A&quot;,&quot;HCD0621638_V1_A&quot;,&quot;HCD0626446_V1_A&quot;,&quot;HCD0627549_V1_A&quot;,&quot;HCD0627852_V1_A&quot;,&quot;HCD0628854_V1_A&quot;,&quot;HCD0630134_V1_A&quot;,&quot;HCD0641038_V1_A&quot;,&quot;HCD0641341_V1_A&quot;,&quot;HCD0643345_V1_A&quot;,&quot;HCD0644044_V1_A&quot;,&quot;HCD0644852_V1_A&quot;,&quot;HCD0657558_V1_A&quot;,&quot;HCD0662955_V1_A&quot;,&quot;HCD0664656_V1_A&quot;,&quot;HCD0667763_V1_A&quot;,&quot;HCD0671956_V1_A&quot;,&quot;HCD0676764_V1_A&quot;,&quot;HCD0678970_V1_A&quot;,&quot;HCD0679770_V1_B&quot;,&quot;HCD0682557_V1_A&quot;,&quot;HCD0684460_V1_A&quot;,&quot;HCD0686666_V1_A&quot;,&quot;HCD0692964_V1_A&quot;,&quot;HCD0694564_V1_A&quot;,&quot;HCD0697671_V1_A&quot;,&quot;HCD0697772_V1_A&quot;,&quot;HCD0703943_V1_A&quot;,&quot;HCD0714443_V1_A&quot;,&quot;HCD0715243_V1_A&quot;,&quot;HCD0717954_V1_A&quot;,&quot;HCD0719352_V1_A&quot;,&quot;HCD0721440_V1_A&quot;,&quot;HCD0743955_V1_A&quot;,&quot;HCD0750649_V1_A&quot;,&quot;HCD0752855_V1_A&quot;,&quot;HCD0755962_V1_A&quot;,&quot;HCD0758867_V1_A&quot;,&quot;HCD0762959_V1_A&quot;,&quot;HCD0764256_V1_A&quot;,&quot;HCD0772255_V1_A&quot;,&quot;HCD0772760_V1_A&quot;,&quot;HCD0777265_V1_A&quot;,&quot;HCD0784060_V1_A&quot;,&quot;HCD0786771_V1_A&quot;,&quot;HCD0788674_V1_A&quot;,&quot;HCD0789272_V1_A&quot;,&quot;HCD0795267_V1_A&quot;,&quot;HCD0796067_V1_A&quot;,&quot;HCD0797877_V1_A&quot;,&quot;HCD0798273_V1_A&quot;,&quot;HCD0801539_V1_A&quot;,&quot;HCD0802440_V1_A&quot;,&quot;HCD0804545_V1_A&quot;,&quot;HCD0806751_V1_A&quot;,&quot;HCD0808654_V1_A&quot;,&quot;HCD0810035_V1_A&quot;,&quot;HCD0812241_V1_A&quot;,&quot;HCD0812746_V1_A&quot;,&quot;HCD0822850_V1_A&quot;,&quot;HCD0842250_V1_A&quot;,&quot;HCD0845458_V1_A&quot;,&quot;HCD0848060_V1_A&quot;,&quot;HCD0848565_V1_A&quot;,&quot;HCD0848969_V1_A&quot;,&quot;HCD0852253_V1_A&quot;,&quot;HCD0855562_V1_A&quot;,&quot;HCD0857566_V1_A&quot;,&quot;HCD0858467_V1_A&quot;,&quot;HCD0861052_V1_A&quot;,&quot;HCD0869371_V1_A&quot;,&quot;HCD0889579_V1_A&quot;,&quot;HCD0891566_V1_A&quot;,&quot;HCD0894875_V1_B&quot;,&quot;HCD0899582_V1_A&quot;,&quot;HCD0900440_V1_A&quot;,&quot;HCD0902343_V1_A&quot;,&quot;HCD0904650_V1_A&quot;,&quot;HCD0906250_V1_A&quot;,&quot;HCD0909256_V1_A&quot;,&quot;HCD0912952_V1_A&quot;,&quot;HCD0914956_V1_A&quot;,&quot;HCD0919562_V1_A&quot;,&quot;HCD0921145_V1_A&quot;,&quot;HCD0921347_V1_A&quot;,&quot;HCD0925759_V1_A&quot;,&quot;HCD0927056_V1_A&quot;,&quot;HCD0929161_V1_A&quot;,&quot;HCD0933051_V1_A&quot;,&quot;HCD0938263_V1_A&quot;,&quot;HCD0943458_V1_A&quot;,&quot;HCD0945967_V1_A&quot;,&quot;HCD0946868_V1_A&quot;,&quot;HCD0947365_V1_A&quot;,&quot;HCD0949874_V1_A&quot;,&quot;HCD0951861_V1_A&quot;,&quot;HCD0956871_V1_A&quot;,&quot;HCD0957368_V1_A&quot;,&quot;HCD0960155_V1_A&quot;,&quot;HCD0960458_V1_A&quot;,&quot;HCD0968878_V1_A&quot;,&quot;HCD0969072_V1_A&quot;,&quot;HCD0977576_V1_A&quot;,&quot;HCD0979378_V1_A&quot;,&quot;HCD0980262_V1_A&quot;,&quot;HCD0985474_V1_A&quot;,&quot;HCD0988682_V1_A&quot;,&quot;HCD0995477_V1_A&quot;,&quot;HCD0997380_V1_A&quot;,&quot;HCD1001916_V1_A&quot;,&quot;HCD1003617_V1_A&quot;,&quot;HCD1007221_V1_A&quot;,&quot;HCD1007423_V1_A&quot;,&quot;HCD1010311_V1_A&quot;,&quot;HCD1010412_V1_A&quot;,&quot;HCD1012719_V1_A&quot;,&quot;HCD1013014_V1_A&quot;,&quot;HCD1014723_V1_A&quot;,&quot;HCD1016929_V1_A&quot;,&quot;HCD1017729_V1_A&quot;,&quot;HCD1017931_V1_A&quot;,&quot;HCD1021821_V1_A&quot;,&quot;HCD1022722_V1_B&quot;,&quot;HCD1027126_V1_A&quot;,&quot;HCD1029837_V1_B&quot;,&quot;HCD1036733_V1_A&quot;,&quot;HCD1036834_V1_A&quot;,&quot;HCD1039032_V1_A&quot;,&quot;HCD1042223_V1_A&quot;,&quot;HCD1047233_V1_A&quot;,&quot;HCD1057337_V1_A&quot;,&quot;HCD1071634_V1_A&quot;,&quot;HCD1071836_V1_A&quot;,&quot;HCD1093139_V1_A&quot;,&quot;HCD1103419_V1_A&quot;,&quot;HCD1106728_V1_A&quot;,&quot;HCD1108833_V1_A&quot;,&quot;HCD1111822_V1_A&quot;,&quot;HCD1113220_V1_A&quot;,&quot;HCD1119030_V1_A&quot;,&quot;HCD1119232_V1_A&quot;,&quot;HCD1120015_V1_A&quot;,&quot;HCD1123526_V1_A&quot;,&quot;HCD1128738_V1_A&quot;,&quot;HCD1129235_V1_A&quot;,&quot;HCD1131222_V1_A&quot;,&quot;HCD1139541_V1_A&quot;,&quot;HCD1155943_V1_A&quot;,&quot;HCD1156036_V1_A&quot;,&quot;HCD1159446_V1_A&quot;,&quot;HCD1162334_V1_A&quot;,&quot;HCD1163134_V1_A&quot;,&quot;HCD1168245_V1_A&quot;,&quot;HCD1175343_V1_A&quot;,&quot;HCD1176345_V1_A&quot;,&quot;HCD1181843_V1_A&quot;,&quot;HCD1184950_V1_B&quot;,&quot;HCD1187653_V1_A&quot;,&quot;HCD1196553_V1_A&quot;,&quot;HCD1197757_V1_A&quot;,&quot;HCD1202320_V1_A&quot;,&quot;HCD1203928_V1_A&quot;,&quot;HCD1205326_V1_A&quot;,&quot;HCD1209536_V1_A&quot;,&quot;HCD1212929_V1_A&quot;,&quot;HCD1215632_V1_A&quot;,&quot;HCD1221627_V1_A&quot;,&quot;HCD1223833_V1_A&quot;,&quot;HCD1223934_V1_A&quot;,&quot;HCD1227134_V1_A&quot;,&quot;HCD1227740_V1_A&quot;,&quot;HCD1231832_V1_A&quot;,&quot;HCD1237844_V1_A&quot;,&quot;HCD1239343_V1_A&quot;,&quot;HCD1240530_V1_A&quot;,&quot;HCD1246340_V1_A&quot;,&quot;HCD1262136_V1_A&quot;,&quot;HCD1267348_V1_A&quot;,&quot;HCD1268350_V1_A&quot;,&quot;HCD1276753_V1_A&quot;,&quot;HCD1277149_V1_A&quot;,&quot;HCD1282142_V1_A&quot;,&quot;HCD1285956_V1_A&quot;,&quot;HCD1289358_V1_A&quot;,&quot;HCD1293349_V1_A&quot;,&quot;HCD1294755_V1_A&quot;,&quot;HCD1305936_V1_A&quot;,&quot;HCD1306130_V1_A&quot;,&quot;HCD1314331_V1_A&quot;,&quot;HCD1315737_V1_A&quot;,&quot;HCD1322835_V1_A&quot;,&quot;HCD1327744_V1_A&quot;,&quot;HCD1328241_V1_A&quot;,&quot;HCD1328948_V1_A&quot;,&quot;HCD1330228_V1_A&quot;,&quot;HCD1342033_V1_A&quot;,&quot;HCD1346849_V1_A&quot;,&quot;HCD1350638_V1_A&quot;,&quot;HCD1358149_V1_A&quot;,&quot;HCD1361441_V1_A&quot;,&quot;HCD1363546_V1_A&quot;,&quot;HCD1371848_V1_A&quot;,&quot;HCD1375755_V1_A&quot;,&quot;HCD1376252_V1_A&quot;,&quot;HCD1380849_V1_A&quot;,&quot;HCD1387055_V1_A&quot;,&quot;HCD1389665_V1_A&quot;,&quot;HCD1395458_V1_A&quot;,&quot;HCD1396662_V1_A&quot;,&quot;HCD1400728_V1_A&quot;,&quot;HCD1404231_V1_A&quot;,&quot;HCD1407439_V1_B&quot;,&quot;HCD1409342_V1_A&quot;,&quot;HCD1410933_V1_A&quot;,&quot;HCD1411531_V1_A&quot;,&quot;HCD1411632_V1_A&quot;,&quot;HCD1411935_V1_A&quot;,&quot;HCD1433743_V1_A&quot;,&quot;HCD1435646_V1_A&quot;,&quot;HCD1444142_V1_B&quot;,&quot;HCD1445245_V1_A&quot;,&quot;HCD1456048_V1_A&quot;,&quot;HCD1458153_V1_A&quot;,&quot;HCD1462548_V1_A&quot;,&quot;HCD1464451_V1_A&quot;,&quot;HCD1464653_V1_A&quot;,&quot;HCD1477056_V1_A&quot;,&quot;HCD1479262_V1_A&quot;,&quot;HCD1479969_V1_A&quot;,&quot;HCD1481855_V1_A&quot;,&quot;HCD1490048_V1_A&quot;,&quot;HCD1491252_V1_A&quot;,&quot;HCD1491454_V1_A&quot;,&quot;HCD1493761_V1_A&quot;,&quot;HCD1493862_V1_A&quot;,&quot;HCD1496767_V1_A&quot;,&quot;HCD1500025_V1_A&quot;,&quot;HCD1500631_V1_A&quot;,&quot;HCD1501936_V1_A&quot;,&quot;HCD1502635_V1_A&quot;,&quot;HCD1504437_V1_A&quot;,&quot;HCD1510432_V1_A&quot;,&quot;HCD1514945_V1_A&quot;,&quot;HCD1515644_V1_A&quot;,&quot;HCD1518448_V1_A&quot;,&quot;HCD1522338_V1_A&quot;,&quot;HCD1527045_V1_A&quot;,&quot;HCD1527651_V1_A&quot;,&quot;HCD1534244_V1_A&quot;,&quot;HCD1539759_V1_A&quot;,&quot;HCD1543851_V1_A&quot;,&quot;HCD1546857_V1_A&quot;,&quot;HCD1553551_V1_A&quot;,&quot;HCD1557054_V1_A&quot;,&quot;HCD1560851_V1_A&quot;,&quot;HCD1565356_V1_A&quot;,&quot;HCD1568867_V1_A&quot;,&quot;HCD1571351_V1_A&quot;,&quot;HCD1573456_V1_A&quot;,&quot;HCD1575359_V1_A&quot;,&quot;HCD1578365_V1_A&quot;,&quot;HCD1590860_V1_A&quot;,&quot;HCD1594767_V1_A&quot;,&quot;HCD1600332_V1_A&quot;,&quot;HCD1609148_V1_A&quot;,&quot;HCD1610436_V1_A&quot;,&quot;HCD1612238_V1_A&quot;,&quot;HCD1612844_V1_A&quot;,&quot;HCD1617450_V1_A&quot;,&quot;HCD1622342_V1_A&quot;,&quot;HCD1623142_V1_A&quot;,&quot;HCD1623445_V1_A&quot;,&quot;HCD1626653_V1_A&quot;,&quot;HCD1630139_V1_A&quot;,&quot;HCD1631646_V1_A&quot;,&quot;HCD1633751_V1_A&quot;,&quot;HCD1643855_V1_A&quot;,&quot;HCD1645354_V1_A&quot;,&quot;HCD1646154_V1_A&quot;,&quot;HCD1647863_V1_X&quot;,&quot;HCD1654355_V1_A&quot;,&quot;HCD1655458_V1_A&quot;,&quot;HCD1656359_V1_A&quot;,&quot;HCD1658565_V1_A&quot;,&quot;HCD1658969_V1_A&quot;,&quot;HCD1663053_V1_A&quot;,&quot;HCD1664358_V1_A&quot;,&quot;HCD1664762_V1_A&quot;,&quot;HCD1668164_V1_A&quot;,&quot;HCD1681257_V1_A&quot;,&quot;HCD1685164_V1_A&quot;,&quot;HCD1686267_V1_A&quot;,&quot;HCD1694569_V1_A&quot;,&quot;HCD1701338_V1_A&quot;,&quot;HCD1703140_V1_A&quot;,&quot;HCD1707047_V1_A&quot;,&quot;HCD1711240_V1_A&quot;,&quot;HCD1712444_V1_A&quot;,&quot;HCD1714751_V1_A&quot;,&quot;HCD1723651_V1_A&quot;,&quot;HCD1729562_V1_A&quot;,&quot;HCD1734858_V1_A&quot;,&quot;HCD1742958_V1_A&quot;,&quot;HCD1743354_V1_A&quot;,&quot;HCD1748061_V1_A&quot;,&quot;HCD1749467_V1_A&quot;,&quot;HCD1749770_V1_A&quot;,&quot;HCD1753559_V1_A&quot;,&quot;HCD1756060_V1_A&quot;,&quot;HCD1756262_V1_A&quot;,&quot;HCD1757062_V1_A&quot;,&quot;HCD1759571_V1_A&quot;,&quot;HCD1761356_V1_A&quot;,&quot;HCD1762661_V1_A&quot;,&quot;HCD1765970_V1_A&quot;,&quot;HCD1769978_V1_A&quot;,&quot;HCD1778070_V1_A&quot;,&quot;HCD1778474_V1_A&quot;,&quot;HCD1783366_V1_A&quot;,&quot;HCD1784065_V1_A&quot;,&quot;HCD1785572_V1_A&quot;,&quot;HCD1787677_V1_A&quot;,&quot;HCD1790262_V1_A&quot;,&quot;HCD1791163_V1_A&quot;,&quot;HCD1791567_V1_A&quot;,&quot;HCD1794977_V1_A&quot;,&quot;HCD1796577_V1_A&quot;,&quot;HCD1798985_V1_A&quot;,&quot;HCD1801140_V1_A&quot;,&quot;HCD1807051_V1_A&quot;,&quot;HCD1812044_V1_A&quot;,&quot;HCD1826661_V1_A&quot;,&quot;HCD1832858_V1_A&quot;,&quot;HCD1838567_V1_A&quot;,&quot;HCD1840251_V1_B&quot;,&quot;HCD1842558_V1_A&quot;,&quot;HCD1845160_V1_A&quot;,&quot;HCD1847972_V1_A&quot;,&quot;HCD1849673_V1_A&quot;,&quot;HCD1852056_V1_A&quot;,&quot;HCD1854767_V1_A&quot;,&quot;HCD1855365_V1_A&quot;,&quot;HCD1856468_V1_A&quot;,&quot;HCD1857066_V1_A&quot;,&quot;HCD1859474_V1_A&quot;,&quot;HCD1863465_V1_A&quot;,&quot;HCD1867372_V1_A&quot;,&quot;HCD1870159_V1_A&quot;,&quot;HCD1871969_V1_A&quot;,&quot;HCD1872971_V1_A&quot;,&quot;HCD1876878_V1_A&quot;,&quot;HCD1880162_V1_A&quot;,&quot;HCD1880465_V1_A&quot;,&quot;HCD1881164_V1_A&quot;,&quot;HCD1886275_V1_A&quot;,&quot;HCD1886477_V1_A&quot;,&quot;HCD1886881_V1_A&quot;,&quot;HCD1891268_V1_A&quot;,&quot;HCD1892371_V1_A&quot;,&quot;HCD1900142_V1_A&quot;,&quot;HCD1900445_V1_A&quot;,&quot;HCD1901346_V1_A&quot;,&quot;HCD1903350_V1_A&quot;,&quot;HCD1905152_V1_A&quot;,&quot;HCD1906457_V1_A&quot;,&quot;HCD1914557_V1_A&quot;,&quot;HCD1920754_V1_A&quot;,&quot;HCD1925461_V1_A&quot;,&quot;HCD1928871_V1_A&quot;,&quot;HCD1930353_V1_A&quot;,&quot;HCD1931456_V1_A&quot;,&quot;HCD1933864_V1_A&quot;,&quot;HCD1934159_V1_A&quot;,&quot;HCD1939068_V1_A&quot;,&quot;HCD1943867_V1_A&quot;,&quot;HCD1945164_V1_A&quot;,&quot;HCD1946469_V1_A&quot;,&quot;HCD1946873_V1_A&quot;,&quot;HCD1948170_V1_A&quot;,&quot;HCD1949879_V1_A&quot;,&quot;HCD1950056_V1_A&quot;,&quot;HCD1957171_V1_A&quot;,&quot;HCD1959680_V1_A&quot;,&quot;HCD1961263_V1_A&quot;,&quot;HCD1964269_V1_A&quot;,&quot;HCD1969986_V1_A&quot;,&quot;HCD1976377_V1_A&quot;,&quot;HCD1978987_V1_A&quot;,&quot;HCD1983879_V1_A&quot;,&quot;HCD1986784_V1_A&quot;,&quot;HCD1988687_V1_A&quot;,&quot;HCD1992375_V1_A&quot;,&quot;HCD1994884_V1_A&quot;,&quot;HCD1998791_V1_A&quot;,&quot;HCD2000111_V1_A&quot;,&quot;HCD2000212_V1_A&quot;,&quot;HCD2001517_V1_A&quot;,&quot;HCD2001719_V1_A&quot;,&quot;HCD2008329_V1_A&quot;,&quot;HCD2028638_V1_A&quot;,&quot;HCD2030726_V1_A&quot;,&quot;HCD2035635_V1_A&quot;,&quot;HCD2035837_V1_A&quot;,&quot;HCD2039946_V1_A&quot;,&quot;HCD2045638_V1_A&quot;,&quot;HCD2046842_V1_A&quot;,&quot;HCD2046943_V1_A&quot;,&quot;HCD2051532_V1_A&quot;,&quot;HCD2055237_V1_A&quot;,&quot;HCD2059245_V1_A&quot;,&quot;HCD2062537_V1_A&quot;,&quot;HCD2063034_V1_A&quot;,&quot;HCD2064440_V1_A&quot;,&quot;HCD2068145_V1_A&quot;,&quot;HCD2073340_V1_A&quot;,&quot;HCD2082442_V1_A&quot;,&quot;HCD2082947_V1_A&quot;,&quot;HCD2093245_V1_A&quot;,&quot;HCD2095148_V1_A&quot;,&quot;HCD2099257_V1_A&quot;,&quot;HCD2105125_V1_A&quot;,&quot;HCD2109234_V1_A&quot;,&quot;HCD2109638_V1_A&quot;,&quot;HCD2112829_V1_A&quot;,&quot;HCD2115835_V1_A&quot;,&quot;HCD2118538_V1_A&quot;,&quot;HCD2122125_V1_A&quot;,&quot;HCD2133433_V1_A&quot;,&quot;HCD2134031_V1_A&quot;,&quot;HCD2136540_V1_A&quot;,&quot;HCD2140026_V1_A&quot;,&quot;HCD2140127_V1_A&quot;,&quot;HCD2146139_V1_A&quot;,&quot;HCD2155140_V1_A&quot;,&quot;HCD2155645_V1_A&quot;,&quot;HCD2155746_V1_A&quot;,&quot;HCD2155847_V1_A&quot;,&quot;HCD2156142_V1_A&quot;,&quot;HCD2156344_V1_A&quot;,&quot;HCD2163644_V1_A&quot;,&quot;HCD2164242_V1_A&quot;,&quot;HCD2174649_V1_A&quot;,&quot;HCD2181848_V1_A&quot;,&quot;HCD2203933_V1_A&quot;,&quot;HCD2207840_V1_A&quot;,&quot;HCD2208135_V1_A&quot;,&quot;HCD2211932_V1_A&quot;,&quot;HCD2216437_V1_A&quot;,&quot;HCD2217742_V1_A&quot;,&quot;HCD2220428_V1_A&quot;,&quot;HCD2223131_V1_A&quot;,&quot;HCD2229547_V1_A&quot;,&quot;HCD2236140_V1_A&quot;,&quot;HCD2239247_V1_A&quot;,&quot;HCD2240030_V1_A&quot;,&quot;HCD2241234_V1_A&quot;,&quot;HCD2254243_V1_A&quot;,&quot;HCD2256651_V1_A&quot;,&quot;HCD2264549_V1_A&quot;,&quot;HCD2277558_V1_A&quot;,&quot;HCD2286155_V1_A&quot;,&quot;HCD2295762_V1_A&quot;,&quot;HCD2296461_V1_A&quot;,&quot;HCD2300426_V1_A&quot;,&quot;HCD2301428_V1_A&quot;,&quot;HCD2302430_V1_A&quot;,&quot;HCD2304737_V1_A&quot;,&quot;HCD2310227_V1_A&quot;,&quot;HCD2310328_V1_A&quot;,&quot;HCD2311633_V1_A&quot;,&quot;HCD2322335_V1_A&quot;,&quot;HCD2332136_V1_A&quot;,&quot;HCD2333340_V1_A&quot;,&quot;HCD2335344_V1_A&quot;,&quot;HCD2336346_V1_A&quot;,&quot;HCD2339049_V1_A&quot;,&quot;HCD2342745_V1_A&quot;,&quot;HCD2344244_V1_B&quot;,&quot;HCD2353245_V1_A&quot;,&quot;HCD2355249_V1_A&quot;,&quot;HCD2363450_V1_A&quot;,&quot;HCD2365454_V1_A&quot;,&quot;HCD2370952_V1_A&quot;,&quot;HCD2378463_V1_A&quot;,&quot;HCD2380753_V1_A&quot;,&quot;HCD2383456_V1_A&quot;,&quot;HCD2383658_V1_A&quot;,&quot;HCD2400026_V1_A&quot;,&quot;HCD2400632_V1_A&quot;,&quot;HCD2415140_V1_A&quot;,&quot;HCD2422440_V1_A&quot;,&quot;HCD2427753_V1_A&quot;,&quot;HCD2428755_V1_A&quot;,&quot;HCD2449763_V1_A&quot;,&quot;HCD2461450_V1_B&quot;,&quot;HCD2462654_V1_A&quot;,&quot;HCD2464759_V1_A&quot;,&quot;HCD2473356_V1_A&quot;,&quot;HCD2478669_V1_A&quot;,&quot;HCD2483561_V1_A&quot;,&quot;HCD2483662_V1_A&quot;,&quot;HCD2485666_V1_A&quot;,&quot;HCD2491257_V1_A&quot;,&quot;HCD2496570_V1_A&quot;,&quot;HCD2499374_V1_A&quot;,&quot;HCD2499576_V1_A&quot;,&quot;HCD2500030_V1_A&quot;,&quot;HCD2500939_V1_A&quot;,&quot;HCD2504038_V1_A&quot;,&quot;HCD2506951_V1_A&quot;,&quot;HCD2523345_V1_A&quot;,&quot;HCD2524751_V1_A&quot;,&quot;HCD2530140_V1_A&quot;,&quot;HCD2537457_V1_A&quot;,&quot;HCD2540042_V1_A&quot;,&quot;HCD2540648_V1_A&quot;,&quot;HCD2543250_V1_A&quot;,&quot;HCD2544151_V1_A&quot;,&quot;HCD2544757_V1_A&quot;,&quot;HCD2545759_V1_A&quot;,&quot;HCD2554255_V1_A&quot;,&quot;HCD2556158_V1_A&quot;,&quot;HCD2556764_V1_A&quot;,&quot;HCD2565664_V1_A&quot;,&quot;HCD2568670_V1_A&quot;,&quot;HCD2574564_V1_A&quot;,&quot;HCD2581763_V1_A&quot;,&quot;HCD2586268_V1_A&quot;,&quot;HCD2589981_V1_A&quot;,&quot;HCD2594671_V1_A&quot;,&quot;HCD2594772_V1_A&quot;,&quot;HCD2600034_V1_A&quot;,&quot;HCD2606652_V1_A&quot;,&quot;HCD2607452_V1_B&quot;,&quot;HCD2612142_V1_A&quot;,&quot;HCD2617657_V1_A&quot;,&quot;HCD2618053_V1_A&quot;,&quot;HCD2625454_V1_A&quot;,&quot;HCD2626456_V1_A&quot;,&quot;HCD2631954_V1_A&quot;,&quot;HCD2633554_V1_A&quot;,&quot;HCD2635659_V1_A&quot;,&quot;HCD2643052_V1_A&quot;,&quot;HCD2643456_V1_A&quot;,&quot;HCD2655766_V1_A&quot;,&quot;HCD2662763_V1_A&quot;,&quot;HCD2664161_V1_A&quot;,&quot;HCD2669575_V1_A&quot;,&quot;HCD2679073_V1_A&quot;,&quot;HCD2679982_V1_A&quot;,&quot;HCD2685169_V1_A&quot;,&quot;HCD2692671_V1_A&quot;,&quot;HCD2696780_V1_A&quot;,&quot;HCD2704551_V1_A&quot;,&quot;HCD2711649_V1_A&quot;,&quot;HCD2714655_V1_A&quot;,&quot;HCD2715152_V1_A&quot;,&quot;HCD2721147_V1_A&quot;,&quot;HCD2724456_V1_A&quot;,&quot;HCD2731049_V1_A&quot;,&quot;HCD2737869_V1_A&quot;,&quot;HCD2740454_V1_A&quot;,&quot;HCD2741961_V1_A&quot;,&quot;HCD2743157_V1_A&quot;,&quot;HCD2748268_V1_A&quot;,&quot;HCD2748672_V1_A&quot;,&quot;HCD2751560_V1_A&quot;,&quot;HCD2751964_V1_A&quot;,&quot;HCD2754061_V1_A&quot;,&quot;HCD2757370_V1_A&quot;,&quot;HCD2761967_V1_A&quot;,&quot;HCD2762565_V1_A&quot;,&quot;HCD2764771_V1_B&quot;,&quot;HCD2768981_V1_A&quot;,&quot;HCD2769983_V1_A&quot;,&quot;HCD2785678_V1_A&quot;,&quot;HCD2786074_V1_A&quot;,&quot;HCD2795479_V1_A&quot;,&quot;HCD2797584_V1_A&quot;,&quot;HCD2801852_V1_A&quot;,&quot;HCD2804151_V1_A&quot;,&quot;HCD2807460_V1_A&quot;,&quot;HCD2810954_V1_A&quot;,&quot;HCD2811552_V1_A&quot;,&quot;HCD2812352_V1_A&quot;,&quot;HCD2820351_V1_B&quot;,&quot;HCD2828569_V1_A&quot;,&quot;HCD2832863_V1_A&quot;,&quot;HCD2833360_V1_A&quot;,&quot;HCD2833461_V1_A&quot;,&quot;HCD2841965_V1_A&quot;,&quot;HCD2847977_V1_A&quot;,&quot;HCD2855875_V1_A&quot;,&quot;HCD2856170_V1_A&quot;,&quot;HCD2860262_V1_A&quot;,&quot;HCD2863975_V1_A&quot;,&quot;HCD2864270_V1_A&quot;,&quot;HCD2878382_V1_A&quot;,&quot;HCD2879788_V1_A&quot;,&quot;HCD2884175_V1_A&quot;,&quot;HCD2884377_V1_A&quot;,&quot;HCD2888789_V1_A&quot;,&quot;HCD2897184_V1_A&quot;,&quot;HCD2897891_V1_A&quot;,&quot;HCD2901654_V1_A&quot;,&quot;HCD2903759_V1_A&quot;,&quot;HCD2904862_V1_A&quot;,&quot;HCD2905460_V1_A&quot;,&quot;HCD2913459_V1_A&quot;,&quot;HCD2926973_V1_A&quot;,&quot;HCD2930055_V1_A&quot;,&quot;HCD2932665_V1_A&quot;,&quot;HCD2936875_V1_A&quot;,&quot;HCD2938172_V1_A&quot;,&quot;HCD2939275_V1_A&quot;,&quot;HCD2945876_V1_A&quot;,&quot;HCD2949682_V1_X&quot;,&quot;HCD2955374_V1_A&quot;,&quot;HCD2957075_V1_A&quot;,&quot;HCD2957277_V1_A&quot;,&quot;HCD2968080_V1_A&quot;,&quot;HCD2976079_V1_A&quot;,&quot;HCD2976382_V1_A&quot;,&quot;HCD2978386_V1_A&quot;,&quot;HCD2980575_V1_A&quot;,&quot;HCD2982276_V1_A&quot;,&quot;HCD2982579_V1_A&quot;,&quot;HCD2985181_V1_A&quot;,&quot;HCD2987185_V1_A&quot;,&quot;HCD2990073_V1_A&quot;,&quot;HCD2993079_V1_A&quot;,&quot;HCD2995083_V1_A&quot;,&quot;HCD2996590_V1_A&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Participants with CARIT task behavior, but no dowloaded task MRI (on this task).<\/caption>","data":[["HCD1106728","HCD2769983"],[14.07,12.15],["MALE","MALE"],["Harvard","University of Minnesota"],["WHITE","WHITE"],["HIGH","HIGH"],["HIGH","MIDDLE"],[200000,140000],["HCD1106728_V1_A","HCD2769983_V1_A"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>age<\/th>\n      <th>gender<\/th>\n      <th>site<\/th>\n      <th>RACE<\/th>\n      <th>SES_PLVL<\/th>\n      <th>SES_RLVL<\/th>\n      <th>income<\/th>\n      <th>sessionID<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":[1,7]}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6e50b0c84bc45e3cf280" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6e50b0c84bc45e3cf280">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"1\" data-scale=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;HCD0001305_V1_A&quot;,&quot;HCD0007014_V1_A&quot;,&quot;HCD0008117_V1_A&quot;,&quot;HCD0012815_V1_A&quot;,&quot;HCD0015417_V1_A&quot;,&quot;HCD0015417_V2_A&quot;,&quot;HCD0015417_V3_A&quot;,&quot;HCD0021614_V1_A&quot;,&quot;HCD0021614_V2_A&quot;,&quot;HCD0021614_V3_A&quot;,&quot;HCD0022919_V1_B&quot;,&quot;HCD0022919_V2_A&quot;,&quot;HCD0022919_V3_A&quot;,&quot;HCD0024014_V1_A&quot;,&quot;HCD0024418_V1_A&quot;,&quot;HCD0026119_V1_A&quot;,&quot;HCD0029630_V1_A&quot;,&quot;HCD0030413_V1_A&quot;,&quot;HCD0031617_V1_A&quot;,&quot;HCD0033419_V1_B&quot;,&quot;HCD0036324_V1_A&quot;,&quot;HCD0039128_V1_A&quot;,&quot;HCD0040113_V1_A&quot;,&quot;HCD0041822_V1_A&quot;,&quot;HCD0042420_V1_A&quot;,&quot;HCD0045527_V1_A&quot;,&quot;HCD0048028_V1_A&quot;,&quot;HCD0050621_V1_A&quot;,&quot;HCD0051825_V1_A&quot;,&quot;HCD0055328_V1_B&quot;,&quot;HCD0056229_V1_B&quot;,&quot;HCD0059235_V1_A&quot;,&quot;HCD0067032_V1_A&quot;,&quot;HCD0069238_V1_A&quot;,&quot;HCD0069238_V2_A&quot;,&quot;HCD0071831_V1_A&quot;,&quot;HCD0073431_V1_B&quot;,&quot;HCD0075435_V1_A&quot;,&quot;HCD0082937_V1_A&quot;,&quot;HCD0086440_V1_A&quot;,&quot;HCD0092334_V1_A&quot;,&quot;HCD0100307_V1_A&quot;,&quot;HCD0101006_V1_A&quot;,&quot;HCD0102210_V1_A&quot;,&quot;HCD0102412_V1_A&quot;,&quot;HCD0105317_V1_A&quot;,&quot;HCD0110007_V1_A&quot;,&quot;HCD0110310_V1_A&quot;,&quot;HCD0110310_V2_A&quot;,&quot;HCD0110310_V3_A&quot;,&quot;HCD0110411_V1_A&quot;,&quot;HCD0111716_V1_A&quot;,&quot;HCD0113316_V1_A&quot;,&quot;HCD0113316_V2_B&quot;,&quot;HCD0114419_V1_A&quot;,&quot;HCD0116019_V1_A&quot;,&quot;HCD0117324_V1_A&quot;,&quot;HCD0118528_V1_A&quot;,&quot;HCD0118528_V2_A&quot;,&quot;HCD0118528_V3_A&quot;,&quot;HCD0119126_V1_A&quot;,&quot;HCD0119429_V1_A&quot;,&quot;HCD0121719_V1_A&quot;,&quot;HCD0121719_V2_A&quot;,&quot;HCD0121719_V3_A&quot;,&quot;HCD0122317_V1_A&quot;,&quot;HCD0123925_V1_A&quot;,&quot;HCD0123925_V2_A&quot;,&quot;HCD0123925_V3_A&quot;,&quot;HCD0124725_V1_A&quot;,&quot;HCD0125424_V1_A&quot;,&quot;HCD0128935_V1_A&quot;,&quot;HCD0129937_V1_A&quot;,&quot;HCD0129937_V3_A&quot;,&quot;HCD0130821_V1_A&quot;,&quot;HCD0130821_V2_A&quot;,&quot;HCD0130821_V3_A&quot;,&quot;HCD0131116_V1_A&quot;,&quot;HCD0134526_V1_A&quot;,&quot;HCD0134526_V2_A&quot;,&quot;HCD0135831_V1_A&quot;,&quot;HCD0137532_V1_A&quot;,&quot;HCD0143426_V1_A&quot;,&quot;HCD0144125_V1_A&quot;,&quot;HCD0145430_V1_A&quot;,&quot;HCD0145733_V1_A&quot;,&quot;HCD0146331_V1_A&quot;,&quot;HCD0146331_V2_A&quot;,&quot;HCD0146331_V3_A&quot;,&quot;HCD0146937_V1_A&quot;,&quot;HCD0146937_V2_A&quot;,&quot;HCD0146937_V3_A&quot;,&quot;HCD0147333_V1_A&quot;,&quot;HCD0147939_V1_A&quot;,&quot;HCD0148537_V1_A&quot;,&quot;HCD0148537_V2_A&quot;,&quot;HCD0148537_V3_A&quot;,&quot;HCD0152932_V1_A&quot;,&quot;HCD0154431_V1_A&quot;,&quot;HCD0155837_V1_X&quot;,&quot;HCD0161327_V1_A&quot;,&quot;HCD0161731_V1_A&quot;,&quot;HCD0165234_V1_A&quot;,&quot;HCD0165941_V1_A&quot;,&quot;HCD0174235_V1_A&quot;,&quot;HCD0174639_V1_A&quot;,&quot;HCD0177342_V1_A&quot;,&quot;HCD0178243_V1_A&quot;,&quot;HCD0178748_V1_A&quot;,&quot;HCD0181838_V1_A&quot;,&quot;HCD0181838_V2_A&quot;,&quot;HCD0182941_V1_A&quot;,&quot;HCD0183438_V1_A&quot;,&quot;HCD0183438_V2_A&quot;,&quot;HCD0183438_V3_A&quot;,&quot;HCD0183539_V1_A&quot;,&quot;HCD0184743_V1_A&quot;,&quot;HCD0184743_V2_A&quot;,&quot;HCD0184743_V3_A&quot;,&quot;HCD0185442_V1_A&quot;,&quot;HCD0185644_V1_A&quot;,&quot;HCD0187547_V1_A&quot;,&quot;HCD0187850_V1_B&quot;,&quot;HCD0188549_V1_A&quot;,&quot;HCD0188549_V2_A&quot;,&quot;HCD0188549_V3_A&quot;,&quot;HCD0190435_V1_X&quot;,&quot;HCD0193845_V1_A&quot;,&quot;HCD0197045_V1_A&quot;,&quot;HCD0197348_V1_A&quot;,&quot;HCD0200210_V1_A&quot;,&quot;HCD0201515_V1_A&quot;,&quot;HCD0203620_V1_A&quot;,&quot;HCD0207931_V1_A&quot;,&quot;HCD0208731_V1_A&quot;,&quot;HCD0211720_V1_A&quot;,&quot;HCD0214423_V1_A&quot;,&quot;HCD0214423_V2_A&quot;,&quot;HCD0214423_V3_A&quot;,&quot;HCD0215829_V1_A&quot;,&quot;HCD0222018_V1_A&quot;,&quot;HCD0224123_V1_A&quot;,&quot;HCD0224123_V3_A&quot;,&quot;HCD0225529_V1_A&quot;,&quot;HCD0225630_V1_A&quot;,&quot;HCD0232223_V1_A&quot;,&quot;HCD0232223_V2_A&quot;,&quot;HCD0232223_V3_A&quot;,&quot;HCD0236130_V1_A&quot;,&quot;HCD0236635_V1_A&quot;,&quot;HCD0244230_V1_A&quot;,&quot;HCD0245030_V1_A&quot;,&quot;HCD0245636_V1_A&quot;,&quot;HCD0247438_V1_A&quot;,&quot;HCD0248440_V1_A&quot;,&quot;HCD0259243_V1_A&quot;,&quot;HCD0259546_V1_A&quot;,&quot;HCD0259546_V2_A&quot;,&quot;HCD0262838_V1_B&quot;,&quot;HCD0263032_V1_A&quot;,&quot;HCD0265844_V1_A&quot;,&quot;HCD0265844_V2_A&quot;,&quot;HCD0266442_V1_A&quot;,&quot;HCD0267242_V1_A&quot;,&quot;HCD0267747_V1_A&quot;,&quot;HCD0267848_V1_A&quot;,&quot;HCD0271031_V1_A&quot;,&quot;HCD0273439_V1_A&quot;,&quot;HCD0276243_V1_B&quot;,&quot;HCD0276748_V1_A&quot;,&quot;HCD0277447_V1_A&quot;,&quot;HCD0278853_V1_A&quot;,&quot;HCD0286650_V1_A&quot;,&quot;HCD0286650_V2_B&quot;,&quot;HCD0286650_V3_A&quot;,&quot;HCD0288250_V1_A&quot;,&quot;HCD0288250_V2_A&quot;,&quot;HCD0294245_V1_A&quot;,&quot;HCD0295146_V1_B&quot;,&quot;HCD0295954_V1_A&quot;,&quot;HCD0298758_V1_A&quot;,&quot;HCD0300820_V1_A&quot;,&quot;HCD0304828_V1_A&quot;,&quot;HCD0304828_V3_A&quot;,&quot;HCD0305325_V1_A&quot;,&quot;HCD0305628_V1_A&quot;,&quot;HCD0305628_V2_A&quot;,&quot;HCD0306630_V1_A&quot;,&quot;HCD0309636_V1_A&quot;,&quot;HCD0311118_V1_A&quot;,&quot;HCD0311320_V1_A&quot;,&quot;HCD0311421_V1_B&quot;,&quot;HCD0318435_V1_A&quot;,&quot;HCD0320624_V1_A&quot;,&quot;HCD0323125_V1_A&quot;,&quot;HCD0328842_V1_A&quot;,&quot;HCD0329137_V1_A&quot;,&quot;HCD0330021_V1_A&quot;,&quot;HCD0330021_V3_A&quot;,&quot;HCD0330122_V1_A&quot;,&quot;HCD0336841_V1_A&quot;,&quot;HCD0336841_V2_A&quot;,&quot;HCD0336841_V3_A&quot;,&quot;HCD0338441_V1_A&quot;,&quot;HCD0338744_V1_A&quot;,&quot;HCD0338744_V2_A&quot;,&quot;HCD0340125_V1_A&quot;,&quot;HCD0343333_V1_A&quot;,&quot;HCD0353538_V1_A&quot;,&quot;HCD0354843_V1_A&quot;,&quot;HCD0360838_V1_A&quot;,&quot;HCD0362640_V1_A&quot;,&quot;HCD0363743_V1_A&quot;,&quot;HCD0363743_V2_A&quot;,&quot;HCD0363743_V3_A&quot;,&quot;HCD0364745_V1_A&quot;,&quot;HCD0367448_V1_A&quot;,&quot;HCD0367448_V2_A&quot;,&quot;HCD0367448_V3_A&quot;,&quot;HCD0370639_V1_A&quot;,&quot;HCD0372542_V1_A&quot;,&quot;HCD0378150_V1_A&quot;,&quot;HCD0382343_V1_A&quot;,&quot;HCD0382343_V2_A&quot;,&quot;HCD0382848_V1_A&quot;,&quot;HCD0383143_V1_A&quot;,&quot;HCD0384650_V1_A&quot;,&quot;HCD0392144_V1_A&quot;,&quot;HCD0392144_V2_A&quot;,&quot;HCD0392144_V3_A&quot;,&quot;HCD0392649_V1_A&quot;,&quot;HCD0393550_V1_A&quot;,&quot;HCD0394350_V1_A&quot;,&quot;HCD0394754_V1_A&quot;,&quot;HCD0394754_V2_A&quot;,&quot;HCD0394754_V3_A&quot;,&quot;HCD0395251_V1_A&quot;,&quot;HCD0401725_V1_A&quot;,&quot;HCD0403224_V1_A&quot;,&quot;HCD0403325_V1_A&quot;,&quot;HCD0406230_V1_A&quot;,&quot;HCD0407636_V1_A&quot;,&quot;HCD0410322_V1_A&quot;,&quot;HCD0413732_V1_A&quot;,&quot;HCD0415433_V1_B&quot;,&quot;HCD0418338_V1_A&quot;,&quot;HCD0425335_V1_A&quot;,&quot;HCD0429343_V1_A&quot;,&quot;HCD0430530_V1_A&quot;,&quot;HCD0442638_V1_A&quot;,&quot;HCD0443741_V1_A&quot;,&quot;HCD0452439_V1_A&quot;,&quot;HCD0454443_V1_B&quot;,&quot;HCD0457146_V1_A&quot;,&quot;HCD0461844_V1_A&quot;,&quot;HCD0461945_V1_A&quot;,&quot;HCD0462341_V1_A&quot;,&quot;HCD0462341_V2_A&quot;,&quot;HCD0465246_V1_B&quot;,&quot;HCD0465347_V1_A&quot;,&quot;HCD0469658_V1_A&quot;,&quot;HCD0471746_V1_A&quot;,&quot;HCD0474045_V1_A&quot;,&quot;HCD0476352_V1_A&quot;,&quot;HCD0478356_V1_A&quot;,&quot;HCD0481749_V1_A&quot;,&quot;HCD0482448_V1_A&quot;,&quot;HCD0484250_V1_A&quot;,&quot;HCD0484452_V1_A&quot;,&quot;HCD0486254_V1_A&quot;,&quot;HCD0488965_V1_A&quot;,&quot;HCD0491348_V1_A&quot;,&quot;HCD0494354_V1_A&quot;,&quot;HCD0498261_V1_A&quot;,&quot;HCD0498968_V1_A&quot;,&quot;HCD0498968_V2_A&quot;,&quot;HCD0498968_V3_A&quot;,&quot;HCD0501830_V1_A&quot;,&quot;HCD0504735_V1_A&quot;,&quot;HCD0505838_V1_A&quot;,&quot;HCD0507034_V1_A&quot;,&quot;HCD0508440_V1_A&quot;,&quot;HCD0514738_V1_A&quot;,&quot;HCD0515538_V1_A&quot;,&quot;HCD0517845_V1_A&quot;,&quot;HCD0519849_V1_A&quot;,&quot;HCD0520329_V1_A&quot;,&quot;HCD0522434_V1_A&quot;,&quot;HCD0524236_V1_A&quot;,&quot;HCD0526644_V1_A&quot;,&quot;HCD0526644_V3_A&quot;,&quot;HCD0528850_V1_A&quot;,&quot;HCD0529751_V1_A&quot;,&quot;HCD0534138_V1_A&quot;,&quot;HCD0536142_V1_A&quot;,&quot;HCD0541034_V1_A&quot;,&quot;HCD0541034_V2_A&quot;,&quot;HCD0541034_V3_X&quot;,&quot;HCD0541539_V1_A&quot;,&quot;HCD0551239_V1_A&quot;,&quot;HCD0551239_V2_A&quot;,&quot;HCD0551239_V3_A&quot;,&quot;HCD0551946_V1_A&quot;,&quot;HCD0555146_V1_A&quot;,&quot;HCD0559760_V1_B&quot;,&quot;HCD0565755_V1_A&quot;,&quot;HCD0571649_V1_A&quot;,&quot;HCD0574049_V1_A&quot;,&quot;HCD0574756_V1_A&quot;,&quot;HCD0576558_V1_A&quot;,&quot;HCD0576558_V2_A&quot;,&quot;HCD0577661_V1_A&quot;,&quot;HCD0580751_V1_A&quot;,&quot;HCD0581652_V1_A&quot;,&quot;HCD0581652_V2_A&quot;,&quot;HCD0581652_V3_A&quot;,&quot;HCD0583555_V1_A&quot;,&quot;HCD0584860_V1_A&quot;,&quot;HCD0590047_V1_A&quot;,&quot;HCD0598366_V1_A&quot;,&quot;HCD0605135_V1_A&quot;,&quot;HCD0605135_V2_A&quot;,&quot;HCD0605135_V3_A&quot;,&quot;HCD0605438_V1_A&quot;,&quot;HCD0614035_V1_A&quot;,&quot;HCD0614237_V1_A&quot;,&quot;HCD0616342_V1_A&quot;,&quot;HCD0616342_V2_A&quot;,&quot;HCD0616342_V3_A&quot;,&quot;HCD0619247_V1_A&quot;,&quot;HCD0619247_V2_A&quot;,&quot;HCD0619247_V3_A&quot;,&quot;HCD0620030_V1_A&quot;,&quot;HCD0621638_V1_A&quot;,&quot;HCD0621638_V3_A&quot;,&quot;HCD0626446_V1_A&quot;,&quot;HCD0627549_V1_A&quot;,&quot;HCD0627852_V1_A&quot;,&quot;HCD0628248_V1_A&quot;,&quot;HCD0628248_V2_A&quot;,&quot;HCD0628248_V3_A&quot;,&quot;HCD0628349_V1_A&quot;,&quot;HCD0628854_V1_A&quot;,&quot;HCD0630134_V1_A&quot;,&quot;HCD0637855_V1_A&quot;,&quot;HCD0639455_V1_A&quot;,&quot;HCD0641038_V1_A&quot;,&quot;HCD0641341_V1_A&quot;,&quot;HCD0641745_V1_A&quot;,&quot;HCD0643345_V1_A&quot;,&quot;HCD0643345_V2_A&quot;,&quot;HCD0643345_V3_A&quot;,&quot;HCD0644044_V1_A&quot;,&quot;HCD0644852_V1_A&quot;,&quot;HCD0657558_V1_A&quot;,&quot;HCD0662955_V1_A&quot;,&quot;HCD0663048_V1_A&quot;,&quot;HCD0664151_V1_B&quot;,&quot;HCD0664656_V1_A&quot;,&quot;HCD0664656_V2_A&quot;,&quot;HCD0664656_V3_X&quot;,&quot;HCD0667763_V1_A&quot;,&quot;HCD0671956_V1_A&quot;,&quot;HCD0676764_V1_A&quot;,&quot;HCD0678970_V1_A&quot;,&quot;HCD0679770_V1_B&quot;,&quot;HCD0682557_V1_A&quot;,&quot;HCD0684460_V1_A&quot;,&quot;HCD0684460_V2_A&quot;,&quot;HCD0684460_V3_A&quot;,&quot;HCD0686666_V1_A&quot;,&quot;HCD0690758_V1_A&quot;,&quot;HCD0690758_V2_B&quot;,&quot;HCD0690758_V3_A&quot;,&quot;HCD0692055_V1_A&quot;,&quot;HCD0692964_V1_A&quot;,&quot;HCD0694564_V1_A&quot;,&quot;HCD0697671_V1_A&quot;,&quot;HCD0697671_V2_A&quot;,&quot;HCD0697671_V3_A&quot;,&quot;HCD0697772_V1_A&quot;,&quot;HCD0703842_V1_A&quot;,&quot;HCD0703943_V1_A&quot;,&quot;HCD0703943_V2_A&quot;,&quot;HCD0703943_V3_A&quot;,&quot;HCD0714443_V1_A&quot;,&quot;HCD0715243_V1_A&quot;,&quot;HCD0717954_V1_A&quot;,&quot;HCD0718451_V1_A&quot;,&quot;HCD0719352_V1_A&quot;,&quot;HCD0721440_V1_A&quot;,&quot;HCD0729052_V1_A&quot;,&quot;HCD0731847_V1_A&quot;,&quot;HCD0737657_V1_A&quot;,&quot;HCD0742347_V1_A&quot;,&quot;HCD0743955_V1_A&quot;,&quot;HCD0750649_V1_A&quot;,&quot;HCD0750649_V2_A&quot;,&quot;HCD0750649_V3_A&quot;,&quot;HCD0752855_V1_A&quot;,&quot;HCD0753049_V1_A&quot;,&quot;HCD0754354_V1_A&quot;,&quot;HCD0755962_V1_A&quot;,&quot;HCD0758867_V1_A&quot;,&quot;HCD0759162_V1_A&quot;,&quot;HCD0762959_V1_A&quot;,&quot;HCD0764256_V1_A&quot;,&quot;HCD0769973_V1_A&quot;,&quot;HCD0772255_V1_A&quot;,&quot;HCD0772760_V1_A&quot;,&quot;HCD0772760_V2_A&quot;,&quot;HCD0772760_V3_A&quot;,&quot;HCD0777265_V1_A&quot;,&quot;HCD0784060_V1_A&quot;,&quot;HCD0786771_V1_A&quot;,&quot;HCD0788674_V1_A&quot;,&quot;HCD0789272_V1_A&quot;,&quot;HCD0792564_V1_A&quot;,&quot;HCD0795267_V1_A&quot;,&quot;HCD0796067_V1_A&quot;,&quot;HCD0796067_V2_A&quot;,&quot;HCD0796067_V3_A&quot;,&quot;HCD0796168_V1_A&quot;,&quot;HCD0797877_V1_A&quot;,&quot;HCD0797877_V2_A&quot;,&quot;HCD0797877_V3_A&quot;,&quot;HCD0798273_V1_A&quot;,&quot;HCD0801539_V1_A&quot;,&quot;HCD0802440_V1_A&quot;,&quot;HCD0804545_V1_A&quot;,&quot;HCD0806751_V1_A&quot;,&quot;HCD0807046_V1_A&quot;,&quot;HCD0808654_V1_A&quot;,&quot;HCD0810035_V1_A&quot;,&quot;HCD0812241_V1_A&quot;,&quot;HCD0812746_V1_A&quot;,&quot;HCD0815247_V1_A&quot;,&quot;HCD0822850_V1_A&quot;,&quot;HCD0832853_V1_A&quot;,&quot;HCD0833754_V1_A&quot;,&quot;HCD0835657_V1_B&quot;,&quot;HCD0836356_V1_A&quot;,&quot;HCD0842250_V1_A&quot;,&quot;HCD0842250_V2_A&quot;,&quot;HCD0842250_V3_A&quot;,&quot;HCD0843151_V1_A&quot;,&quot;HCD0845357_V1_A&quot;,&quot;HCD0845458_V1_A&quot;,&quot;HCD0848060_V1_A&quot;,&quot;HCD0848565_V1_A&quot;,&quot;HCD0848969_V1_A&quot;,&quot;HCD0852253_V1_A&quot;,&quot;HCD0855562_V1_A&quot;,&quot;HCD0856059_V1_A&quot;,&quot;HCD0857566_V1_A&quot;,&quot;HCD0858467_V1_A&quot;,&quot;HCD0861052_V1_A&quot;,&quot;HCD0861456_V1_A&quot;,&quot;HCD0867973_V1_A&quot;,&quot;HCD0868268_V1_A&quot;,&quot;HCD0869169_V1_A&quot;,&quot;HCD0869371_V1_A&quot;,&quot;HCD0869371_V2_A&quot;,&quot;HCD0874667_V1_A&quot;,&quot;HCD0874869_V1_A&quot;,&quot;HCD0882666_V1_A&quot;,&quot;HCD0882666_V2_B&quot;,&quot;HCD0882666_V3_A&quot;,&quot;HCD0889579_V1_A&quot;,&quot;HCD0891566_V1_A&quot;,&quot;HCD0894875_V1_B&quot;,&quot;HCD0899582_V1_A&quot;,&quot;HCD0900440_V1_A&quot;,&quot;HCD0900440_V2_A&quot;,&quot;HCD0900440_V3_A&quot;,&quot;HCD0901240_V1_A&quot;,&quot;HCD0902343_V1_A&quot;,&quot;HCD0902343_V2_A&quot;,&quot;HCD0902343_V3_A&quot;,&quot;HCD0904650_V1_A&quot;,&quot;HCD0906250_V1_A&quot;,&quot;HCD0906250_V2_A&quot;,&quot;HCD0906250_V3_A&quot;,&quot;HCD0909054_V1_A&quot;,&quot;HCD0909256_V1_A&quot;,&quot;HCD0909256_V2_A&quot;,&quot;HCD0909761_V1_A&quot;,&quot;HCD0912952_V1_A&quot;,&quot;HCD0914956_V1_A&quot;,&quot;HCD0914956_V2_A&quot;,&quot;HCD0914956_V3_A&quot;,&quot;HCD0919562_V1_A&quot;,&quot;HCD0921145_V1_A&quot;,&quot;HCD0921347_V1_A&quot;,&quot;HCD0924858_V1_B&quot;,&quot;HCD0925759_V1_A&quot;,&quot;HCD0926054_V1_A&quot;,&quot;HCD0927056_V1_A&quot;,&quot;HCD0929161_V1_A&quot;,&quot;HCD0930954_V1_A&quot;,&quot;HCD0931249_V1_A&quot;,&quot;HCD0932554_V1_A&quot;,&quot;HCD0932554_V2_A&quot;,&quot;HCD0933051_V1_A&quot;,&quot;HCD0934962_V1_A&quot;,&quot;HCD0938263_V1_A&quot;,&quot;HCD0943458_V1_A&quot;,&quot;HCD0943458_V2_A&quot;,&quot;HCD0945967_V1_A&quot;,&quot;HCD0946868_V1_A&quot;,&quot;HCD0946868_V2_A&quot;,&quot;HCD0947365_V1_A&quot;,&quot;HCD0949874_V1_A&quot;,&quot;HCD0951861_V1_A&quot;,&quot;HCD0956063_V1_A&quot;,&quot;HCD0956871_V1_A&quot;,&quot;HCD0957368_V1_A&quot;,&quot;HCD0960155_V1_A&quot;,&quot;HCD0960458_V1_A&quot;,&quot;HCD0961763_V1_A&quot;,&quot;HCD0968373_V1_A&quot;,&quot;HCD0968878_V1_A&quot;,&quot;HCD0969072_V1_A&quot;,&quot;HCD0969072_V2_A&quot;,&quot;HCD0969072_V3_A&quot;,&quot;HCD0977576_V1_A&quot;,&quot;HCD0977576_V2_A&quot;,&quot;HCD0977576_V3_A&quot;,&quot;HCD0979378_V1_A&quot;,&quot;HCD0979378_V2_A&quot;,&quot;HCD0979378_V3_A&quot;,&quot;HCD0980262_V1_A&quot;,&quot;HCD0982872_V1_A&quot;,&quot;HCD0985474_V1_A&quot;,&quot;HCD0988682_V1_A&quot;,&quot;HCD0995477_V1_A&quot;,&quot;HCD0997279_V1_A&quot;,&quot;HCD0997380_V1_A&quot;,&quot;HCD1001916_V1_A&quot;,&quot;HCD1003617_V1_A&quot;,&quot;HCD1005621_V1_A&quot;,&quot;HCD1007221_V1_A&quot;,&quot;HCD1007423_V1_A&quot;,&quot;HCD1007827_V1_B&quot;,&quot;HCD1010311_V1_A&quot;,&quot;HCD1010412_V1_A&quot;,&quot;HCD1012012_V1_A&quot;,&quot;HCD1012719_V1_A&quot;,&quot;HCD1013014_V1_A&quot;,&quot;HCD1013923_V1_A&quot;,&quot;HCD1014723_V1_A&quot;,&quot;HCD1016323_V1_A&quot;,&quot;HCD1016929_V1_A&quot;,&quot;HCD1017123_V1_B&quot;,&quot;HCD1017729_V1_A&quot;,&quot;HCD1017729_V2_A&quot;,&quot;HCD1017729_V3_A&quot;,&quot;HCD1017931_V1_A&quot;,&quot;HCD1021821_V1_A&quot;,&quot;HCD1022419_V1_A&quot;,&quot;HCD1022722_V1_B&quot;,&quot;HCD1027126_V1_A&quot;,&quot;HCD1029837_V1_B&quot;,&quot;HCD1032927_V1_X&quot;,&quot;HCD1034123_V1_A&quot;,&quot;HCD1036733_V1_A&quot;,&quot;HCD1036834_V1_A&quot;,&quot;HCD1039032_V1_A&quot;,&quot;HCD1039032_V2_A&quot;,&quot;HCD1039032_V3_A&quot;,&quot;HCD1042223_V1_A&quot;,&quot;HCD1043629_V1_A&quot;,&quot;HCD1044429_V1_A&quot;,&quot;HCD1047233_V1_A&quot;,&quot;HCD1057337_V1_A&quot;,&quot;HCD1068746_V1_B&quot;,&quot;HCD1071634_V1_A&quot;,&quot;HCD1071836_V1_A&quot;,&quot;HCD1071836_V2_A&quot;,&quot;HCD1071836_V3_A&quot;,&quot;HCD1072434_V1_A&quot;,&quot;HCD1079044_V1_A&quot;,&quot;HCD1082740_V1_A&quot;,&quot;HCD1090941_V1_A&quot;,&quot;HCD1093139_V1_A&quot;,&quot;HCD1096347_V1_A&quot;,&quot;HCD1099858_V1_A&quot;,&quot;HCD1100615_V1_A&quot;,&quot;HCD1103419_V1_A&quot;,&quot;HCD1103419_V2_A&quot;,&quot;HCD1103419_V3_A&quot;,&quot;HCD1104724_V1_A&quot;,&quot;HCD1106728_V1_A&quot;,&quot;HCD1106728_V2_A&quot;,&quot;HCD1106728_V3_X&quot;,&quot;HCD1108833_V1_A&quot;,&quot;HCD1111822_V1_A&quot;,&quot;HCD1113018_V1_A&quot;,&quot;HCD1113220_V1_A&quot;,&quot;HCD1119030_V1_A&quot;,&quot;HCD1119232_V1_A&quot;,&quot;HCD1119232_V2_B&quot;,&quot;HCD1119232_V3_A&quot;,&quot;HCD1120015_V1_A&quot;,&quot;HCD1123526_V1_A&quot;,&quot;HCD1123526_V2_A&quot;,&quot;HCD1123526_V3_A&quot;,&quot;HCD1127130_V1_A&quot;,&quot;HCD1128738_V1_A&quot;,&quot;HCD1129235_V1_A&quot;,&quot;HCD1131222_V1_A&quot;,&quot;HCD1139541_V1_A&quot;,&quot;HCD1144534_V1_A&quot;,&quot;HCD1149948_V1_A&quot;,&quot;HCD1155943_V1_A&quot;,&quot;HCD1155943_V2_A&quot;,&quot;HCD1155943_V3_A&quot;,&quot;HCD1156036_V1_A&quot;,&quot;HCD1156844_V1_A&quot;,&quot;HCD1159446_V1_A&quot;,&quot;HCD1162334_V1_A&quot;,&quot;HCD1163134_V1_A&quot;,&quot;HCD1164843_V1_A&quot;,&quot;HCD1168245_V1_A&quot;,&quot;HCD1170131_V1_A&quot;,&quot;HCD1171335_V1_A&quot;,&quot;HCD1172640_V1_A&quot;,&quot;HCD1175343_V1_A&quot;,&quot;HCD1176345_V1_A&quot;,&quot;HCD1176345_V2_A&quot;,&quot;HCD1176345_V3_A&quot;,&quot;HCD1179755_V1_A&quot;,&quot;HCD1181843_V1_A&quot;,&quot;HCD1182542_V1_A&quot;,&quot;HCD1184950_V1_B&quot;,&quot;HCD1187653_V1_A&quot;,&quot;HCD1188756_V1_A&quot;,&quot;HCD1194751_V1_A&quot;,&quot;HCD1196553_V1_A&quot;,&quot;HCD1197454_V1_A&quot;,&quot;HCD1197454_V2_A&quot;,&quot;HCD1197454_V3_A&quot;,&quot;HCD1197757_V1_A&quot;,&quot;HCD1198355_V1_A&quot;,&quot;HCD1201015_V1_A&quot;,&quot;HCD1201015_V2_A&quot;,&quot;HCD1201015_V3_A&quot;,&quot;HCD1202320_V1_A&quot;,&quot;HCD1203928_V1_A&quot;,&quot;HCD1204627_V1_A&quot;,&quot;HCD1205326_V1_A&quot;,&quot;HCD1209536_V1_A&quot;,&quot;HCD1210117_V1_A&quot;,&quot;HCD1212929_V1_A&quot;,&quot;HCD1215632_V1_A&quot;,&quot;HCD1215632_V2_A&quot;,&quot;HCD1215632_V3_A&quot;,&quot;HCD1218032_V1_A&quot;,&quot;HCD1221627_V1_A&quot;,&quot;HCD1221627_V2_A&quot;,&quot;HCD1221627_V3_A&quot;,&quot;HCD1223833_V1_A&quot;,&quot;HCD1223934_V1_A&quot;,&quot;HCD1227134_V1_A&quot;,&quot;HCD1227134_V2_A&quot;,&quot;HCD1227134_V3_A&quot;,&quot;HCD1227740_V1_A&quot;,&quot;HCD1227740_V2_A&quot;,&quot;HCD1229239_V1_B&quot;,&quot;HCD1231832_V1_A&quot;,&quot;HCD1231832_V2_A&quot;,&quot;HCD1231832_V3_A&quot;,&quot;HCD1232632_V1_A&quot;,&quot;HCD1237844_V1_A&quot;,&quot;HCD1239343_V1_A&quot;,&quot;HCD1240530_V1_A&quot;,&quot;HCD1240530_V2_A&quot;,&quot;HCD1240530_V3_A&quot;,&quot;HCD1246340_V1_A&quot;,&quot;HCD1257042_V1_A&quot;,&quot;HCD1262136_V1_A&quot;,&quot;HCD1267348_V1_A&quot;,&quot;HCD1268047_V1_A&quot;,&quot;HCD1268350_V1_A&quot;,&quot;HCD1268350_V2_A&quot;,&quot;HCD1270943_V1_A&quot;,&quot;HCD1276753_V1_A&quot;,&quot;HCD1277149_V1_A&quot;,&quot;HCD1277149_V2_A&quot;,&quot;HCD1277553_V1_A&quot;,&quot;HCD1282142_V1_A&quot;,&quot;HCD1282142_V3_A&quot;,&quot;HCD1285956_V1_A&quot;,&quot;HCD1289358_V1_A&quot;,&quot;HCD1289358_V2_A&quot;,&quot;HCD1289358_V3_A&quot;,&quot;HCD1293349_V1_A&quot;,&quot;HCD1293349_V2_A&quot;,&quot;HCD1293349_V3_A&quot;,&quot;HCD1294755_V1_A&quot;,&quot;HCD1295050_V1_B&quot;,&quot;HCD1296456_V1_A&quot;,&quot;HCD1305734_V1_A&quot;,&quot;HCD1305936_V1_A&quot;,&quot;HCD1306130_V1_A&quot;,&quot;HCD1306130_V2_A&quot;,&quot;HCD1306130_V3_A&quot;,&quot;HCD1314331_V1_A&quot;,&quot;HCD1314432_V1_A&quot;,&quot;HCD1315737_V1_A&quot;,&quot;HCD1320932_V1_A&quot;,&quot;HCD1321429_V1_A&quot;,&quot;HCD1321429_V2_A&quot;,&quot;HCD1321429_V3_A&quot;,&quot;HCD1322835_V1_A&quot;,&quot;HCD1322835_V2_A&quot;,&quot;HCD1322835_V3_A&quot;,&quot;HCD1327744_V1_A&quot;,&quot;HCD1327744_V2_A&quot;,&quot;HCD1327744_V3_A&quot;,&quot;HCD1328241_V1_A&quot;,&quot;HCD1328241_V2_A&quot;,&quot;HCD1328241_V3_A&quot;,&quot;HCD1328948_V1_A&quot;,&quot;HCD1328948_V2_A&quot;,&quot;HCD1328948_V3_A&quot;,&quot;HCD1330228_V1_A&quot;,&quot;HCD1330228_V2_A&quot;,&quot;HCD1330228_V3_B&quot;,&quot;HCD1330733_V1_A&quot;,&quot;HCD1331432_V1_A&quot;,&quot;HCD1333638_V1_A&quot;,&quot;HCD1342033_V1_A&quot;,&quot;HCD1344845_V1_A&quot;,&quot;HCD1346849_V1_A&quot;,&quot;HCD1346849_V2_A&quot;,&quot;HCD1346849_V3_A&quot;,&quot;HCD1350638_V1_A&quot;,&quot;HCD1353139_V1_A&quot;,&quot;HCD1358149_V1_A&quot;,&quot;HCD1361441_V1_A&quot;,&quot;HCD1361441_V3_A&quot;,&quot;HCD1363546_V1_A&quot;,&quot;HCD1371848_V1_A&quot;,&quot;HCD1375755_V1_A&quot;,&quot;HCD1375755_V2_A&quot;,&quot;HCD1376151_V1_A&quot;,&quot;HCD1376252_V1_A&quot;,&quot;HCD1380849_V1_A&quot;,&quot;HCD1380849_V2_A&quot;,&quot;HCD1380849_V3_A&quot;,&quot;HCD1382045_V1_A&quot;,&quot;HCD1387055_V1_A&quot;,&quot;HCD1387762_V1_A&quot;,&quot;HCD1389665_V1_A&quot;,&quot;HCD1395054_V1_A&quot;,&quot;HCD1395458_V1_A&quot;,&quot;HCD1396662_V1_A&quot;,&quot;HCD1396662_V2_A&quot;,&quot;HCD1396662_V3_A&quot;,&quot;HCD1398060_V1_A&quot;,&quot;HCD1400728_V1_A&quot;,&quot;HCD1404231_V1_A&quot;,&quot;HCD1404837_V1_A&quot;,&quot;HCD1407439_V1_B&quot;,&quot;HCD1408037_V1_A&quot;,&quot;HCD1409342_V1_A&quot;,&quot;HCD1410630_V1_B&quot;,&quot;HCD1410933_V1_A&quot;,&quot;HCD1411531_V1_A&quot;,&quot;HCD1411632_V1_A&quot;,&quot;HCD1411935_V1_A&quot;,&quot;HCD1413939_V1_A&quot;,&quot;HCD1423841_V1_X&quot;,&quot;HCD1433743_V1_A&quot;,&quot;HCD1435646_V1_A&quot;,&quot;HCD1436446_V1_A&quot;,&quot;HCD1441540_V1_A&quot;,&quot;HCD1441540_V2_A&quot;,&quot;HCD1441540_V3_A&quot;,&quot;HCD1444142_V1_B&quot;,&quot;HCD1445245_V1_A&quot;,&quot;HCD1447249_V1_A&quot;,&quot;HCD1452141_V1_B&quot;,&quot;HCD1452848_V1_A&quot;,&quot;HCD1455147_V1_B&quot;,&quot;HCD1456048_V1_A&quot;,&quot;HCD1458153_V1_A&quot;,&quot;HCD1460847_V1_A&quot;,&quot;HCD1461344_V1_A&quot;,&quot;HCD1461647_V1_A&quot;,&quot;HCD1462548_V1_A&quot;,&quot;HCD1464451_V1_A&quot;,&quot;HCD1464451_V2_A&quot;,&quot;HCD1464451_V3_A&quot;,&quot;HCD1464653_V1_A&quot;,&quot;HCD1468661_V1_A&quot;,&quot;HCD1469764_V1_A&quot;,&quot;HCD1472753_V1_A&quot;,&quot;HCD1473553_V1_A&quot;,&quot;HCD1473553_V2_A&quot;,&quot;HCD1473553_V3_A&quot;,&quot;HCD1475355_V1_A&quot;,&quot;HCD1477056_V1_A&quot;,&quot;HCD1477056_V3_A&quot;,&quot;HCD1479262_V1_A&quot;,&quot;HCD1479262_V2_A&quot;,&quot;HCD1479262_V3_A&quot;,&quot;HCD1479969_V1_A&quot;,&quot;HCD1481855_V1_A&quot;,&quot;HCD1490048_V1_A&quot;,&quot;HCD1491252_V1_A&quot;,&quot;HCD1491454_V1_A&quot;,&quot;HCD1493761_V1_A&quot;,&quot;HCD1493862_V1_A&quot;,&quot;HCD1493862_V2_A&quot;,&quot;HCD1493862_V3_A&quot;,&quot;HCD1496767_V1_A&quot;,&quot;HCD1496767_V3_A&quot;,&quot;HCD1500025_V1_A&quot;,&quot;HCD1500631_V1_A&quot;,&quot;HCD1500732_V1_A&quot;,&quot;HCD1501936_V1_A&quot;,&quot;HCD1502231_V1_A&quot;,&quot;HCD1502635_V1_A&quot;,&quot;HCD1504437_V1_A&quot;,&quot;HCD1510432_V1_A&quot;,&quot;HCD1514945_V1_A&quot;,&quot;HCD1514945_V2_A&quot;,&quot;HCD1514945_V3_B&quot;,&quot;HCD1515240_V1_A&quot;,&quot;HCD1515644_V1_A&quot;,&quot;HCD1515644_V3_A&quot;,&quot;HCD1518448_V1_A&quot;,&quot;HCD1522338_V1_A&quot;,&quot;HCD1525546_V1_A&quot;,&quot;HCD1527045_V1_A&quot;,&quot;HCD1527651_V1_A&quot;,&quot;HCD1532745_V1_A&quot;,&quot;HCD1534244_V1_A&quot;,&quot;HCD1534244_V2_A&quot;,&quot;HCD1534244_V3_A&quot;,&quot;HCD1539759_V1_A&quot;,&quot;HCD1543043_V1_A&quot;,&quot;HCD1543851_V1_A&quot;,&quot;HCD1546857_V1_A&quot;,&quot;HCD1551951_V1_A&quot;,&quot;HCD1553349_V1_A&quot;,&quot;HCD1553551_V1_A&quot;,&quot;HCD1553551_V2_A&quot;,&quot;HCD1553551_V3_A&quot;,&quot;HCD1557054_V1_A&quot;,&quot;HCD1559664_V1_A&quot;,&quot;HCD1560851_V1_A&quot;,&quot;HCD1565356_V1_A&quot;,&quot;HCD1568867_V1_A&quot;,&quot;HCD1568867_V2_A&quot;,&quot;HCD1570349_V1_A&quot;,&quot;HCD1571351_V1_A&quot;,&quot;HCD1573456_V1_A&quot;,&quot;HCD1573456_V2_A&quot;,&quot;HCD1573456_V3_A&quot;,&quot;HCD1575359_V1_A&quot;,&quot;HCD1578365_V1_A&quot;,&quot;HCD1578365_V2_A&quot;,&quot;HCD1579064_V1_A&quot;,&quot;HCD1589269_V1_A&quot;,&quot;HCD1590860_V1_A&quot;,&quot;HCD1594767_V1_A&quot;,&quot;HCD1600332_V1_A&quot;,&quot;HCD1609148_V1_A&quot;,&quot;HCD1609552_V1_A&quot;,&quot;HCD1610436_V1_A&quot;,&quot;HCD1610436_V3_A&quot;,&quot;HCD1612238_V1_A&quot;,&quot;HCD1612238_V2_B&quot;,&quot;HCD1612238_V3_A&quot;,&quot;HCD1612844_V1_A&quot;,&quot;HCD1617450_V1_A&quot;,&quot;HCD1617450_V2_A&quot;,&quot;HCD1617450_V3_A&quot;,&quot;HCD1622342_V1_A&quot;,&quot;HCD1623142_V1_A&quot;,&quot;HCD1623445_V1_A&quot;,&quot;HCD1624346_V1_A&quot;,&quot;HCD1624346_V2_A&quot;,&quot;HCD1624346_V3_A&quot;,&quot;HCD1626653_V1_A&quot;,&quot;HCD1626653_V2_A&quot;,&quot;HCD1626653_V3_A&quot;,&quot;HCD1630139_V1_A&quot;,&quot;HCD1631646_V1_A&quot;,&quot;HCD1632244_V1_A&quot;,&quot;HCD1633751_V1_A&quot;,&quot;HCD1634147_V1_A&quot;,&quot;HCD1638862_V1_A&quot;,&quot;HCD1643855_V1_A&quot;,&quot;HCD1645354_V1_A&quot;,&quot;HCD1646154_V1_A&quot;,&quot;HCD1646760_V2_A&quot;,&quot;HCD1646760_V3_A&quot;,&quot;HCD1647863_V1_X&quot;,&quot;HCD1654355_V1_A&quot;,&quot;HCD1655458_V1_A&quot;,&quot;HCD1655458_V2_A&quot;,&quot;HCD1656359_V1_A&quot;,&quot;HCD1658565_V1_A&quot;,&quot;HCD1658969_V1_A&quot;,&quot;HCD1658969_V2_A&quot;,&quot;HCD1658969_V3_A&quot;,&quot;HCD1663053_V1_A&quot;,&quot;HCD1664358_V1_A&quot;,&quot;HCD1664661_V1_A&quot;,&quot;HCD1664762_V1_A&quot;,&quot;HCD1667566_V1_A&quot;,&quot;HCD1668164_V1_A&quot;,&quot;HCD1681257_V1_A&quot;,&quot;HCD1681358_V1_A&quot;,&quot;HCD1685164_V1_A&quot;,&quot;HCD1685164_V2_A&quot;,&quot;HCD1686267_V1_A&quot;,&quot;HCD1687168_V1_A&quot;,&quot;HCD1687168_V2_A&quot;,&quot;HCD1690359_V1_A&quot;,&quot;HCD1694569_V1_A&quot;,&quot;HCD1701338_V1_A&quot;,&quot;HCD1703140_V1_A&quot;,&quot;HCD1703746_V1_A&quot;,&quot;HCD1705144_V1_A&quot;,&quot;HCD1707047_V1_A&quot;,&quot;HCD1707047_V3_A&quot;,&quot;HCD1711240_V1_A&quot;,&quot;HCD1712444_V1_A&quot;,&quot;HCD1714751_V1_A&quot;,&quot;HCD1714953_V1_A&quot;,&quot;HCD1715147_V1_A&quot;,&quot;HCD1723651_V1_A&quot;,&quot;HCD1725352_V1_B&quot;,&quot;HCD1729562_V1_A&quot;,&quot;HCD1734858_V1_A&quot;,&quot;HCD1735052_V1_A&quot;,&quot;HCD1737662_V1_B&quot;,&quot;HCD1742958_V1_A&quot;,&quot;HCD1742958_V3_A&quot;,&quot;HCD1743354_V1_A&quot;,&quot;HCD1748061_V1_A&quot;,&quot;HCD1749467_V1_A&quot;,&quot;HCD1749770_V1_A&quot;,&quot;HCD1753559_V1_A&quot;,&quot;HCD1753559_V2_A&quot;,&quot;HCD1753559_V3_A&quot;,&quot;HCD1754056_V1_B&quot;,&quot;HCD1756060_V1_A&quot;,&quot;HCD1756060_V2_A&quot;,&quot;HCD1756262_V1_A&quot;,&quot;HCD1756464_V1_A&quot;,&quot;HCD1757062_V1_A&quot;,&quot;HCD1757668_V1_A&quot;,&quot;HCD1759571_V1_A&quot;,&quot;HCD1759571_V2_A&quot;,&quot;HCD1761053_V1_A&quot;,&quot;HCD1761356_V1_A&quot;,&quot;HCD1762661_V1_A&quot;,&quot;HCD1765970_V1_A&quot;,&quot;HCD1769978_V1_A&quot;,&quot;HCD1775266_V1_A&quot;,&quot;HCD1775266_V2_A&quot;,&quot;HCD1775266_V3_A&quot;,&quot;HCD1775771_V1_A&quot;,&quot;HCD1778070_V1_A&quot;,&quot;HCD1778474_V1_A&quot;,&quot;HCD1780663_V1_A&quot;,&quot;HCD1783366_V1_A&quot;,&quot;HCD1784065_V1_A&quot;,&quot;HCD1784065_V2_A&quot;,&quot;HCD1784065_V3_A&quot;,&quot;HCD1785572_V1_A&quot;,&quot;HCD1785572_V2_A&quot;,&quot;HCD1785572_V3_A&quot;,&quot;HCD1787677_V1_A&quot;,&quot;HCD1789681_V1_A&quot;,&quot;HCD1790262_V1_A&quot;,&quot;HCD1790262_V2_A&quot;,&quot;HCD1790262_V3_A&quot;,&quot;HCD1791163_V1_A&quot;,&quot;HCD1791567_V1_A&quot;,&quot;HCD1794977_V1_A&quot;,&quot;HCD1796577_V1_A&quot;,&quot;HCD1798985_V1_A&quot;,&quot;HCD1801140_V1_A&quot;,&quot;HCD1801342_V1_A&quot;,&quot;HCD1805451_V1_A&quot;,&quot;HCD1807051_V1_A&quot;,&quot;HCD1812044_V1_A&quot;,&quot;HCD1812044_V2_A&quot;,&quot;HCD1812044_V3_A&quot;,&quot;HCD1815454_V1_A&quot;,&quot;HCD1818561_V1_B&quot;,&quot;HCD1819866_V1_A&quot;,&quot;HCD1821247_V1_B&quot;,&quot;HCD1821247_V3_A&quot;,&quot;HCD1823150_V1_B&quot;,&quot;HCD1826661_V1_A&quot;,&quot;HCD1832858_V1_A&quot;,&quot;HCD1832858_V2_A&quot;,&quot;HCD1838567_V1_A&quot;,&quot;HCD1840251_V1_B&quot;,&quot;HCD1840857_V1_A&quot;,&quot;HCD1842558_V1_A&quot;,&quot;HCD1845160_V1_A&quot;,&quot;HCD1845160_V2_A&quot;,&quot;HCD1845867_V1_X&quot;,&quot;HCD1847972_V1_A&quot;,&quot;HCD1848469_V1_A&quot;,&quot;HCD1849673_V1_A&quot;,&quot;HCD1852056_V1_A&quot;,&quot;HCD1852056_V2_A&quot;,&quot;HCD1852056_V3_A&quot;,&quot;HCD1854767_V1_A&quot;,&quot;HCD1855365_V1_A&quot;,&quot;HCD1856468_V1_A&quot;,&quot;HCD1856468_V2_A&quot;,&quot;HCD1856468_V3_A&quot;,&quot;HCD1857066_V1_A&quot;,&quot;HCD1859474_V1_A&quot;,&quot;HCD1862968_V1_A&quot;,&quot;HCD1863465_V1_A&quot;,&quot;HCD1863465_V2_A&quot;,&quot;HCD1863465_V3_A&quot;,&quot;HCD1867372_V1_A&quot;,&quot;HCD1870159_V1_A&quot;,&quot;HCD1870159_V2_B&quot;,&quot;HCD1870159_V3_A&quot;,&quot;HCD1871969_V1_A&quot;,&quot;HCD1872062_V1_A&quot;,&quot;HCD1872971_V1_A&quot;,&quot;HCD1876878_V1_A&quot;,&quot;HCD1880162_V1_A&quot;,&quot;HCD1880162_V2_A&quot;,&quot;HCD1880465_V1_A&quot;,&quot;HCD1881164_V1_A&quot;,&quot;HCD1882570_V1_A&quot;,&quot;HCD1885172_V1_A&quot;,&quot;HCD1886275_V1_A&quot;,&quot;HCD1886275_V3_A&quot;,&quot;HCD1886477_V1_A&quot;,&quot;HCD1886881_V1_A&quot;,&quot;HCD1887277_V1_A&quot;,&quot;HCD1891268_V1_A&quot;,&quot;HCD1892371_V1_A&quot;,&quot;HCD1893171_V1_A&quot;,&quot;HCD1893171_V2_A&quot;,&quot;HCD1893171_V3_A&quot;,&quot;HCD1900142_V1_A&quot;,&quot;HCD1900445_V1_A&quot;,&quot;HCD1901346_V1_A&quot;,&quot;HCD1903350_V1_A&quot;,&quot;HCD1903956_V1_B&quot;,&quot;HCD1905152_V1_A&quot;,&quot;HCD1905758_V1_X&quot;,&quot;HCD1906457_V1_A&quot;,&quot;HCD1907055_V1_A&quot;,&quot;HCD1908360_V1_A&quot;,&quot;HCD1914557_V1_A&quot;,&quot;HCD1917664_V1_A&quot;,&quot;HCD1920754_V1_A&quot;,&quot;HCD1925461_V1_A&quot;,&quot;HCD1928871_V1_A&quot;,&quot;HCD1930353_V1_A&quot;,&quot;HCD1931456_V1_A&quot;,&quot;HCD1931456_V2_A&quot;,&quot;HCD1931456_V3_A&quot;,&quot;HCD1933864_V1_A&quot;,&quot;HCD1934159_V1_A&quot;,&quot;HCD1939068_V1_A&quot;,&quot;HCD1941964_V1_B&quot;,&quot;HCD1943867_V1_A&quot;,&quot;HCD1943867_V2_A&quot;,&quot;HCD1943867_V3_A&quot;,&quot;HCD1945164_V1_A&quot;,&quot;HCD1946469_V1_A&quot;,&quot;HCD1946873_V1_A&quot;,&quot;HCD1948170_V1_A&quot;,&quot;HCD1949879_V1_A&quot;,&quot;HCD1950056_V1_A&quot;,&quot;HCD1953668_V1_A&quot;,&quot;HCD1957171_V1_A&quot;,&quot;HCD1959680_V1_A&quot;,&quot;HCD1961263_V1_A&quot;,&quot;HCD1964269_V1_A&quot;,&quot;HCD1969986_V1_A&quot;,&quot;HCD1976377_V1_A&quot;,&quot;HCD1978987_V1_A&quot;,&quot;HCD1981976_V1_A&quot;,&quot;HCD1983879_V1_A&quot;,&quot;HCD1984881_V1_A&quot;,&quot;HCD1986784_V1_A&quot;,&quot;HCD1988687_V1_A&quot;,&quot;HCD1989285_V1_A&quot;,&quot;HCD1992375_V1_A&quot;,&quot;HCD1994884_V1_A&quot;,&quot;HCD1998791_V1_A&quot;,&quot;HCD1998791_V2_A&quot;,&quot;HCD1998791_V3_A&quot;,&quot;HCD1998892_V1_A&quot;,&quot;HCD2000111_V1_A&quot;,&quot;HCD2000212_V1_A&quot;,&quot;HCD2000212_V3_A&quot;,&quot;HCD2001517_V1_A&quot;,&quot;HCD2001719_V1_A&quot;,&quot;HCD2003723_V1_A&quot;,&quot;HCD2007933_V1_A&quot;,&quot;HCD2008329_V1_A&quot;,&quot;HCD2013019_V1_A&quot;,&quot;HCD2017330_V1_B&quot;,&quot;HCD2026836_V1_A&quot;,&quot;HCD2028638_V1_A&quot;,&quot;HCD2028638_V2_A&quot;,&quot;HCD2028638_V3_B&quot;,&quot;HCD2030726_V1_A&quot;,&quot;HCD2030726_V2_A&quot;,&quot;HCD2031627_V1_B&quot;,&quot;HCD2035635_V1_A&quot;,&quot;HCD2035837_V1_A&quot;,&quot;HCD2035837_V2_A&quot;,&quot;HCD2035837_V3_A&quot;,&quot;HCD2039946_V1_A&quot;,&quot;HCD2044333_V1_X&quot;,&quot;HCD2045638_V1_A&quot;,&quot;HCD2046539_V1_A&quot;,&quot;HCD2046842_V1_A&quot;,&quot;HCD2046943_V1_A&quot;,&quot;HCD2051532_V1_A&quot;,&quot;HCD2053536_V1_A&quot;,&quot;HCD2055237_V1_A&quot;,&quot;HCD2057645_V1_A&quot;,&quot;HCD2059245_V1_A&quot;,&quot;HCD2061333_V1_A&quot;,&quot;HCD2062537_V1_A&quot;,&quot;HCD2063034_V1_A&quot;,&quot;HCD2064036_V1_A&quot;,&quot;HCD2064440_V1_A&quot;,&quot;HCD2064440_V2_A&quot;,&quot;HCD2064440_V3_A&quot;,&quot;HCD2067850_V1_A&quot;,&quot;HCD2068145_V1_A&quot;,&quot;HCD2068145_V2_A&quot;,&quot;HCD2068145_V3_A&quot;,&quot;HCD2073340_V1_A&quot;,&quot;HCD2073340_V2_B&quot;,&quot;HCD2073340_V3_A&quot;,&quot;HCD2080135_V1_A&quot;,&quot;HCD2080135_V2_A&quot;,&quot;HCD2080135_V3_A&quot;,&quot;HCD2082341_V1_A&quot;,&quot;HCD2082442_V1_A&quot;,&quot;HCD2082442_V2_A&quot;,&quot;HCD2082442_V3_A&quot;,&quot;HCD2082947_V1_A&quot;,&quot;HCD2085751_V2_A&quot;,&quot;HCD2085751_V3_A&quot;,&quot;HCD2093245_V1_A&quot;,&quot;HCD2095148_V1_A&quot;,&quot;HCD2095754_V1_B&quot;,&quot;HCD2098457_V1_A&quot;,&quot;HCD2099257_V1_A&quot;,&quot;HCD2103323_V1_A&quot;,&quot;HCD2105125_V1_A&quot;,&quot;HCD2109234_V1_A&quot;,&quot;HCD2109638_V1_A&quot;,&quot;HCD2112829_V1_A&quot;,&quot;HCD2115835_V1_A&quot;,&quot;HCD2115835_V2_A&quot;,&quot;HCD2115835_V3_A&quot;,&quot;HCD2118538_V1_A&quot;,&quot;HCD2122125_V1_A&quot;,&quot;HCD2122428_V1_A&quot;,&quot;HCD2128642_V1_A&quot;,&quot;HCD2133433_V1_A&quot;,&quot;HCD2134031_V1_A&quot;,&quot;HCD2134132_V1_A&quot;,&quot;HCD2136540_V1_A&quot;,&quot;HCD2140026_V1_A&quot;,&quot;HCD2140127_V1_A&quot;,&quot;HCD2146139_V1_A&quot;,&quot;HCD2149852_V1_A&quot;,&quot;HCD2152942_V1_A&quot;,&quot;HCD2152942_V2_A&quot;,&quot;HCD2152942_V3_A&quot;,&quot;HCD2155140_V1_A&quot;,&quot;HCD2155645_V1_A&quot;,&quot;HCD2155746_V1_A&quot;,&quot;HCD2155847_V1_A&quot;,&quot;HCD2156142_V1_A&quot;,&quot;HCD2156344_V1_A&quot;,&quot;HCD2163644_V1_A&quot;,&quot;HCD2164242_V1_A&quot;,&quot;HCD2164242_V2_A&quot;,&quot;HCD2164242_V3_A&quot;,&quot;HCD2174649_V1_A&quot;,&quot;HCD2181545_V1_A&quot;,&quot;HCD2181848_V1_A&quot;,&quot;HCD2194352_V1_A&quot;,&quot;HCD2199362_V1_A&quot;,&quot;HCD2199867_V1_A&quot;,&quot;HCD2202729_V1_A&quot;,&quot;HCD2203933_V1_A&quot;,&quot;HCD2207840_V1_A&quot;,&quot;HCD2208135_V1_A&quot;,&quot;HCD2208236_V1_B&quot;,&quot;HCD2211932_V1_A&quot;,&quot;HCD2213431_V1_B&quot;,&quot;HCD2215536_V1_B&quot;,&quot;HCD2216437_V1_A&quot;,&quot;HCD2217742_V1_A&quot;,&quot;HCD2219746_V1_A&quot;,&quot;HCD2220428_V1_A&quot;,&quot;HCD2220428_V2_A&quot;,&quot;HCD2220428_V3_A&quot;,&quot;HCD2223131_V1_A&quot;,&quot;HCD2223131_V2_A&quot;,&quot;HCD2225135_V1_A&quot;,&quot;HCD2229547_V1_A&quot;,&quot;HCD2229547_V2_A&quot;,&quot;HCD2229547_V3_A&quot;,&quot;HCD2232940_V1_B&quot;,&quot;HCD2236140_V1_A&quot;,&quot;HCD2237041_V1_A&quot;,&quot;HCD2239247_V1_A&quot;,&quot;HCD2239247_V2_A&quot;,&quot;HCD2240030_V1_A&quot;,&quot;HCD2240030_V2_A&quot;,&quot;HCD2240030_V3_A&quot;,&quot;HCD2241234_V1_A&quot;,&quot;HCD2241234_V2_A&quot;,&quot;HCD2241234_V3_A&quot;,&quot;HCD2242135_V1_A&quot;,&quot;HCD2242640_V1_B&quot;,&quot;HCD2250235_V1_B&quot;,&quot;HCD2251540_V1_A&quot;,&quot;HCD2251540_V3_A&quot;,&quot;HCD2254243_V1_A&quot;,&quot;HCD2256651_V1_A&quot;,&quot;HCD2257956_V1_A&quot;,&quot;HCD2259455_V1_A&quot;,&quot;HCD2264549_V1_A&quot;,&quot;HCD2264549_V2_A&quot;,&quot;HCD2264549_V3_A&quot;,&quot;HCD2273853_V1_A&quot;,&quot;HCD2274350_V1_A&quot;,&quot;HCD2274855_V1_A&quot;,&quot;HCD2277558_V1_A&quot;,&quot;HCD2286155_V1_A&quot;,&quot;HCD2294558_V1_A&quot;,&quot;HCD2295762_V1_A&quot;,&quot;HCD2295762_V2_A&quot;,&quot;HCD2296461_V1_A&quot;,&quot;HCD2300426_V1_A&quot;,&quot;HCD2301428_V1_A&quot;,&quot;HCD2301428_V2_A&quot;,&quot;HCD2302430_V1_A&quot;,&quot;HCD2302430_V2_A&quot;,&quot;HCD2302430_V3_A&quot;,&quot;HCD2304737_V1_A&quot;,&quot;HCD2309040_V1_A&quot;,&quot;HCD2309040_V2_A&quot;,&quot;HCD2309040_V3_A&quot;,&quot;HCD2310227_V1_A&quot;,&quot;HCD2310328_V1_A&quot;,&quot;HCD2310833_V1_B&quot;,&quot;HCD2310833_V2_A&quot;,&quot;HCD2310833_V3_A&quot;,&quot;HCD2311532_V1_A&quot;,&quot;HCD2311633_V1_A&quot;,&quot;HCD2319144_V1_A&quot;,&quot;HCD2321535_V1_A&quot;,&quot;HCD2321939_V1_A&quot;,&quot;HCD2322335_V1_A&quot;,&quot;HCD2323842_V1_A&quot;,&quot;HCD2332136_V1_A&quot;,&quot;HCD2333340_V1_A&quot;,&quot;HCD2333340_V2_A&quot;,&quot;HCD2335344_V1_A&quot;,&quot;HCD2335344_V2_A&quot;,&quot;HCD2336346_V1_A&quot;,&quot;HCD2339049_V1_A&quot;,&quot;HCD2340640_V1_A&quot;,&quot;HCD2340640_V2_A&quot;,&quot;HCD2342745_V1_A&quot;,&quot;HCD2344244_V1_B&quot;,&quot;HCD2344244_V2_A&quot;,&quot;HCD2346046_V1_A&quot;,&quot;HCD2349557_V1_A&quot;,&quot;HCD2353245_V1_A&quot;,&quot;HCD2355249_V1_A&quot;,&quot;HCD2355249_V2_A&quot;,&quot;HCD2363450_V1_A&quot;,&quot;HCD2363450_V2_A&quot;,&quot;HCD2363450_V3_A&quot;,&quot;HCD2363955_V1_A&quot;,&quot;HCD2365454_V1_A&quot;,&quot;HCD2369260_V1_B&quot;,&quot;HCD2370952_V1_A&quot;,&quot;HCD2373958_V1_A&quot;,&quot;HCD2378463_V1_A&quot;,&quot;HCD2378463_V2_A&quot;,&quot;HCD2378463_V3_A&quot;,&quot;HCD2380753_V1_A&quot;,&quot;HCD2380854_V1_A&quot;,&quot;HCD2383456_V1_A&quot;,&quot;HCD2383658_V1_A&quot;,&quot;HCD2388870_V1_A&quot;,&quot;HCD2396869_V1_A&quot;,&quot;HCD2398267_V1_A&quot;,&quot;HCD2400026_V1_A&quot;,&quot;HCD2400632_V1_A&quot;,&quot;HCD2408749_V1_A&quot;,&quot;HCD2415140_V1_A&quot;,&quot;HCD2416142_V1_A&quot;,&quot;HCD2420537_V1_A&quot;,&quot;HCD2422440_V1_A&quot;,&quot;HCD2425143_V1_A&quot;,&quot;HCD2427753_V1_A&quot;,&quot;HCD2428755_V1_A&quot;,&quot;HCD2441444_V1_A&quot;,&quot;HCD2442042_V1_X&quot;,&quot;HCD2449157_V1_A&quot;,&quot;HCD2449157_V2_A&quot;,&quot;HCD2449157_V3_A&quot;,&quot;HCD2449460_V1_A&quot;,&quot;HCD2449763_V1_A&quot;,&quot;HCD2458461_V1_A&quot;,&quot;HCD2461450_V1_B&quot;,&quot;HCD2461450_V2_A&quot;,&quot;HCD2462654_V1_A&quot;,&quot;HCD2464759_V1_A&quot;,&quot;HCD2464860_V1_A&quot;,&quot;HCD2473356_V1_A&quot;,&quot;HCD2478063_V1_A&quot;,&quot;HCD2478669_V1_A&quot;,&quot;HCD2482963_V1_A&quot;,&quot;HCD2483561_V1_A&quot;,&quot;HCD2483662_V1_A&quot;,&quot;HCD2485666_V1_A&quot;,&quot;HCD2485666_V2_A&quot;,&quot;HCD2491156_V1_B&quot;,&quot;HCD2491257_V1_A&quot;,&quot;HCD2491257_V2_A&quot;,&quot;HCD2496065_V1_A&quot;,&quot;HCD2496570_V1_A&quot;,&quot;HCD2499071_V1_A&quot;,&quot;HCD2499172_V1_A&quot;,&quot;HCD2499374_V1_A&quot;,&quot;HCD2499576_V1_A&quot;,&quot;HCD2500030_V1_A&quot;,&quot;HCD2500939_V1_A&quot;,&quot;HCD2500939_V2_A&quot;,&quot;HCD2500939_V3_A&quot;,&quot;HCD2502640_V1_A&quot;,&quot;HCD2504038_V1_A&quot;,&quot;HCD2504038_V2_A&quot;,&quot;HCD2504038_V3_A&quot;,&quot;HCD2506951_V1_A&quot;,&quot;HCD2523244_V1_A&quot;,&quot;HCD2523345_V1_A&quot;,&quot;HCD2524751_V1_A&quot;,&quot;HCD2526250_V1_A&quot;,&quot;HCD2527959_V1_A&quot;,&quot;HCD2530140_V1_A&quot;,&quot;HCD2537457_V1_A&quot;,&quot;HCD2540042_V1_A&quot;,&quot;HCD2540648_V1_A&quot;,&quot;HCD2540648_V2_A&quot;,&quot;HCD2540648_V3_A&quot;,&quot;HCD2543250_V1_A&quot;,&quot;HCD2544151_V1_A&quot;,&quot;HCD2544757_V1_A&quot;,&quot;HCD2545759_V1_A&quot;,&quot;HCD2554255_V1_A&quot;,&quot;HCD2556158_V1_A&quot;,&quot;HCD2556764_V1_A&quot;,&quot;HCD2556865_V1_A&quot;,&quot;HCD2556865_V2_A&quot;,&quot;HCD2562658_V1_A&quot;,&quot;HCD2562658_V2_A&quot;,&quot;HCD2562658_V3_A&quot;,&quot;HCD2565664_V1_A&quot;,&quot;HCD2567163_V1_A&quot;,&quot;HCD2568670_V1_A&quot;,&quot;HCD2568670_V2_A&quot;,&quot;HCD2568670_V3_A&quot;,&quot;HCD2572459_V1_A&quot;,&quot;HCD2574564_V1_A&quot;,&quot;HCD2577671_V1_A&quot;,&quot;HCD2581763_V1_A&quot;,&quot;HCD2581763_V2_A&quot;,&quot;HCD2581763_V3_A&quot;,&quot;HCD2583565_V1_A&quot;,&quot;HCD2584264_V1_A&quot;,&quot;HCD2586268_V1_A&quot;,&quot;HCD2589981_V1_A&quot;,&quot;HCD2589981_V2_A&quot;,&quot;HCD2591766_V1_A&quot;,&quot;HCD2591766_V2_A&quot;,&quot;HCD2594671_V1_A&quot;,&quot;HCD2594772_V1_A&quot;,&quot;HCD2600034_V1_A&quot;,&quot;HCD2600539_V1_A&quot;,&quot;HCD2600640_V1_A&quot;,&quot;HCD2604749_V1_X&quot;,&quot;HCD2606652_V1_A&quot;,&quot;HCD2607452_V1_B&quot;,&quot;HCD2611645_V1_B&quot;,&quot;HCD2612142_V1_A&quot;,&quot;HCD2613043_V1_A&quot;,&quot;HCD2614247_V1_A&quot;,&quot;HCD2617657_V1_A&quot;,&quot;HCD2618053_V1_A&quot;,&quot;HCD2625454_V1_A&quot;,&quot;HCD2625454_V2_A&quot;,&quot;HCD2626456_V1_A&quot;,&quot;HCD2626456_V2_A&quot;,&quot;HCD2626456_V3_A&quot;,&quot;HCD2627256_V1_A&quot;,&quot;HCD2631954_V1_A&quot;,&quot;HCD2633554_V1_A&quot;,&quot;HCD2635659_V1_A&quot;,&quot;HCD2641351_V1_A&quot;,&quot;HCD2642858_V1_A&quot;,&quot;HCD2643052_V1_A&quot;,&quot;HCD2643456_V1_A&quot;,&quot;HCD2644862_V1_A&quot;,&quot;HCD2648365_V1_X&quot;,&quot;HCD2649670_V1_A&quot;,&quot;HCD2655766_V1_A&quot;,&quot;HCD2655766_V2_A&quot;,&quot;HCD2659370_V1_A&quot;,&quot;HCD2662763_V1_A&quot;,&quot;HCD2662763_V2_A&quot;,&quot;HCD2662763_V3_A&quot;,&quot;HCD2664161_V1_A&quot;,&quot;HCD2669575_V1_A&quot;,&quot;HCD2672867_V1_A&quot;,&quot;HCD2679073_V1_A&quot;,&quot;HCD2679982_V1_A&quot;,&quot;HCD2681161_V1_B&quot;,&quot;HCD2685169_V1_A&quot;,&quot;HCD2689076_V1_B&quot;,&quot;HCD2692671_V1_A&quot;,&quot;HCD2696780_V1_A&quot;,&quot;HCD2703751_V1_A&quot;,&quot;HCD2704147_V1_A&quot;,&quot;HCD2704551_V1_A&quot;,&quot;HCD2704753_V1_A&quot;,&quot;HCD2711649_V1_A&quot;,&quot;HCD2711649_V2_A&quot;,&quot;HCD2711649_V3_A&quot;,&quot;HCD2714655_V1_A&quot;,&quot;HCD2714655_V2_A&quot;,&quot;HCD2714655_V3_A&quot;,&quot;HCD2715152_V1_A&quot;,&quot;HCD2721147_V1_A&quot;,&quot;HCD2721147_V2_A&quot;,&quot;HCD2722755_V1_A&quot;,&quot;HCD2724456_V1_A&quot;,&quot;HCD2725559_V1_A&quot;,&quot;HCD2730249_V1_A&quot;,&quot;HCD2730249_V2_A&quot;,&quot;HCD2730249_V3_A&quot;,&quot;HCD2731049_V1_A&quot;,&quot;HCD2734257_V1_B&quot;,&quot;HCD2734257_V2_A&quot;,&quot;HCD2734257_V3_A&quot;,&quot;HCD2734358_V1_A&quot;,&quot;HCD2736766_V1_A&quot;,&quot;HCD2737869_V1_A&quot;,&quot;HCD2739671_V1_A&quot;,&quot;HCD2740454_V1_A&quot;,&quot;HCD2740454_V2_A&quot;,&quot;HCD2740454_V3_A&quot;,&quot;HCD2741961_V1_A&quot;,&quot;HCD2741961_V2_A&quot;,&quot;HCD2741961_V3_A&quot;,&quot;HCD2743157_V1_A&quot;,&quot;HCD2743157_V2_A&quot;,&quot;HCD2743157_V3_A&quot;,&quot;HCD2748268_V1_A&quot;,&quot;HCD2748672_V1_A&quot;,&quot;HCD2751560_V1_A&quot;,&quot;HCD2751964_V1_A&quot;,&quot;HCD2751964_V3_A&quot;,&quot;HCD2754061_V1_A&quot;,&quot;HCD2754061_V2_A&quot;,&quot;HCD2754061_V3_A&quot;,&quot;HCD2756166_V1_A&quot;,&quot;HCD2757370_V1_A&quot;,&quot;HCD2757370_V2_A&quot;,&quot;HCD2757370_V3_A&quot;,&quot;HCD2758473_V1_A&quot;,&quot;HCD2761967_V1_A&quot;,&quot;HCD2762565_V1_A&quot;,&quot;HCD2764064_V1_B&quot;,&quot;HCD2764771_V1_B&quot;,&quot;HCD2768981_V1_A&quot;,&quot;HCD2769983_V1_A&quot;,&quot;HCD2773368_V1_A&quot;,&quot;HCD2776374_V1_A&quot;,&quot;HCD2781771_V1_A&quot;,&quot;HCD2784171_V1_A&quot;,&quot;HCD2785678_V1_A&quot;,&quot;HCD2786074_V1_A&quot;,&quot;HCD2795479_V1_A&quot;,&quot;HCD2797584_V1_A&quot;,&quot;HCD2801852_V1_A&quot;,&quot;HCD2804151_V1_A&quot;,&quot;HCD2804151_V2_A&quot;,&quot;HCD2804151_V3_A&quot;,&quot;HCD2805658_V1_A&quot;,&quot;HCD2807460_V1_A&quot;,&quot;HCD2810954_V1_A&quot;,&quot;HCD2811148_V1_A&quot;,&quot;HCD2811552_V1_A&quot;,&quot;HCD2812352_V1_A&quot;,&quot;HCD2820351_V1_B&quot;,&quot;HCD2825058_V1_A&quot;,&quot;HCD2827365_V1_A&quot;,&quot;HCD2828569_V1_A&quot;,&quot;HCD2832863_V1_A&quot;,&quot;HCD2832863_V2_A&quot;,&quot;HCD2832863_V3_A&quot;,&quot;HCD2833360_V1_A&quot;,&quot;HCD2833360_V2_A&quot;,&quot;HCD2833360_V3_A&quot;,&quot;HCD2833461_V1_A&quot;,&quot;HCD2833461_V2_A&quot;,&quot;HCD2833461_V3_A&quot;,&quot;HCD2834463_V1_A&quot;,&quot;HCD2836164_V1_A&quot;,&quot;HCD2841965_V1_A&quot;,&quot;HCD2842462_V1_B&quot;,&quot;HCD2842462_V2_A&quot;,&quot;HCD2842462_V3_A&quot;,&quot;HCD2842967_V1_A&quot;,&quot;HCD2847371_V1_B&quot;,&quot;HCD2847977_V1_A&quot;,&quot;HCD2855875_V1_A&quot;,&quot;HCD2856170_V1_A&quot;,&quot;HCD2858477_V1_A&quot;,&quot;HCD2860262_V1_A&quot;,&quot;HCD2863268_V1_A&quot;,&quot;HCD2863975_V1_A&quot;,&quot;HCD2864169_V1_A&quot;,&quot;HCD2864169_V2_A&quot;,&quot;HCD2864169_V3_A&quot;,&quot;HCD2864270_V1_A&quot;,&quot;HCD2867276_V1_A&quot;,&quot;HCD2878382_V1_A&quot;,&quot;HCD2878382_V2_A&quot;,&quot;HCD2879687_V1_A&quot;,&quot;HCD2879788_V1_A&quot;,&quot;HCD2884175_V1_A&quot;,&quot;HCD2884377_V1_A&quot;,&quot;HCD2884377_V2_A&quot;,&quot;HCD2888688_V1_A&quot;,&quot;HCD2888789_V1_A&quot;,&quot;HCD2891576_V1_A&quot;,&quot;HCD2892477_V1_B&quot;,&quot;HCD2893277_V1_A&quot;,&quot;HCD2893378_V1_B&quot;,&quot;HCD2896283_V1_A&quot;,&quot;HCD2897184_V1_A&quot;,&quot;HCD2897184_V3_A&quot;,&quot;HCD2897891_V1_A&quot;,&quot;HCD2897891_V2_A&quot;,&quot;HCD2897891_V3_A&quot;,&quot;HCD2901654_V1_A&quot;,&quot;HCD2903759_V1_A&quot;,&quot;HCD2904862_V1_A&quot;,&quot;HCD2905460_V1_A&quot;,&quot;HCD2905460_V2_A&quot;,&quot;HCD2905460_V3_A&quot;,&quot;HCD2907464_V1_A&quot;,&quot;HCD2908062_V1_A&quot;,&quot;HCD2908870_V1_A&quot;,&quot;HCD2913459_V1_A&quot;,&quot;HCD2925971_V1_A&quot;,&quot;HCD2926973_V1_A&quot;,&quot;HCD2930055_V1_A&quot;,&quot;HCD2930964_V1_A&quot;,&quot;HCD2932665_V1_A&quot;,&quot;HCD2932968_V1_X&quot;,&quot;HCD2933869_V1_A&quot;,&quot;HCD2936269_V1_A&quot;,&quot;HCD2936875_V1_A&quot;,&quot;HCD2936875_V2_A&quot;,&quot;HCD2936875_V3_A&quot;,&quot;HCD2937473_V1_A&quot;,&quot;HCD2938071_V1_A&quot;,&quot;HCD2938172_V1_A&quot;,&quot;HCD2939275_V1_A&quot;,&quot;HCD2944874_V1_A&quot;,&quot;HCD2945876_V1_A&quot;,&quot;HCD2949682_V1_X&quot;,&quot;HCD2955374_V1_A&quot;,&quot;HCD2957075_V1_A&quot;,&quot;HCD2957277_V1_A&quot;,&quot;HCD2968080_V1_A&quot;,&quot;HCD2968080_V2_A&quot;,&quot;HCD2968080_V3_A&quot;,&quot;HCD2970269_V1_A&quot;,&quot;HCD2971776_V1_A&quot;,&quot;HCD2973073_V1_A&quot;,&quot;HCD2976079_V1_A&quot;,&quot;HCD2976382_V1_A&quot;,&quot;HCD2978386_V1_A&quot;,&quot;HCD2980575_V1_A&quot;,&quot;HCD2982276_V1_A&quot;,&quot;HCD2982579_V1_A&quot;,&quot;HCD2985181_V1_A&quot;,&quot;HCD2987185_V1_A&quot;,&quot;HCD2987185_V2_A&quot;,&quot;HCD2987185_V3_A&quot;,&quot;HCD2990073_V1_A&quot;,&quot;HCD2990073_V2_A&quot;,&quot;HCD2990073_V3_A&quot;,&quot;HCD2992784_V1_A&quot;,&quot;HCD2993079_V1_A&quot;,&quot;HCD2995083_V1_A&quot;,&quot;HCD2996590_V1_A&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Participants with CARIT task behavior, but no dowloaded task MRI (on this task).<\/caption>","data":[["HCD2085751","HCD2085751"],["WashU","WashU"],["Black or African American","Black or African American"],["Not Hispanic or Latino","Not Hispanic or Latino"],["M","M"],[10.71,10.71],["V1","V1"],["HCD2085751_V2_A","HCD2085751_V3_A"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>site<\/th>\n      <th>race<\/th>\n      <th>ethnic_group<\/th>\n      <th>gender<\/th>\n      <th>age<\/th>\n      <th>redcap_event<\/th>\n      <th>sessionID<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
 <div id="public-release" class="section level2">
 <h2>Public release</h2>
+<p><em>No longer relevant.</em></p>
 <pre class="r"><code>public_release[, PR := TRUE]
 d_pr &lt;- public_release[d_combined, on = &#39;sID&#39;]
 d_pr[, PR := data.table::fifelse(PR, TRUE, FALSE, na = FALSE)]
 d_pr &lt;- d_pr[PR == TRUE]</code></pre>
-<p>Not all staged participants are available for public release, and we've decided to use the public release data for this set of analyses.</p>
-<p>Number of PR participants: 652</p>
-<p>Number of PR participants with CARIT behavior: 652</p>
-<p>Number of PR participants with CARIT task scan: 643</p>
+<p>Not all staged participants are available for public release, and
+we’ve decided to use the public release data for this set of
+analyses.</p>
 </div>
 </div>
 <div id="check-design" class="section level1">
 <h1>Check design</h1>
 <div id="public-release-and-scan-data" class="section level2">
 <h2>Public release and scan data</h2>
-<pre class="r"><code>carit_pr_scan &lt;- carit[public_release, on = &#39;sID&#39;, nomatch = 0]
+<pre class="r"><code>#carit_pr_scan &lt;- carit[public_release, on = &#39;sID&#39;, nomatch = 0]
+carit_pr_scan &lt;- carit
 carit_pr_scan &lt;- staged_dlmri[carit_pr_scan, on = &#39;sID&#39;][has_carit == TRUE]</code></pre>
-<p>CARIT has two rounds of 92 trials each, for a total of 184 trials per subject.</p>
+<p>CARIT has two rounds of 92 trials each, for a total of 184 trials per
+subject.</p>
 <p>Modal number of trials: 184.</p>
-<p>Number of participants without modal number: 21.</p>
+<p>Number of participants without modal number: 200.</p>
 <pre class="r"><code>#List participants without the modal number of trials
 do.call(DT::datatable, 
         c(list(carit_pr_scan[, list(`N trials` = .N), by = &#39;sID&#39;][`N trials` != as.numeric(modal(`N trials`))],
                caption = &#39;Pariticipants without modal number of trials.&#39;), 
           dt_options))</code></pre>
-<div id="htmlwidget-ca670490bd81829beb06" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ca670490bd81829beb06">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"disabled\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Pariticipants without modal number of trials.<\/caption>","data":[["HCD0295954","HCD0679770","HCD0714443","HCD0719352","HCD0921347","HCD0949874","HCD0957368","HCD0980262","HCD1022722","HCD1395458","HCD1444142","HCD1546857","HCD1658565","HCD1734858","HCD1798985","HCD1857066","HCD1945164","HCD2322335","HCD2600034","HCD2617657","HCD2635659"],[92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>N trials<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
-<p>Each round of the task has 68 go trials and 24 nogo trials. Each subject should have 136 go and 48 nogo trials</p>
+<div id="htmlwidget-621d03bf1b94b6227a2d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-621d03bf1b94b6227a2d">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"integer\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"80\" data-max=\"172\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Pariticipants without modal number of trials.<\/caption>","data":[["HCD0007014","HCD0030413","HCD0033419","HCD0056229","HCD0086440","HCD0092334","HCD0117324","HCD0119126","HCD0144125","HCD0155837","HCD0187850","HCD0190435","HCD0201515","HCD0207931","HCD0208731","HCD0211720","HCD0276748","HCD0295954","HCD0306630","HCD0318435","HCD0353538","HCD0395251","HCD0454443","HCD0457146","HCD0465246","HCD0481749","HCD0484250","HCD0484452","HCD0501830","HCD0507034","HCD0522434","HCD0663048","HCD0664151","HCD0679770","HCD0714443","HCD0719352","HCD0742347","HCD0769973","HCD0807046","HCD0815247","HCD0832853","HCD0836356","HCD0845357","HCD0856059","HCD0867973","HCD0868268","HCD0869169","HCD0909054","HCD0909761","HCD0921347","HCD0924858","HCD0926054","HCD0931249","HCD0938263","HCD0949874","HCD0957368","HCD0968373","HCD0980262","HCD0982872","HCD0997279","HCD1005621","HCD1017123","HCD1022722","HCD1032927","HCD1036733","HCD1043629","HCD1068746","HCD1104724","HCD1113018","HCD1127130","HCD1144534","HCD1155943","HCD1156844","HCD1164843","HCD1172640","HCD1179755","HCD1194751","HCD1204627","HCD1218032","HCD1229239","HCD1257042","HCD1305734","HCD1314432","HCD1331432","HCD1333638","HCD1353139","HCD1395054","HCD1395458","HCD1408037","HCD1410630","HCD1413939","HCD1423841","HCD1444142","HCD1447249","HCD1452141","HCD1455147","HCD1461344","HCD1461647","HCD1475355","HCD1502231","HCD1515240","HCD1527651","HCD1532745","HCD1546857","HCD1551951","HCD1645354","HCD1658565","HCD1664661","HCD1690359","HCD1705144","HCD1714953","HCD1734858","HCD1737662","HCD1754056","HCD1756464","HCD1757668","HCD1780663","HCD1798985","HCD1801342","HCD1818561","HCD1819866","HCD1821247","HCD1848469","HCD1857066","HCD1862968","HCD1872062","HCD1885172","HCD1887277","HCD1901346","HCD1905758","HCD1908360","HCD1941964","HCD1945164","HCD1984881","HCD1989285","HCD1998892","HCD2003723","HCD2039946","HCD2044333","HCD2046539","HCD2053536","HCD2082341","HCD2095754","HCD2103323","HCD2122428","HCD2149852","HCD2181545","HCD2199867","HCD2208236","HCD2215536","HCD2219746","HCD2225135","HCD2237041","HCD2242135","HCD2321535","HCD2322335","HCD2336346","HCD2349557","HCD2363955","HCD2369260","HCD2398267","HCD2420537","HCD2425143","HCD2441444","HCD2442042","HCD2449460","HCD2464759","HCD2473356","HCD2499374","HCD2583565","HCD2600034","HCD2604749","HCD2611645","HCD2617657","HCD2635659","HCD2641351","HCD2642858","HCD2643456","HCD2644862","HCD2648365","HCD2649670","HCD2689076","HCD2704753","HCD2725559","HCD2736766","HCD2776374","HCD2781771","HCD2805658","HCD2834463","HCD2847371","HCD2847977","HCD2858477","HCD2863268","HCD2892477","HCD2893277","HCD2908062","HCD2932968","HCD2944874","HCD2971776","HCD2980575"],[92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,91,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,172,92,92,92,91,92,92,92,92,92,92,92,92,80,92]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>N trials<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<p>Each round of the task has 68 go trials and 24 nogo trials. Each
+subject should have 136 go and 48 nogo trials</p>
 <p>Number of participants with any deviation from this:</p>
 <pre class="r"><code>dcast(carit_pr_scan[, .N, keyby = c(&#39;sID&#39;, &#39;trialType&#39;)],
       sID ~ trialType)[go != 136 | nogo != 48][, .N]</code></pre>
-<pre><code>## [1] 21</code></pre>
-<p>Nogo trials should be equivalently distributed between prev reward and prev loss trials. Each subject should have 24 prevRew, 24 prevLoss.</p>
+<pre><code>## [1] 200</code></pre>
+<p>Nogo trials should be equivalently distributed between prev reward
+and prev loss trials. Each subject should have 24 prevRew, 24
+prevLoss.</p>
 <p>Number of participants with any deviation from this:</p>
 <pre class="r"><code>dcast(carit_pr_scan[, .N, keyby = c(&#39;sID&#39;, &#39;nogoCondition&#39;)], 
       sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, .N]</code></pre>
-<pre><code>## [1] 21</code></pre>
-<p>Go prepotency trials should number 20 for 2, 16 for 3, and 12 for 4.</p>
+<pre><code>## [1] 201</code></pre>
+<p>Go prepotency trials should number 20 for 2, 16 for 3, and 12 for
+4.</p>
 <p>Number of participants with any deviation from this:</p>
 <pre class="r"><code>dcast(carit_pr_scan[, .N, keyby = c(&#39;sID&#39;, &#39;prepotency&#39;)], 
       sID ~ prepotency)[`2go` != 20 | 
                           `3go` != 16 |
                           `4go` != 12][, .N]</code></pre>
-<pre><code>## [1] 21</code></pre>
-<p>These are all the same IDs who are missing one of the two runs.</p>
+<pre><code>## [1] 200</code></pre>
+<p>[CHECK] These are all the same IDs who are missing one of the two
+runs.</p>
 <pre class="r"><code>identical(dcast(carit_pr_scan[, .N, keyby = c(&#39;sID&#39;, &#39;trialType&#39;)],
                 sID ~ trialType)[go != 136 | nogo != 48][, &#39;sID&#39;],
           dcast(carit_pr_scan[, .N, keyby = c(&#39;sID&#39;, &#39;nogoCondition&#39;)], 
                 sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, &#39;sID&#39;])</code></pre>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code>## [1] FALSE</code></pre>
 <pre class="r"><code>identical(dcast(carit_pr_scan[, .N, keyby = c(&#39;sID&#39;, &#39;nogoCondition&#39;)], 
                 sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, &#39;sID&#39;], 
           dcast(carit_pr_scan[, .N, keyby = c(&#39;sID&#39;, &#39;prepotency&#39;)], 
                 sID ~ prepotency)[`2go` != 20 | 
                                     `3go` != 16 |
                                     `4go` != 12][, &#39;sID&#39;])</code></pre>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code>## [1] FALSE</code></pre>
 </div>
 <div id="for-all-carit-data" class="section level2">
 <h2>For all CARIT data</h2>
-<p>CARIT has two rounds of 92 trials each, for a total of 184 trials per subject.</p>
+<p>CARIT has two rounds of 92 trials each, for a total of 184 trials per
+subject.</p>
 <p>Modal number of trials: 184.</p>
-<p>Number of participants without modal number: 151.</p>
+<p>Number of participants without modal number: 200.</p>
 <pre class="r"><code>#List participants without the modal number of trials
 do.call(DT::datatable, 
         c(list(carit[, list(`N trials` = .N, data_source = unique(data_source)), by = &#39;sID&#39;][`N trials` != as.numeric(modal(`N trials`))],
                caption = &#39;Pariticipants without modal number of trials.&#39;), 
           dt_options))</code></pre>
-<div id="htmlwidget-5f9d2cfa0f39fb16a2c8" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5f9d2cfa0f39fb16a2c8">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"integer\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"6\" data-max=\"152\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Pariticipants without modal number of trials.<\/caption>","data":[["HCD0144125","HCD0295954","HCD0679770","HCD0714443","HCD0719352","HCD0921347","HCD0938263","HCD0949874","HCD0957368","HCD0980262","HCD1022722","HCD1036733","HCD1155943","HCD1395458","HCD1444142","HCD1527651","HCD1546857","HCD1645354","HCD1658565","HCD1734858","HCD1798985","HCD1857066","HCD1901346","HCD1945164","HCD2039946","HCD2322335","HCD2336346","HCD2464759","HCD2473356","HCD2499374","HCD2600034","HCD2617657","HCD2635659","HCD2643456","HCD2847977","HCD2980575","HCD0007014","HCD0030413","HCD0033419","HCD0056229","HCD0099752","HCD0117324","HCD0119126","HCD0155837","HCD0187850","HCD0306630","HCD0395251","HCD0454443","HCD0465246","HCD0481749","HCD0484452","HCD0507034","HCD0522434","HCD0663048","HCD0769973","HCD0807046","HCD0815247","HCD0832853","HCD0836356","HCD0856059","HCD0867973","HCD0869169","HCD0909761","HCD0924858","HCD0931249","HCD0982872","HCD0989280","HCD0997279","HCD1005621","HCD1017123","HCD1032927","HCD1043629","HCD1068746","HCD1104724","HCD1144534","HCD1194751","HCD1204627","HCD1218032","HCD1249649","HCD1257042","HCD1266952","HCD1314432","HCD1331432","HCD1333638","HCD1336341","HCD1410630","HCD1413939","HCD1423841","HCD1447249","HCD1452141","HCD1454246","HCD1461344","HCD1475355","HCD1515240","HCD1532745","HCD1551951","HCD1664661","HCD1714953","HCD1735052","HCD1742251","HCD1754056","HCD1756464","HCD1757668","HCD1780663","HCD1818561","HCD1821247","HCD1848469","HCD1872062","HCD1887277","HCD1905758","HCD1941964","HCD1984881","HCD1989285","HCD1998892","HCD2017330","HCD2044333","HCD2053536","HCD2082341","HCD2095754","HCD2103323","HCD2122428","HCD2149852","HCD2181545","HCD2208236","HCD2215536","HCD2225135","HCD2237041","HCD2242135","HCD2321535","HCD2363955","HCD2398267","HCD2425143","HCD2442042","HCD2449157","HCD2449460","HCD2491156","HCD2641351","HCD2648365","HCD2649670","HCD2734358","HCD2776374","HCD2781771","HCD2805658","HCD2834463","HCD2847371","HCD2858477","HCD2863268","HCD2892477","HCD2893277","HCD2932968","HCD2971776"],[92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,6,92,92,92,92,92,143,92,92,92,92,92,92,92,10,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,27,92,35,92,92,92,16,92,92,24,92,92,64,92,92,92,92,92,92,92,108,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,119,117,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,92,112,92,124,92,92,92,92,152,92,92,92,91,92,92,92,92,92,131],["staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","staged","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake","intake"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>N trials<\/th>\n      <th>data_source<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
-<p>Each round of the task has 68 go trials and 24 nogo trials. Each subject should have 136 go and 48 nogo trials</p>
+<p>Each round of the task has 68 go trials and 24 nogo trials. Each
+subject should have 136 go and 48 nogo trials</p>
 <p>Number of participants with any deviation from this:</p>
 <pre class="r"><code>dcast(carit[, .N, keyby = c(&#39;sID&#39;, &#39;trialType&#39;)],
       sID ~ trialType)[go != 136 | nogo != 48][, .N]</code></pre>
-<pre><code>## [1] 151</code></pre>
-<p>Nogo trials should be equivalently distributed between prev reward and prev loss trials. Each subject should have 24 prevRew, 24 prevLoss.</p>
+<pre><code>## [1] 200</code></pre>
+<p>Nogo trials should be equivalently distributed between prev reward
+and prev loss trials. Each subject should have 24 prevRew, 24
+prevLoss.</p>
 <p>Number of participants with any deviation from this:</p>
 <pre class="r"><code>dcast(carit[, .N, keyby = c(&#39;sID&#39;, &#39;nogoCondition&#39;)], 
       sID ~ nogoCondition)[prevRewNogo != 24 | prevLossNogo != 24][, .N]</code></pre>
-<pre><code>## [1] 153</code></pre>
-<p>Go prepotency trials should number 20 for 2, 16 for 3, and 12 for 4.</p>
+<pre><code>## [1] 201</code></pre>
+<p>Go prepotency trials should number 20 for 2, 16 for 3, and 12 for
+4.</p>
 <p>Number of participants with any deviation from this:</p>
 <pre class="r"><code>dcast(carit[, .N, keyby = c(&#39;sID&#39;, &#39;prepotency&#39;)], 
       sID ~ prepotency)[`2go` != 20 | 
                           `3go` != 16 |
                           `4go` != 12][, .N]</code></pre>
-<pre><code>## [1] 151</code></pre>
+<pre><code>## [1] 200</code></pre>
 </div>
 </div>
 <div id="data-availability" class="section level1 tabset">
-<h1>Data availability</h1>
-<p>N participants with task behavior: 1178. N participants with any task fMRI: 814. N participants with CARIT fMRI: 807. N participants with Guessing fMRI: 813.</p>
-<p>The following comparisons are based on the those with any CARIT task data whatsover, and those who have fMRI CARIT data.</p>
+<h1 class="tabset">Data availability</h1>
+<p>N participants with task behavior: 1243. N participants with any task
+fMRI: 1656. N participants with CARIT fMRI: 1637. N participants with
+Guessing fMRI: 1655.</p>
+<p>The following comparisons are based on the those with any CARIT task
+data whatsover, and those who have fMRI CARIT data.</p>
 <div id="age" class="section level2">
 <h2>Age</h2>
 <pre class="r"><code>carit_behavior_ids &lt;- unique(carit[, c(&#39;sID&#39;)])
@@ -675,7 +736,6 @@ ggplot(PR_data_avail_age_prop, aes(x = age_bin)) +
   labs(x = &#39;Age binned (years)&#39;, y = &#39;Proportion&#39;) + 
   jftheme + 
   theme(axis.text.x = element_text(size = 10))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-19-1.png" width="576" /></p>
 </div>
 <div id="sex" class="section level2">
 <h2>Sex</h2>
@@ -697,7 +757,6 @@ ggplot(PR_data_avail_age_prop, aes(x = age_bin)) +
                  binwidth = 1) +
   scale_fill_manual(aesthetics = c(&#39;fill&#39;, &#39;color&#39;), values = apal[c(1,5)]) + 
   jftheme</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-21-1.png" width="576" /></p>
 </div>
 <div id="site" class="section level2">
 <h2>Site</h2>
@@ -744,11 +803,10 @@ ggplot(PR_data_avail_site_prop, aes(x = site)) +
   scale_fill_manual(aesthetics = c(&#39;fill&#39;, &#39;color&#39;), values = apal[c(1,5)]) + 
   jftheme + 
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-24-1.png" width="576" /></p>
 </div>
 <div id="race-count" class="section level2">
 <h2>Race Count</h2>
-<pre class="r"><code>ggplot(demos_and_data_avail, aes(x = RACE)) + 
+<pre class="r"><code>ggplot(demos_and_data_avail, aes(x = race)) + 
   geom_bar(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`),
            position = position_dodge(), 
            alpha = .95,
@@ -762,9 +820,9 @@ ggplot(PR_data_avail_site_prop, aes(x = site)) +
 <h2>Race Prop.</h2>
 <pre class="r"><code>demos_and_data_avail_race_prop &lt;- 
   demos_and_data_avail[, .N, 
-                       by = c(&#39;RACE&#39;, &#39;Data Available&#39;)][, prop := N / sum(N), 
-                                                             by = &#39;RACE&#39;]
-ggplot(demos_and_data_avail_race_prop, aes(x = RACE)) + 
+                       by = c(&#39;race&#39;, &#39;Data Available&#39;)][, prop := N / sum(N), 
+                                                             by = &#39;race&#39;]
+ggplot(demos_and_data_avail_race_prop, aes(x = race)) + 
   geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
            position = position_stack(), 
            alpha = .95,
@@ -778,9 +836,9 @@ ggplot(demos_and_data_avail_race_prop, aes(x = RACE)) +
 <h2>PR Race Prop.</h2>
 <pre class="r"><code>PR_data_avail_race_prop &lt;- 
   PR_data_avail[, .N, 
-                       by = c(&#39;RACE&#39;, &#39;Data Available&#39;)][, prop := N / sum(N), 
-                                                             by = &#39;RACE&#39;]
-ggplot(PR_data_avail_race_prop, aes(x = RACE)) + 
+                       by = c(&#39;race&#39;, &#39;Data Available&#39;)][, prop := N / sum(N), 
+                                                             by = &#39;race&#39;]
+ggplot(PR_data_avail_race_prop, aes(x = race)) + 
   geom_col(aes(group = `Data Available`, fill = `Data Available`, color = `Data Available`, y = prop),
            position = position_stack(), 
            alpha = .95,
@@ -788,7 +846,6 @@ ggplot(PR_data_avail_race_prop, aes(x = RACE)) +
   scale_fill_manual(aesthetics = c(&#39;fill&#39;, &#39;color&#39;), values = apal[c(1,5)]) + 
   jftheme + 
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-27-1.png" width="576" /></p>
 </div>
 <div id="ses-count" class="section level2">
 <h2>SES Count</h2>
@@ -800,7 +857,6 @@ ggplot(PR_data_avail_race_prop, aes(x = RACE)) +
   scale_fill_manual(aesthetics = c(&#39;fill&#39;, &#39;color&#39;), values = apal[c(1,5)]) + 
   jftheme + 
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 </div>
 <div id="ses-prop." class="section level2">
 <h2>SES Prop.</h2>
@@ -818,7 +874,6 @@ ggplot(demos_and_data_avail_ses_prop, aes(x = SES_RLVL)) +
   scale_fill_manual(aesthetics = c(&#39;fill&#39;, &#39;color&#39;), values = apal[c(1,5)]) + 
   jftheme + 
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-29-1.png" width="576" /></p>
 </div>
 <div id="pr-ses-prop." class="section level2">
 <h2>PR SES Prop.</h2>
@@ -836,10 +891,9 @@ ggplot(PR_data_avail_ses_prop, aes(x = SES_RLVL)) +
   scale_fill_manual(aesthetics = c(&#39;fill&#39;, &#39;color&#39;), values = apal[c(1,5)]) + 
   jftheme + 
   theme(axis.text.x = element_text(angle = 360-20, hjust = 0))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-30-1.png" width="576" /></p>
 </div>
 <div id="proportions-compared" class="section level2 tabset">
-<h2>Proportions compared</h2>
+<h2 class="tabset">Proportions compared</h2>
 <pre class="r"><code>get_proportions &lt;- function(adt, cols, id.vars, data_col, data_crit){
   SEp &lt;- function(p, n){
     sqrt( p * (1 - p) / n )
@@ -877,7 +931,7 @@ ggplot(PR_data_avail_ses_prop, aes(x = SES_RLVL)) +
   return(adt_l_p)
 }
 
-cols &lt;- c(&#39;SES_RLVL&#39;, &#39;RACE&#39;, &#39;site&#39;, &#39;gender&#39;, &#39;age&#39;)
+cols &lt;- c(&#39;SES_RLVL&#39;, &#39;race&#39;, &#39;site&#39;, &#39;gender&#39;, &#39;age&#39;)
 id.vars &lt;- c(&#39;sID&#39;, &#39;Data Available&#39;)
 
 PR_data_avail_props &lt;- get_proportions(PR_data_avail, cols = cols, id.vars = id.vars, 
@@ -901,7 +955,7 @@ prop_comparison[, data := factor(data, levels = c(&#39;Staged&#39;, &#39;Public 
   } else {
     d &lt;- prop_comparison[variable == col]
   }
-  if(col %in% c(&#39;SES_RLVL&#39;, &#39;RACE&#39;, &#39;site&#39;)){
+  if(col %in% c(&#39;SES_RLVL&#39;, &#39;race&#39;, &#39;site&#39;)){
     axis_text &lt;- theme(axis.text.x = element_text(angle = 360-20, hjust = 0))
   } else if (col == &#39;age_bin&#39;){
     axis_text &lt;- theme(axis.text.x = element_text(angle = 0, hjust = .5, size = 10))
@@ -917,39 +971,19 @@ prop_comparison[, data := factor(data, levels = c(&#39;Staged&#39;, &#39;Public 
           coord_cartesian(y = c(0,1)) + 
           labs(x = col, y = &#39;Proportion with data&#39;, color = &#39;&#39;))
 }</code></pre>
-<div id="ses_rlvl" class="section level3">
-<h3>SES_RLVL</h3>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-32-1.png" width="576" /></p>
-</div>
-<div id="race" class="section level3">
-<h3>RACE</h3>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-32-2.png" width="576" /></p>
-</div>
-<div id="site-1" class="section level3">
-<h3>site</h3>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-32-3.png" width="576" /></p>
-</div>
-<div id="gender" class="section level3">
-<h3>gender</h3>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-32-4.png" width="576" /></p>
-</div>
-<div id="age-1" class="section level3">
-<h3>age</h3>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-32-5.png" width="576" /></p>
-</div>
 </div>
 </div>
 <div id="reaction-times-rt" class="section level1">
 <h1>Reaction times (RT)</h1>
 <div id="general-characterization" class="section level2 tabset">
-<h2>General Characterization</h2>
-<p>Number of negative reaction times: 22</p>
+<h2 class="tabset">General Characterization</h2>
+<p>Number of negative reaction times: 23</p>
 <div id="rt-and-age" class="section level3">
 <h3>RT and age</h3>
 <pre class="r"><code>ggplot(carit[RT.shape &gt; 0]) +
   geom_hex(aes(x = age, y = RT.shape, color = ..count..), binwidth = c(.5, .03)) +
-  scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
-  scale_color_gradient(low = apal[[1]], high = apal[[5]]) + 
+  scale_fill_gradient(low = apal[[1]], high = apal[[5]], trans=&#39;log&#39;) + 
+  scale_color_gradient(low = apal[[1]], high = apal[[5]], trans=&#39;log&#39;) + 
   geom_line(aes(x = age, y = RT.shape), stat = &#39;smooth&#39;, method = &#39;gam&#39;, color = apal[[2]]) + 
   jftheme</code></pre>
 <p><img src="carit_report_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
@@ -960,8 +994,8 @@ prop_comparison[, data := factor(data, levels = c(&#39;Staged&#39;, &#39;Public 
         c(list(carit[RT.shape &lt; 0, list(N = .N, rt = mean(RT.shape)), by = sID],
                caption = &#39;Negative reaction times&#39;), 
           dt_options))</code></pre>
-<div id="htmlwidget-2a13e3cd1b502a85ce29" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2a13e3cd1b502a85ce29">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"integer\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"1\" data-max=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"-17.7283470626\" data-max=\"-0.029506922000024\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Negative reaction times<\/caption>","data":[["HCD0039128","HCD0165234","HCD0508440","HCD1268350","HCD1328948","HCD1560851","HCD1568867","HCD1832858","HCD1886275","HCD2461450","HCD2473356","HCD2483662","HCD2556764","HCD2731049","HCD0924858","HCD1032927","HCD1099858","HCD1664661","HCD1903956","HCD1907055","HCD2773368","HCD2896283"],[1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[-0.0295069220000244,-7.859516143796,-3.33392310142,-7.379360914226,-5.0284588337,-7.279935836788,-5.43232703209,-4.52118802071,-4.92038798332,-2.2329750061,-6.98963499069,-0.439970016480001,-4.80446600914,-17.7283470626,-7.386790990826,-7.747964859013,-6.84974384308,-7.473325967788,-0.94804906845,-5.71196913719,-7.190612077709,-6.41867113113]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>N<\/th>\n      <th>rt<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":[1,2]}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-ed66613deade1eebe52d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ed66613deade1eebe52d">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"integer\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"1\" data-max=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"-17.7283470626\" data-max=\"-0.029506922000024\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Negative reaction times<\/caption>","data":[["HCD0039128","HCD0165234","HCD0318435","HCD0508440","HCD0924858","HCD1032927","HCD1099858","HCD1268350","HCD1328948","HCD1560851","HCD1568867","HCD1664661","HCD1832858","HCD1886275","HCD1903956","HCD1907055","HCD2461450","HCD2473356","HCD2483662","HCD2556764","HCD2731049","HCD2773368","HCD2896283"],[1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1],[-0.0295069220000244,-7.859516143796,-7.083151102063,-3.33392310142,-7.386790990826,-7.747964859013,-6.84974384308,-7.379360914226,-5.0284588337,-7.279935836788,-5.43232703209,-7.473325967788,-4.52118802071,-4.92038798332,-0.94804906845,-5.71196913719,-2.2329750061,-6.98963499069,-0.439970016480001,-4.80446600914,-17.7283470626,-7.190612077709,-6.41867113113]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>N<\/th>\n      <th>rt<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":[1,2]}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="negative-rt-over-trials" class="section level3">
 <h3>Negative RT over trials</h3>
@@ -983,9 +1017,17 @@ ggplot(carit[sID %in% neg_ids$sID],
 <h3>All trials RT &gt; 0</h3>
 <pre class="r"><code>ggplot(carit[RT.shape &gt; 0], aes(x = RT.shape)) + 
   stat_density(aes(group = sID), geom = &quot;line&quot;, color = apal[[1]], alpha = 0.1, position = &#39;identity&#39;) + 
-  coord_cartesian(xlim = c(0, 1)) + 
+  coord_cartesian(xlim = c(0, 1), ylim = c(0,10)) + 
   jftheme</code></pre>
 <p><img src="carit_report_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<pre class="r"><code>rt_sd_dt &lt;- carit[RT.shape &gt; 0, .(sd_rt = sd(RT.shape)), by = c(&#39;sID&#39;, &#39;runN&#39;)]
+setorder(rt_sd_dt, &#39;sd_rt&#39;)
+plot(rt_sd_dt$sd_rt)</code></pre>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<pre class="r"><code>carit[RT.shape &gt; 0, sd_rt := sd(RT.shape), by = c(&#39;sID&#39;, &#39;runN&#39;)]
+ggplot(carit[sd_rt &gt; .22 | sd_rt &lt; .04], aes(x = trialNum, y = RT.shape, group = interaction(sID, runN))) + 
+  geom_line(alpha = .9, aes(color = sd_rt)) </code></pre>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-37-2.png" width="672" /></p>
 </div>
 <div id="participants-with-rt-0" class="section level3">
 <h3>Participants with RT &lt; 0</h3>
@@ -994,10 +1036,10 @@ ggplot(carit[sID %in% neg_ids$sID],
   scale_x_continuous(breaks = c(-15, -10, -5, 0, 1)) +
   geom_vline(xintercept = 1, color = apal[[5]]) +
   jftheme</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
 </div>
 <div id="all-rt-by-participant" class="section level3 tabset">
-<h3>All RT by participant</h3>
+<h3 class="tabset">All RT by participant</h3>
 <pre class="r"><code>#A few participants have a single negative RT.
 sid_groups &lt;- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -1016,12 +1058,12 @@ for(i in 1:length(sid_groups)){
 <h3>Participants with RT &lt; .2</h3>
 <pre class="r"><code>dt_table(data = carit[RT.shape &lt; .2, list(`N &lt; .2` = .N), by = &#39;sID&#39;],
          caption = &#39;Participants with RT &lt; .2&#39;)</code></pre>
-<div id="htmlwidget-e419d2bec2ef2f1051d8" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e419d2bec2ef2f1051d8">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"integer\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"1\" data-max=\"41\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Participants with RT &lt; .2<\/caption>","data":[["HCD0039128","HCD0073431","HCD0122317","HCD0129937","HCD0145430","HCD0152932","HCD0165234","HCD0165941","HCD0178748","HCD0181838","HCD0185644","HCD0197348","HCD0259546","HCD0286650","HCD0304828","HCD0305628","HCD0363743","HCD0367448","HCD0410322","HCD0461844","HCD0508440","HCD0536142","HCD0551946","HCD0555146","HCD0580751","HCD0583555","HCD0605135","HCD0619247","HCD0643345","HCD0678970","HCD0697671","HCD0703943","HCD0762959","HCD0764256","HCD0802440","HCD0858467","HCD0889579","HCD0921145","HCD0921347","HCD0946868","HCD0947365","HCD1007423","HCD1119232","HCD1123526","HCD1129235","HCD1163134","HCD1196553","HCD1203928","HCD1215632","HCD1231832","HCD1268350","HCD1282142","HCD1328241","HCD1328948","HCD1410933","HCD1411531","HCD1464451","HCD1477056","HCD1500631","HCD1522338","HCD1560851","HCD1568867","HCD1609148","HCD1630139","HCD1655458","HCD1703140","HCD1714751","HCD1743354","HCD1757062","HCD1769978","HCD1791567","HCD1832858","HCD1847972","HCD1849673","HCD1855365","HCD1876878","HCD1886275","HCD1906457","HCD1928871","HCD1930353","HCD1931456","HCD1998791","HCD2000212","HCD2001517","HCD2039946","HCD2155645","HCD2164242","HCD2223131","HCD2229547","HCD2236140","HCD2240030","HCD2296461","HCD2301428","HCD2400632","HCD2415140","HCD2461450","HCD2473356","HCD2478669","HCD2483662","HCD2485666","HCD2540042","HCD2556764","HCD2586268","HCD2589981","HCD2626456","HCD2662763","HCD2669575","HCD2692671","HCD2704551","HCD2731049","HCD2804151","HCD2897891","HCD2957075","HCD2985181","HCD2995083","HCD0007014","HCD0056229","HCD0099752","HCD0155837","HCD0265844","HCD0278853","HCD0300820","HCD0323125","HCD0395251","HCD0465246","HCD0488965","HCD0522434","HCD0690758","HCD0731847","HCD0737657","HCD0792564","HCD0856059","HCD0882666","HCD0909761","HCD0924858","HCD0932554","HCD0989280","HCD1007827","HCD1012012","HCD1017123","HCD1032927","HCD1099858","HCD1113018","HCD1144534","HCD1182542","HCD1188756","HCD1194751","HCD1295050","HCD1423841","HCD1452141","HCD1452848","HCD1553349","HCD1570349","HCD1646760","HCD1664661","HCD1714953","HCD1735052","HCD1789681","HCD1821247","HCD1848469","HCD1903956","HCD1905758","HCD1907055","HCD1917664","HCD1989285","HCD2017330","HCD2031627","HCD2053536","HCD2098457","HCD2215536","HCD2274350","HCD2449460","HCD2478063","HCD2556865","HCD2562658","HCD2600539","HCD2614247","HCD2648365","HCD2773368","HCD2805658","HCD2834463","HCD2864169","HCD2879687","HCD2896283","HCD2908870","HCD2925971","HCD2932968","HCD2971776"],[1,1,1,3,1,1,1,2,1,1,1,2,3,1,3,4,3,2,1,1,2,1,5,1,13,2,5,8,1,2,4,4,1,1,1,1,2,2,1,1,4,2,4,6,1,1,1,4,1,10,3,2,1,2,1,1,6,1,1,1,1,9,1,1,1,1,6,1,1,2,1,5,1,2,5,2,2,1,2,3,3,2,3,6,3,1,1,1,1,1,1,1,1,1,1,8,6,1,2,1,2,41,2,7,2,1,1,1,1,1,1,4,1,1,1,7,2,9,1,4,2,1,3,3,1,1,1,1,2,1,3,2,2,1,1,5,26,1,2,4,2,2,10,2,3,1,7,1,1,3,1,1,1,1,1,7,7,1,1,1,3,1,1,14,1,7,1,1,2,2,2,4,1,1,1,1,6,2,4,2,1,5,21,2,5,12,2,1]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>N &lt; .2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e0522cecaa575d4472ca" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e0522cecaa575d4472ca">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"integer\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"1\" data-max=\"41\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Participants with RT &lt; .2<\/caption>","data":[["HCD0007014","HCD0039128","HCD0056229","HCD0073431","HCD0122317","HCD0129937","HCD0145430","HCD0152932","HCD0155837","HCD0165234","HCD0165941","HCD0178748","HCD0181838","HCD0185644","HCD0187850","HCD0197348","HCD0259546","HCD0265844","HCD0278853","HCD0286650","HCD0300820","HCD0304828","HCD0305628","HCD0318435","HCD0323125","HCD0363743","HCD0367448","HCD0395251","HCD0410322","HCD0461844","HCD0465246","HCD0484250","HCD0488965","HCD0508440","HCD0522434","HCD0536142","HCD0551946","HCD0555146","HCD0580751","HCD0583555","HCD0605135","HCD0619247","HCD0643345","HCD0678970","HCD0690758","HCD0697671","HCD0703943","HCD0731847","HCD0737657","HCD0762959","HCD0764256","HCD0792564","HCD0802440","HCD0845357","HCD0856059","HCD0858467","HCD0882666","HCD0889579","HCD0909761","HCD0921145","HCD0921347","HCD0924858","HCD0932554","HCD0946868","HCD0947365","HCD1007423","HCD1007827","HCD1012012","HCD1017123","HCD1032927","HCD1099858","HCD1113018","HCD1119232","HCD1123526","HCD1129235","HCD1144534","HCD1163134","HCD1182542","HCD1188756","HCD1194751","HCD1196553","HCD1203928","HCD1215632","HCD1231832","HCD1268350","HCD1282142","HCD1295050","HCD1328241","HCD1328948","HCD1410933","HCD1411531","HCD1423841","HCD1452141","HCD1452848","HCD1464451","HCD1477056","HCD1500631","HCD1522338","HCD1553349","HCD1560851","HCD1568867","HCD1570349","HCD1609148","HCD1630139","HCD1655458","HCD1664661","HCD1703140","HCD1714751","HCD1714953","HCD1735052","HCD1743354","HCD1757062","HCD1769978","HCD1789681","HCD1791567","HCD1821247","HCD1832858","HCD1847972","HCD1848469","HCD1849673","HCD1855365","HCD1862968","HCD1876878","HCD1886275","HCD1903956","HCD1905758","HCD1906457","HCD1907055","HCD1917664","HCD1928871","HCD1930353","HCD1931456","HCD1989285","HCD1998791","HCD2000212","HCD2001517","HCD2017330","HCD2031627","HCD2039946","HCD2053536","HCD2098457","HCD2155645","HCD2164242","HCD2215536","HCD2223131","HCD2229547","HCD2236140","HCD2240030","HCD2274350","HCD2296461","HCD2301428","HCD2400632","HCD2415140","HCD2449157","HCD2449460","HCD2461450","HCD2473356","HCD2478063","HCD2478669","HCD2483662","HCD2485666","HCD2540042","HCD2556764","HCD2556865","HCD2562658","HCD2586268","HCD2589981","HCD2600539","HCD2614247","HCD2626456","HCD2648365","HCD2662763","HCD2669575","HCD2692671","HCD2704551","HCD2704753","HCD2725559","HCD2731049","HCD2773368","HCD2776374","HCD2804151","HCD2805658","HCD2834463","HCD2864169","HCD2879687","HCD2896283","HCD2897891","HCD2908062","HCD2908870","HCD2925971","HCD2932968","HCD2957075","HCD2985181","HCD2995083"],[7,1,2,1,1,3,1,1,1,1,2,1,1,1,1,2,3,4,2,1,1,3,4,2,3,3,2,3,1,1,1,1,1,2,1,1,5,1,13,2,5,8,1,2,1,4,4,2,1,1,1,3,1,3,2,1,2,2,1,2,1,1,5,1,4,2,1,2,4,2,2,5,4,6,1,2,1,3,1,7,1,4,1,10,3,2,1,1,2,1,1,2,3,1,6,1,1,1,1,1,9,1,1,1,1,1,1,6,7,8,1,1,2,1,1,1,5,1,1,2,5,12,2,2,3,1,1,1,14,2,3,3,1,2,3,6,12,1,3,1,2,1,1,2,1,1,1,1,2,1,1,1,1,3,4,8,6,1,1,2,1,2,41,1,1,2,7,1,6,2,1,1,1,1,1,3,1,1,4,1,1,2,1,5,21,2,4,4,5,12,2,1,1,1]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>N &lt; .2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div id="rt-and-task-design" class="section level2 tabset">
-<h2>RT and task design</h2>
+<h2 class="tabset">RT and task design</h2>
 <div id="rt-by-gonogo" class="section level3">
 <h3>RT by go/nogo</h3>
 <pre class="r"><code>library(lme4)
@@ -1046,10 +1088,10 @@ ggplot(carit[RT.shape &gt; 0], aes(x = RT.shape)) +
   coord_cartesian(xlim = c(0, 1)) + 
   facet_grid(trialType ~ ., scales = &#39;free_y&#39;) +
   jftheme</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 </div>
 <div id="all-go-rt-by-participant" class="section level3 tabset">
-<h3>All go RT by participant</h3>
+<h3 class="tabset">All go RT by participant</h3>
 <pre class="r"><code>#A few participants have a single negative RT.
 sid_groups &lt;- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -1065,7 +1107,7 @@ for(i in 1:length(sid_groups)){
 }</code></pre>
 </div>
 <div id="all-nogo-rt-by-participant" class="section level3 tabset">
-<h3>All nogo RT by participant</h3>
+<h3 class="tabset">All nogo RT by participant</h3>
 <pre class="r"><code>#A few participants have a single negative RT.
 sid_groups &lt;- split(unique(carit$sID), 1:20)
 for(i in 1:length(sid_groups)){
@@ -1086,10 +1128,13 @@ for(i in 1:length(sid_groups)){
 carit[, isiPress.rt_num := gsub(&#39;\\[([0-9\\.]+)*,*.*\\]&#39;, &#39;\\1&#39;, isiPress.rt_num)] #sometimes there are more than one, e.g., [.23, .45]
 carit[, isiPress.rt_num := as.numeric(isiPress.rt_num)]
 carit[, lateTime := isiPress.rt_num - 0.2]</code></pre>
-<p>Late presses here are just instances where there was no previous press. For &quot;go&quot; trials, these would count as misses, and for &quot;nogo&quot; trials, this would be correct-rejection trials.</p>
-<p>Number of late presses: 4812.</p>
-<p>Number of participants with late presses: 839.</p>
-<p>Distribution of timing of late presses shows similarity across age bins.</p>
+<p>Late presses here are just instances where there was no previous
+press. For “go” trials, these would count as misses, and for “nogo”
+trials, this would be correct-rejection trials.</p>
+<p>Number of late presses: 5199.</p>
+<p>Number of participants with late presses: 887.</p>
+<p>Distribution of timing of late presses shows similarity across age
+bins.</p>
 <pre class="r"><code>age_dens &lt;- carit[!is.na(isiPress.rt_num) &amp; corrRespTrialType %in% c(&#39;Miss&#39;,&#39;corReject&#39;),]
 age_dens[, age_group := factor(((floor(age) - 5) %/% 6) * 6 + 5,
                                levels = c(5, 11, 17),
@@ -1109,7 +1154,7 @@ ggplot(age_dens,
                      name = &#39;Age group&#39;) +
   jftheme + 
   labs(x = &#39;Late press: time since trial end (seconds)&#39;)</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
 </div>
 <div id="late-presses-by-age" class="section level3">
 <h3>Late presses by age</h3>
@@ -1126,12 +1171,15 @@ ggplot(late_press_age, aes(x = age, y = n)) +
   theme(legend.margin = margin(rep(14, 4), &quot;pt&quot;),
         plot.margin = margin(rep(14, 4), &quot;pt&quot;), 
         legend.box.margin = margin(rep(14, 4), &quot;pt&quot;))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
 </div>
 </div>
 <div id="rt-changes" class="section level2">
 <h2>RT changes</h2>
-<p>Reaction times should change depending on the event. A &quot;Go&quot; after a previous &quot;Go&quot; should be faster, and slower after a &quot;No-Go.&quot; This may differ depending on whether a &quot;No-Go&quot; resulted in a correct rejection or not.</p>
+<p>Reaction times should change depending on the event. A “Go” after a
+previous “Go” should be faster, and slower after a “No-Go.” This may
+differ depending on whether a “No-Go” resulted in a correct rejection or
+not.</p>
 <pre class="r"><code>num_fac &lt;- function(x, levels = NULL){
   if(is.null(levels)){
     as.numeric(factor(x))  
@@ -1160,7 +1208,7 @@ carit[, prev_trial := shift(trialType, type = &#39;lag&#39;)]</code></pre>
   theme(legend.margin = margin(rep(14, 4), &quot;pt&quot;),
         plot.margin = margin(rep(14, 4), &quot;pt&quot;), 
         legend.box.margin = margin(rep(14, 4), &quot;pt&quot;))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-47-1.png" width="456" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-48-1.png" width="456" /></p>
 <pre class="r"><code>ggplot(carit[trialType == &#39;go&#39; &amp; RT.shape &gt; 0], aes(x = trialNum, y = RT.shape)) + 
   geom_bin2d(aes(fill = ..count.., color = ..count..), binwidth = c(5, .025)) + 
   scale_fill_gradient(low = apal[[1]], high = apal[[5]]) + 
@@ -1173,7 +1221,7 @@ carit[, prev_trial := shift(trialType, type = &#39;lag&#39;)]</code></pre>
   theme(legend.margin = margin(rep(14, 4), &quot;pt&quot;),
         plot.margin = margin(rep(14, 4), &quot;pt&quot;), 
         legend.box.margin = margin(rep(14, 4), &quot;pt&quot;))</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-48-1.png" width="576" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-49-1.png" width="576" /></p>
 <pre class="r"><code>library(lme4)
 
 N_of_trialType_s &lt;- scale(carit$N_of_trialType)
@@ -1206,39 +1254,41 @@ summary(rt_repeated_go_trialnum_fit)</code></pre>
 ##    Data: carit_rt_frame[trialType == &quot;go&quot; &amp; RT.shape &gt; 0]
 ## 
 ##       AIC       BIC    logLik  deviance  df.resid 
-##  286028.1  286146.2 -143002.1  286004.1    138603 
+##  294990.2  295108.7 -147483.1  294966.2    143418 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -6.7679 -0.6476 -0.0839  0.5603  5.5775 
+## -6.7618 -0.6482 -0.0835  0.5616  4.8255 
 ## 
 ## Random effects:
 ##  Groups   Name        Variance Std.Dev. Corr 
-##  sID      (Intercept) 0.14668  0.3830        
-##           runN_fac2   0.01978  0.1406   -0.17
-##  Residual             0.44412  0.6664        
-## Number of obs: 138615, groups:  sID, 1171
+##  sID      (Intercept) 0.15211  0.3900        
+##           runN_fac2   0.01985  0.1409   -0.18
+##  Residual             0.44084  0.6640        
+## Number of obs: 143430, groups:  sID, 1237
 ## 
 ## Fixed effects:
 ##                                        Estimate Std. Error t value
-## (Intercept)                            0.094204   0.011503   8.189
-## N_of_trialType_s                       0.059854   0.002447  24.455
-## trialNum_s                            -0.024403   0.002552  -9.562
-## runN_fac2                             -0.075922   0.005825 -13.033
-## N_of_trialType_s:trialNum_s            0.010500   0.002709   3.876
-## N_of_trialType_s:runN_fac2             0.002221   0.003553   0.625
-## trialNum_s:runN_fac2                   0.094711   0.003736  25.349
-## N_of_trialType_s:trialNum_s:runN_fac2 -0.010983   0.003711  -2.960
+## (Intercept)                            0.104893   0.011389   9.210
+## N_of_trialType_s                       0.060463   0.002375  25.462
+## trialNum_s                            -0.025635   0.002475 -10.359
+## runN_fac2                             -0.078333   0.005778 -13.556
+## N_of_trialType_s:trialNum_s            0.011681   0.002629   4.444
+## N_of_trialType_s:runN_fac2             0.001221   0.003485   0.350
+## trialNum_s:runN_fac2                   0.095660   0.003663  26.116
+## N_of_trialType_s:trialNum_s:runN_fac2 -0.012056   0.003635  -3.317
 ## 
 ## Correlation of Fixed Effects:
 ##             (Intr) N_f_T_ trlNm_ rnN_f2 N_f_T_:N_ N__T_:N_2 tN_:N_
-## N_f_trlTyp_ -0.059                                                
-## trialNum_s   0.014 -0.066                                         
-## runN_fac2   -0.213  0.117 -0.023                                  
-## N_f_trT_:N_ -0.013 -0.126 -0.178  0.026                           
-## N_f_tT_:N_2  0.041 -0.689  0.046 -0.171  0.087                    
-## trlNm_s:N_2 -0.009  0.045 -0.683  0.039  0.122    -0.070          
-## N__T_:N_:N_  0.009  0.092  0.130 -0.042 -0.730    -0.080    -0.225</code></pre>
+## N_f_trlTyp_ -0.058                                                
+## trialNum_s   0.013 -0.066                                         
+## runN_fac2   -0.217  0.114 -0.023                                  
+## N_f_trT_:N_ -0.013 -0.124 -0.178  0.026                           
+## N_f_tT_:N_2  0.040 -0.681  0.045 -0.169  0.085                    
+## trlNm_s:N_2 -0.009  0.045 -0.676  0.039  0.120    -0.070          
+## N__T_:N_:N_  0.009  0.090  0.129 -0.042 -0.723    -0.078    -0.226
+## optimizer (nloptwrap) convergence code: 0 (OK)
+## Model failed to converge with max|grad| = 0.00324467 (tol = 0.002, component 1)</code></pre>
 <pre class="r"><code>#It didn&#39;t converge so restart and run for more iterations
 #ss &lt;- getME(rt_repeated_go_trialnum_fit,c(&quot;theta&quot;,&quot;fixef&quot;))
 #m2 &lt;- update(rt_repeated_go_trialnum_fit,start=ss,control=lmerControl(optCtrl=list(maxfun=2e4)))
@@ -1254,41 +1304,41 @@ summary(rt_repeated_go_trialnum_fac_fit)</code></pre>
 ##    Data: carit_rt_frame[trialType == &quot;go&quot; &amp; RT.shape &gt; 0]
 ## 
 ##       AIC       BIC    logLik  deviance  df.resid 
-##  285622.2  285819.0 -142791.1  285582.2    138595 
+##  294570.8  294768.2 -147265.4  294530.8    143410 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -6.7200 -0.6470 -0.0825  0.5584  5.5927 
+## -6.7149 -0.6474 -0.0825  0.5591  4.8580 
 ## 
 ## Random effects:
 ##  Groups   Name        Variance Std.Dev. Corr 
-##  sID      (Intercept) 0.14673  0.3831        
-##           runN_fac2   0.01983  0.1408   -0.17
-##  Residual             0.44274  0.6654        
-## Number of obs: 138615, groups:  sID, 1171
+##  sID      (Intercept) 0.1522   0.3901        
+##           runN_fac2   0.0199   0.1411   -0.18
+##  Residual             0.4395   0.6629        
+## Number of obs: 143430, groups:  sID, 1237
 ## 
 ## Fixed effects:
-##                                            Estimate Std. Error t value
-## (Intercept)                               0.0247378  0.0119605   2.068
-## N_of_trialType_fac2                       0.1202651  0.0058606  20.521
-## N_of_trialType_fac3                       0.1331446  0.0068125  19.544
-## N_of_trialType_fac4                       0.1898688  0.0103756  18.300
-## trialNum_s                               -0.0425302  0.0041030 -10.366
-## runN_fac2                                -0.0798981  0.0075247 -10.618
-## N_of_trialType_fac2:trialNum_s            0.0370030  0.0057587   6.426
-## N_of_trialType_fac3:trialNum_s            0.0233871  0.0069551   3.363
-## N_of_trialType_fac4:trialNum_s            0.0442454  0.0133743   3.308
-## N_of_trialType_fac2:runN_fac2             0.0129031  0.0085542   1.508
-## N_of_trialType_fac3:runN_fac2            -0.0006289  0.0099562  -0.063
-## N_of_trialType_fac4:runN_fac2             0.0152958  0.0143574   1.065
-## trialNum_s:runN_fac2                      0.1034181  0.0060239  17.168
-## N_of_trialType_fac2:trialNum_s:runN_fac2  0.0013260  0.0084765   0.156
-## N_of_trialType_fac3:trialNum_s:runN_fac2 -0.0660414  0.0101721  -6.492
-## N_of_trialType_fac4:trialNum_s:runN_fac2  0.0056287  0.0163898   0.343</code></pre>
+##                                           Estimate Std. Error t value
+## (Intercept)                               0.035349   0.011825   2.989
+## N_of_trialType_fac2                       0.119910   0.005687  21.085
+## N_of_trialType_fac3                       0.133800   0.006610  20.242
+## N_of_trialType_fac4                       0.194006   0.010055  19.294
+## trialNum_s                               -0.045533   0.003980 -11.440
+## runN_fac2                                -0.081865   0.007431 -11.016
+## N_of_trialType_fac2:trialNum_s            0.040362   0.005586   7.226
+## N_of_trialType_fac3:trialNum_s            0.026208   0.006747   3.885
+## N_of_trialType_fac4:trialNum_s            0.044940   0.012976   3.463
+## N_of_trialType_fac2:runN_fac2             0.012868   0.008391   1.533
+## N_of_trialType_fac3:runN_fac2            -0.002468   0.009765  -0.253
+## N_of_trialType_fac4:runN_fac2             0.010001   0.014059   0.711
+## trialNum_s:runN_fac2                      0.106524   0.005907  18.032
+## N_of_trialType_fac2:trialNum_s:runN_fac2 -0.003059   0.008314  -0.368
+## N_of_trialType_fac3:trialNum_s:runN_fac2 -0.069213   0.009975  -6.939
+## N_of_trialType_fac4:trialNum_s:runN_fac2  0.005781   0.016011   0.361</code></pre>
 <pre class="r"><code>AIC(rt_repeated_go_trialnum_fac_fit, rt_repeated_go_trialnum_fit)</code></pre>
 <pre><code>##                                 df      AIC
-## rt_repeated_go_trialnum_fac_fit 20 285622.2
-## rt_repeated_go_trialnum_fit     12 286028.1</code></pre>
+## rt_repeated_go_trialnum_fac_fit 20 294570.8
+## rt_repeated_go_trialnum_fit     12 294990.2</code></pre>
 <pre class="r"><code>new_frame &lt;- unique(carit_rt_frame[, c(&#39;N_of_trialType_s&#39;, &#39;trialNum_s&#39;, &#39;runN_fac&#39;,
                                        &#39;N_of_trialType&#39;, &#39;trialNum&#39;, &#39;runN&#39;)])
 
@@ -1300,17 +1350,18 @@ new_frame_fac &lt;- unique(carit_rt_frame[, c(&#39;N_of_trialType_fac&#39;, &#39
 new_frame_fac[, RT.shape_s := predict(rt_repeated_go_trialnum_fac_fit, newdata = new_frame_fac, re.form = ~0)]
 new_frame_fac[, RT.shape := RT.shape_s * RT.sd + RT.m]</code></pre>
 <div id="n-previous-go-and-rt-plots" class="section level3 tabset">
-<h3>N Previous &quot;GO&quot; and RT plots</h3>
+<h3 class="tabset">N Previous “GO” and RT plots</h3>
 <div id="continuous" class="section level4">
 <h4>Continuous</h4>
-<p>Number of previous go trials is a continuous variable. This model fits less well than when this variable is a factor.</p>
+<p>Number of previous go trials is a continuous variable. This model
+fits less well than when this variable is a factor.</p>
 <pre class="r"><code>ggplot(new_frame, aes(x = trialNum, y = RT.shape)) + 
   geom_point(aes(color = N_of_trialType)) + 
   geom_line(aes(group = N_of_trialType, color = N_of_trialType)) + 
   scale_color_gradient(low = apal[[4]], high = apal[[2]], name = &#39;N previous\n&quot;go&quot; trials&#39;) + 
   facet_wrap(~sprintf(&#39;Run %d&#39;, runN), ncol = 2) + 
   jftheme</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-50-1.png" width="768" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-51-1.png" width="768" /></p>
 </div>
 <div id="factor" class="section level4">
 <h4>Factor</h4>
@@ -1321,7 +1372,7 @@ new_frame_fac[, RT.shape := RT.shape_s * RT.sd + RT.m]</code></pre>
   scale_color_gradient(low = apal[[4]], high = apal[[2]], name = &#39;N previous\n&quot;go&quot; trials&#39;) + 
   facet_wrap(~sprintf(&#39;Run %d&#39;, runN), ncol = 2) + 
   jftheme</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-51-1.png" width="768" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-52-1.png" width="768" /></p>
 </div>
 </div>
 <div id="rt-previous-go-versus-no-go" class="section level3">
@@ -1341,12 +1392,12 @@ ggplot(carit[trialType == &#39;go&#39; &amp; RT.shape &gt; 0 &amp; !is.na(prev_t
                     name = &#39;Previous trial&#39;) + 
   jftheme + 
   labs(x = &#39;Reaction time&#39;, y = &#39;&#39;)</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
 </div>
 </div>
 <div id="probability-of-fa" class="section level2">
 <h2>Probability of FA</h2>
-<p>Is a FA more likely after more previous &quot;go&quot; trials?</p>
+<p>Is a FA more likely after more previous “go” trials?</p>
 <pre class="r"><code>carit[, is_FA := corrRespTrialType == &#39;falseAlarm&#39;]
 
 carit_FA_frame &lt;- data.table(is_FA = carit$is_FA, 
@@ -1372,29 +1423,29 @@ summary(acc_mod)</code></pre>
 ##    Data: carit_FA_frame
 ## 
 ##      AIC      BIC   logLik deviance df.resid 
-##  62969.9  63005.4 -31481.0  62961.9    52859 
+##  65361.0  65396.6 -32676.5  65353.0    54874 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -2.6152 -0.6938 -0.4650  0.9411  3.6734 
+## -2.6207 -0.6926 -0.4642  0.9384  3.6703 
 ## 
 ## Random effects:
 ##  Groups Name        Variance Std.Dev.
-##  sID    (Intercept) 0.7547   0.8687  
-## Number of obs: 52863, groups:  sID, 1178
+##  sID    (Intercept) 0.7633   0.8737  
+## Number of obs: 54878, groups:  sID, 1243
 ## 
 ## Fixed effects:
-##                Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)   -0.781795   0.029806 -26.229  &lt; 2e-16 ***
-## prepotency3go  0.092459   0.022734   4.067 4.76e-05 ***
-## prepotency4go  0.001956   0.024904   0.079    0.937    
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   -0.76952    0.02919 -26.359  &lt; 2e-16 ***
+## prepotency3go  0.08391    0.02233   3.759 0.000171 ***
+## prepotency4go -0.01017    0.02446  -0.416 0.677518    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
 ##             (Intr) prptn3
-## prepotncy3g -0.344       
-## prepotncy4g -0.313  0.411</code></pre>
+## prepotncy3g -0.345       
+## prepotncy4g -0.314  0.410</code></pre>
 <pre class="r"><code>FE &lt;- fixef(acc_mod)
 
 P_FA &lt;- c(arm::invlogit(FE[&#39;(Intercept)&#39;]),
@@ -1406,18 +1457,18 @@ knitr::kable(dplyr::tibble(&#39;Number of previous &quot;GO&quot;s&#39; = 2:4,
 <table>
 <thead>
 <tr class="header">
-<th align="right">Number of previous &quot;GO&quot;s</th>
+<th align="right">Number of previous “GO”s</th>
 <th align="right">Probability of FA</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="right">2</td>
-<td align="right">0.31</td>
+<td align="right">0.32</td>
 </tr>
 <tr class="even">
 <td align="right">3</td>
-<td align="right">0.33</td>
+<td align="right">0.34</td>
 </tr>
 <tr class="odd">
 <td align="right">4</td>
@@ -1509,39 +1560,95 @@ new_frame_FA[, p_FA := predict(acc_mod_expanded, newdata = new_frame_FA, re.form
   scale_color_manual(values = c(apal[[2]], apal[[5]], apal[[4]]), name = &#39;N previous\n&quot;go&quot; trials&#39;) + 
   facet_wrap(~sprintf(&#39;Run %d&#39;, runN), ncol = 2) + 
   jftheme</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-55-1.png" width="768" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-56-1.png" width="768" /></p>
 </div>
 </div>
 <div id="accuracy" class="section level1 tabset">
-<h1>Accuracy</h1>
+<h1 class="tabset">Accuracy</h1>
 <pre class="r"><code>accuracy_summary &lt;- carit[, list(mean_accuracy = mean(corrRespCode, rm.na = TRUE),
              N_na = sum(is.na(corrRespCode)),
              age = unique(age)), 
-             by = c(&#39;sID&#39;, &#39;trialType&#39;, &#39;runN&#39;)]
+             by = c(&#39;sID&#39;, &#39;trialType&#39;, &#39;runN&#39;, &#39;filename&#39;)]
+accuracy_summary[, acquisition_direction := stringr::str_replace(filename, &#39;.*CARIT_(PA|AP).*&#39;, &#39;\\1&#39;)][, filename := NULL]
 
 accuracy_summary_trialtype &lt;- dcast(accuracy_summary[, -&#39;N_na&#39;], ... ~ trialType, value.var = &#39;mean_accuracy&#39;)</code></pre>
 <div id="missing-trials" class="section level2">
 <h2>Missing trials</h2>
-<p>This shouldn't happen: a missed go is a &quot;miss&quot; and a missed nogo is a &quot;correct rejection&quot;.</p>
+<p>This shouldn’t happen: a missed go is a “miss” and a missed nogo is a
+“correct rejection”.</p>
 <p>Number of missing trials across all participants: 8</p>
 <pre class="r"><code>dt_table(accuracy_summary[N_na &gt; 0], caption = &#39;Participant-runs with missing trials&#39;)</code></pre>
-<div id="htmlwidget-98f843d0550685495e6f" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-98f843d0550685495e6f">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;go&quot;,&quot;nogo&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"1\" data-max=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"disabled\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"integer\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"1\" data-max=\"5\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"10.414998255\" data-max=\"21.922421405\" data-scale=\"9\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Participant-runs with missing trials<\/caption>","data":[["HCD0737657","HCD1949879","HCD2061333","HCD2722755","HCD2722755","HCD2930055","HCD2930055","HCD2982276"],["go","go","nogo","go","nogo","go","go","go"],[1,2,1,1,1,1,2,1],[null,null,null,null,null,null,null,null],[2,1,1,5,2,2,2,1],[10.414998255,20.24,21.922421405,19.885418592,19.885418592,16.569813206,16.569813206,21.2]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>trialType<\/th>\n      <th>runN<\/th>\n      <th>mean_accuracy<\/th>\n      <th>N_na<\/th>\n      <th>age<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":[2,3,4,5]}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-93745e07e20c2cbd2f5c" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-93745e07e20c2cbd2f5c">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;&quot;,&quot;go&quot;,&quot;nogo&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"1\" data-max=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"1\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"integer\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"1\" data-max=\"5\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"10.41\" data-max=\"21.92\" data-scale=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Participant-runs with missing trials<\/caption>","data":[["HCD0737657","HCD1949879","HCD2061333","HCD2722755","HCD2722755","HCD2930055","HCD2930055","HCD2982276"],["go","go","nogo","go","nogo","go","go","go"],[1,2,1,1,1,1,2,1],[null,null,null,null,null,null,null,null],[2,1,1,5,2,2,2,1],[10.41,20.24,21.92,19.89,19.89,16.57,16.57,21.2],["PA","AP","PA","PA","PA","PA","AP","PA"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>trialType<\/th>\n      <th>runN<\/th>\n      <th>mean_accuracy<\/th>\n      <th>N_na<\/th>\n      <th>age<\/th>\n      <th>acquisition_direction<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":[2,3,4,5]}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="no-button-presses" class="section level2">
 <h2>No Button Presses</h2>
-<p>If someone doesn't press, they'll get 0% accuracy for &quot;go&quot; trials and 100% accuracy for &quot;nogo&quot; trials.</p>
-<p>Number of participants not pressing for at least 1 run: 12.</p>
+<p>If someone doesn’t press, they’ll get 0% accuracy for “go” trials and
+100% accuracy for “nogo” trials.</p>
+<p>Number of participants not pressing for at least 1 run: 10.</p>
 <pre class="r"><code>setorder(accuracy_summary_trialtype, sID, runN) 
 nopress_id &lt;- accuracy_summary_trialtype[go == 0 &amp; nogo == 1, c(&#39;sID&#39;, &#39;runN&#39;)]
-dt_table(accuracy_summary_trialtype[go == 0 &amp; nogo == 1, 
+dt_table(accuracy_summary_trialtype[(go == 0 &amp; nogo == 1) | (go == 1 &amp; nogo == 0), 
                                     lapply(.SD, function(x) sprintf(fmt = &#39;%d%%&#39;, x*100)), 
                                     .SDcols = c(&#39;go&#39;, &#39;nogo&#39;), 
                                     by = c(&#39;sID&#39;, &#39;runN&#39;)],
          caption = &#39;Participant-runs with no responses&#39;)</code></pre>
-<div id="htmlwidget-cacbe364ce8c31bb180a" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-cacbe364ce8c31bb180a">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"1\" data-max=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"disabled\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"disabled\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Participant-runs with no responses<\/caption>","data":[["HCD0187850","HCD0541539","HCD0836356","HCD1327744","HCD1327744","HCD1481855","HCD2017330","HCD2115835","HCD2336346","HCD2344244","HCD2344244","HCD2556158","HCD2556158","HCD2692671","HCD2884377","HCD2884377"],[1,2,1,1,2,1,1,2,1,1,2,1,2,2,1,2],["0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%"],["100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>runN<\/th>\n      <th>go<\/th>\n      <th>nogo<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
-<p>If someone presses all the time, they'll get 100% accuracy for &quot;go&quot; trials and 0% accuracy for &quot;nogo&quot; trials. Number of participants showing this pattern: 0.</p>
+<div id="htmlwidget-a014d2d0ff9372f48d83" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a014d2d0ff9372f48d83">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"1\" data-max=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>Participant-runs with no responses<\/caption>","data":[["HCD0541539","HCD1327744","HCD1327744","HCD1481855","HCD1761053","HCD1761053","HCD2115835","HCD2336346","HCD2344244","HCD2344244","HCD2556158","HCD2556158","HCD2692671","HCD2884377","HCD2884377"],[2,1,2,1,1,2,2,1,1,2,1,2,2,1,2],["0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%"],["100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>runN<\/th>\n      <th>go<\/th>\n      <th>nogo<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<p>If someone presses all the time, they’ll get 100% accuracy for “go”
+trials and 0% accuracy for “nogo” trials. Number of participants showing
+this pattern: 0.</p>
+<pre class="r"><code>library(data.table)
+
+cope1_check_fn &lt;- &#39;cope1_exists.rds&#39;
+if(!file.exists(cope1_check_fn)){
+  data_dir &lt;- &#39;/ncf/hcp/data/HCD-tfMRI-MultiRunFix&#39;
+  pid_dirs &lt;- dir(data_dir, pattern = &#39;HCD.*&#39;)
+  acquisition_direction &lt;- c(&#39;AP&#39;, &#39;PA&#39;)
+  parcellated_cope1 &lt;- &#39;MNINonLinear/Results/tfMRI_CARIT_AP/tfMRI_CARIT_AP_hp200_s4_level1_hp0_clean.feat/GrayordinatesStats/cope1.dtseries.nii&#39;
+  wholebrain_cope1 &lt;- &#39;MNINonLinear/Results/tfMRI_CARIT_AP/tfMRI_CARIT_AP_hp200_s4_level1_hp0_clean_ColeAnticevic.feat/ParcellatedStats/cope1.ptseries.nii&#39;
+  
+  cope1_dt &lt;- data.table(expand.grid(sess_id = pid_dirs, 
+                                     acquisition_direction = acquisition_direction,
+                                     cope1 = c(parcellated_cope1, 
+                                               wholebrain_cope1),
+                                     stringsAsFactors = FALSE))
+  cope1_dt[, filename := file.path(data_dir, sess_id, cope1)]
+  cope1_dt[acquisition_direction == &#39;PA&#39;, filename := stringr::str_replace_all(filename, &#39;AP&#39;, acquisition_direction)]
+  
+  cope1_dt[, fid := 1:.N]
+  cope1_dt[, exists := file.exists(filename), by = fid]
+  cope1_dt[, sID := stringr::str_replace(sess_id, &#39;(HCD\\d+)_V.*&#39;, &#39;\\1&#39;)]
+  cope1_dt[, analysis_type := stringr::str_replace(filename, &#39;.*(Parcellated|Grayordinates)Stats.*&#39;, &#39;\\1&#39;)]
+  saveRDS(object = cope1_dt, file = cope1_check_fn)
+} else {
+  cope1_dt &lt;- readRDS(file = cope1_check_fn)
+}</code></pre>
+</div>
+<div id="particpants-to-be-excluded-from-tfmri" class="section level2">
+<h2>Particpants to be excluded from tfMRI</h2>
+<pre class="r"><code>accuracy_summary_trialtype_fMRI &lt;- accuracy_summary_trialtype[
+  cope1_dt[exists == TRUE, c(&#39;sID&#39;, &#39;acquisition_direction&#39;, &#39;analysis_type&#39;, &#39;exists&#39;, &#39;filename&#39;)], 
+  on = c(&#39;sID&#39;, &#39;acquisition_direction&#39;)]
+
+accuracy_summary_trialtype_fMRI[, .N, by = c(&#39;analysis_type&#39;, &#39;acquisition_direction&#39;)]</code></pre>
+<pre><code>##    analysis_type acquisition_direction   N
+## 1: Grayordinates                    AP 766
+## 2: Grayordinates                    PA 781
+## 3:   Parcellated                    AP 773
+## 4:   Parcellated                    PA 787</code></pre>
+<pre class="r"><code>setorder(accuracy_summary_trialtype_fMRI, sID, runN, analysis_type)
+
+dt_table(accuracy_summary_trialtype_fMRI[(go == 0 &amp; nogo == 1) | (go == 1 &amp; nogo == 0), 
+                                    lapply(.SD, function(x) sprintf(fmt = &#39;%d%%&#39;, x*100)), 
+                                    .SDcols = c(&#39;go&#39;, &#39;nogo&#39;), 
+                                    by = c(&#39;sID&#39;, &#39;runN&#39;, &#39;analysis_type&#39;, &#39;acquisition_direction&#39;)],
+         caption = &#39;First-level models with no responses (or all responses)&#39;)</code></pre>
+<div id="htmlwidget-0f6e4c5cc5cda8aa975c" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0f6e4c5cc5cda8aa975c">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"1\" data-max=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","extensions":["Buttons"],"caption":"<caption>First-level models with no responses (or all responses)<\/caption>","data":[["HCD0541539","HCD1327744","HCD1327744","HCD1481855","HCD2115835","HCD2344244","HCD2344244","HCD2556158","HCD2556158","HCD2692671","HCD2884377","HCD2884377"],[2,1,2,1,2,1,2,1,2,2,1,2],["Parcellated","Parcellated","Parcellated","Parcellated","Parcellated","Parcellated","Parcellated","Parcellated","Parcellated","Parcellated","Parcellated","Parcellated"],["AP","PA","AP","PA","AP","PA","AP","PA","AP","AP","PA","AP"],["0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%","0%"],["100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%","100%"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>sID<\/th>\n      <th>runN<\/th>\n      <th>analysis_type<\/th>\n      <th>acquisition_direction<\/th>\n      <th>go<\/th>\n      <th>nogo<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"Bfrtip","buttons":["csv"],"columnDefs":[{"className":"dt-right","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>data.table::fwrite(accuracy_summary_trialtype_fMRI[!(go == 0 &amp; nogo == 1) &amp; !(go == 1 &amp; nogo == 0) &amp; analysis_type == &#39;Parcellated&#39;,
+                                c(&#39;sID&#39;, &#39;acquisition_direction&#39;, &#39;filename&#39;)],
+                   file = &#39;parcellated_files_for_inclusion.csv&#39;)</code></pre>
 </div>
 <div id="accuracy-by-age" class="section level2">
 <h2>Accuracy by age</h2>
@@ -1556,7 +1663,7 @@ ggplot(accuracy_summary, aes(x = age, y = mean_accuracy)) +
   facet_grid(trialType ~ run_text) +
   jftheme + 
   labs(x = &#39;Age (years)&#39;, y = &#39;Proportion correct&#39;, fill = &#39;Count&#39;, color = &#39;Count&#39;)</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
 <p>Points indicate participants who showed no presses on any trials.</p>
 </div>
 </div>
@@ -1564,8 +1671,8 @@ ggplot(accuracy_summary, aes(x = age, y = mean_accuracy)) +
 <h1>Signal detection theory metrics</h1>
 <pre class="r"><code>carit_by_run_SDT_demo &lt;- demos[carit_by_run_SDT, on = &#39;sID&#39;]
 carit_by_run_SDT_demo[, run_text := sprintf(&#39;Run %d&#39;, runN)]</code></pre>
-<div id="age-2" class="section level2 tabset">
-<h2>Age</h2>
+<div id="age-1" class="section level2 tabset">
+<h2 class="tabset">Age</h2>
 <div id="dprime" class="section level3">
 <h3><span class="math inline">\(d^{\prime}\)</span></h3>
 <pre class="r"><code>ggplot(carit_by_run_SDT_demo, aes(x = age, y = dprime)) + 
@@ -1575,7 +1682,7 @@ carit_by_run_SDT_demo[, run_text := sprintf(&#39;Run %d&#39;, runN)]</code></pre
   facet_grid( ~ run_text) +
   jftheme + 
   labs(x = &#39;Age (years)&#39;, y = &#39;d prime&#39;, fill = &#39;Count&#39;, color = &#39;Count&#39;)</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-61-1.png" width="576" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-63-1.png" width="576" /></p>
 </div>
 <div id="beta" class="section level3">
 <h3><span class="math inline">\(\beta\)</span></h3>
@@ -1587,7 +1694,7 @@ carit_by_run_SDT_demo[, run_text := sprintf(&#39;Run %d&#39;, runN)]</code></pre
   jftheme + 
   coord_cartesian(y = c(0,2)) + 
   labs(x = &#39;Age (years)&#39;, y = &#39;beta&#39;, fill = &#39;Count&#39;, color = &#39;Count&#39;)</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-62-1.png" width="576" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-64-1.png" width="576" /></p>
 </div>
 <div id="aprime" class="section level3">
 <h3><span class="math inline">\(A^{\prime}\)</span></h3>
@@ -1598,7 +1705,7 @@ carit_by_run_SDT_demo[, run_text := sprintf(&#39;Run %d&#39;, runN)]</code></pre
   facet_grid( ~ run_text) +
   jftheme + 
   labs(x = &#39;Age (years)&#39;, y = &#39;A prime&#39;, fill = &#39;Count&#39;, color = &#39;Count&#39;)</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-63-1.png" width="576" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-65-1.png" width="576" /></p>
 </div>
 <div id="bprimeprimed" class="section level3">
 <h3><span class="math inline">\(B^{\prime\prime}D\)</span></h3>
@@ -1609,7 +1716,7 @@ carit_by_run_SDT_demo[, run_text := sprintf(&#39;Run %d&#39;, runN)]</code></pre
   facet_grid( ~ run_text) +
   jftheme + 
   labs(x = &#39;Age (years)&#39;, y = &quot;B&#39;&#39;D&quot;, fill = &#39;Count&#39;, color = &#39;Count&#39;)</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-64-1.png" width="576" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-66-1.png" width="576" /></p>
 </div>
 <div id="c" class="section level3">
 <h3><span class="math inline">\(c\)</span></h3>
@@ -1620,23 +1727,36 @@ carit_by_run_SDT_demo[, run_text := sprintf(&#39;Run %d&#39;, runN)]</code></pre
   facet_grid( ~ run_text) +
   jftheme + 
   labs(x = &#39;Age (years)&#39;, y = &quot;c&quot;, fill = &#39;Count&#39;, color = &#39;Count&#39;)</code></pre>
-<p><img src="carit_report_files/figure-html/unnamed-chunk-65-1.png" width="576" /></p>
+<p><img src="carit_report_files/figure-html/unnamed-chunk-67-1.png" width="576" /></p>
 </div>
 </div>
 </div>
 <div id="modeling" class="section level1">
 <h1>Modeling</h1>
-<p>One really interesting question we can ask with these data is what is the effect of previous reward associations on go/nogo accuracy, and whether that effect differs by loss amount, or by age.</p>
-<p>Using a hierarchical linear model (aka multilevel model) we can express this as a prediction of the probability of a correct rejection (no response on a &quot;no-go&quot; trial). We could also examine this effect on the probability of a hit (response on a &quot;go&quot; trial). For now, I'll limit it to the no-go trials, but incorrporating trial type would merely entail adding another interaction term.</p>
-<p>Given that the trial-level data response is either 0 or 1 (false alarms or correct rejections), this will be a logisitic regression.</p>
+<p>One really interesting question we can ask with these data is what is
+the effect of previous reward associations on go/nogo accuracy, and
+whether that effect differs by loss amount, or by age.</p>
+<p>Using a hierarchical linear model (aka multilevel model) we can
+express this as a prediction of the probability of a correct rejection
+(no response on a “no-go” trial). We could also examine this effect on
+the probability of a hit (response on a “go” trial). For now, I’ll limit
+it to the no-go trials, but incorrporating trial type would merely
+entail adding another interaction term.</p>
+<p>Given that the trial-level data response is either 0 or 1 (false
+alarms or correct rejections), this will be a logisitic regression.</p>
 <p>The model is:</p>
 <pre><code>CR ~ 1 + prevrew + run + age + prevrew:run + prevrew:age + run:age + prevrew:run:age + prepotency</code></pre>
 <p><span class="math display">\[
-\text{CR} = \beta_0 + \beta_1\text{PrevRew} + \beta_2\text{Run} + \beta_3\text{Age} +\\ \beta_4\text{PrevRew}\cdot\text{Run} + \beta_5\text{PrevRew}\cdot\text{Age} + \\
+\text{CR} = \beta_0 + \beta_1\text{PrevRew} + \beta_2\text{Run} +
+\beta_3\text{Age} +\\ \beta_4\text{PrevRew}\cdot\text{Run} +
+\beta_5\text{PrevRew}\cdot\text{Age} + \\
 \beta_6\text{Run}\cdot\text{Age} + \\
-\beta_7\text{PrevRew}\cdot\text{Run}\cdot\text{Age} + \beta_8 \cdot \text{prepotency} +  \epsilon_{ij}
+\beta_7\text{PrevRew}\cdot\text{Run}\cdot\text{Age} + \beta_8 \cdot
+\text{prepotency} +  \epsilon_{ij}
 \]</span></p>
-<p>where <span class="math inline">\(y_{ij}\)</span> is the <em>i</em>th response from the <em>j</em>th participant. Not shown is the random effects error terms or specific dummy coding.</p>
+<p>where <span class="math inline">\(y_{ij}\)</span> is the <em>i</em>th
+response from the <em>j</em>th participant. Not shown is the random
+effects error terms or specific dummy coding.</p>
 </div>
 
 
@@ -1650,7 +1770,7 @@ carit_by_run_SDT_demo[, run_text := sprintf(&#39;Run %d&#39;, runN)]</code></pre
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -1668,7 +1788,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -1682,6 +1802,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

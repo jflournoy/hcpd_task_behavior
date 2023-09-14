@@ -20,7 +20,7 @@ read_fit_models <- function(model_name, model_dir = 'fits'){
   return(fit)
 }
 
-plot_cond_eff <- function(fit, xvar, xname, yname, conditions = NULL, condition_title = NULL, ribbon_color = '#bc5090', line_color = '#003f5c', mean_center_y = FALSE, method = 'posterior_epred', points = FALSE, points_size = .5, points_alpha = .5, hex = FALSE, hex_args = list(alpha = .8, binwidth = c(.5, .025)), hex_log = FALSE) {
+plot_cond_eff <- function(fit, xvar, xname, yname, conditions = NULL, condition_title = NULL, ribbon_color = '#bc5090', line_color = '#003f5c', mean_center_y = FALSE, method = 'posterior_epred', points = FALSE, points_size = .5, points_alpha = .5, hex = FALSE, hex_args = list(alpha = .8, binwidth = c(.5, .025)), hex_log = FALSE, breaks = NULL, labels = NULL) {
   require(brms)
   require(ggplot2)
   require(viridisLite)
@@ -60,6 +60,17 @@ plot_cond_eff <- function(fit, xvar, xname, yname, conditions = NULL, condition_
     }
     condition_name <- names(conditions)[1]
     set(epred[[xvar]], j = condition_name, value = factor(epred[[xvar]][[condition_name]], levels = conditions[,1]))
+    if(!is.null(breaks)){
+      scale_color <- scale_color_viridis_d(option = 'inferno', begin = 0, end = .6,
+                                      breaks = breaks,
+                                      labels = labels)
+      scale_fill <- scale_fill_viridis_d(option = 'inferno', begin = .3, end = 1,
+                             breaks = breaks,
+                             labels = labels)
+    } else {
+      scale_color <- scale_color_viridis_d(option = 'inferno', begin = 0, end = .6)
+      scale_fill <- scale_fill_viridis_d(option = 'inferno', begin = .3, end = 1)
+    }
     p <- ggplot(epred[[xvar]], aes_string(x = xvar, y = 'estimate__')) + 
       points_geom +
       hex_geom + 
@@ -68,8 +79,8 @@ plot_cond_eff <- function(fit, xvar, xname, yname, conditions = NULL, condition_
       geom_ribbon(aes_string(ymin = 'lower__', ymax = 'upper__', fill = condition_name, group = condition_name), 
                   alpha = .5) + 
       geom_line(aes_string(color = condition_name, fill = NULL, group = condition_name)) + 
-      scale_color_viridis_d(option = 'inferno', begin = 0, end = .6) +
-      scale_fill_viridis_d(option = 'inferno', begin = .3, end = 1) +
+      scale_color +
+      scale_fill +
       labs(x = xname, y = yname, color = condition_title, fill = condition_title)
   } else {
     p <- ggplot(epred[[xvar]], aes_string(x = xvar, y = 'estimate__')) + 

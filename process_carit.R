@@ -23,10 +23,13 @@ lag1_num_fac_diff <- function(x, levels = NULL){
 
 read_carit_dir <- function(data_path, pattern = "*CARIT.*run[12]_wide.csv"){
   #List all of the CARIT task files in the data directory
-  fnames <- dir(data_path, 
-                pattern = pattern, 
-                recursive = TRUE, 
-                full.names = TRUE)
+  hcd_dirs <- dir(data_path, pattern = '^HCD.*', full.names = TRUE)
+  carit_dirs <- unlist(lapply(hcd_dirs, dir, pattern = '^tfMRI_CARIT_(AP|PA)$', full.names = TRUE))
+  fnames <- unlist(lapply(carit_dirs, 
+                          dir,
+                          pattern = pattern, 
+                          recursive = TRUE, 
+                          full.names = TRUE))
   names(fnames) <- 1:length(fnames)
   
   #Set the column names we want from each csv file
@@ -63,23 +66,33 @@ read_carit_dir <- function(data_path, pattern = "*CARIT.*run[12]_wide.csv"){
 workspace_fname <- 'process_carit.rda'
 if(!file.exists(workspace_fname)){
   
-  data_path <- '/ncf/hcp/data/CCF_HCD_STG_PsychoPy_files/'
-  intake_data_path <- '/ncf/hcp/data/intradb_intake/'
+  data_path <- '/ncf/hcp/data/intradb_multiprocfix/'
   
   d <- read_carit_dir(data_path)
-  d_intake <- read_carit_dir(intake_data_path)
-  #remove long
-  
+  #use the condition file name to figure out the run number
+  setnames(d, 'condFile', 'runN')
+  d[, runN := as.numeric(gsub('.*/scan([12])\\.csv', '\\1', runN))]
+  d <- d[ 
+    !filename %in% 
+      c('/ncf/hcp/data/intradb_multiprocfix//HCD0353538_V1_MR/tfMRI_CARIT_PA/LINKED_DATA/PSYCHOPY/CARIT_HCD0353538_V1_A_run1_wide.csv')
+  ]
+  d[
+    filename == '/ncf/hcp/data/intradb_multiprocfix//HCD2776374_V1_MR/tfMRI_CARIT_AP/LINKED_DATA/PSYCHOPY/CARIT_HCD2776374_V1_A_run1_wide.csv',
+    runN := 2
+  ]
   readr::write_csv(d, 'CARIT_allRaw.csv')
+  demos <- fread('HCD_Inventory_2022-04-12.csv', 
+                         select = c('subject', 'site', 'race', 'ethnic_group', 'M/F',
+                                    'event_age', 'redcap_event'))[redcap_event == 'V1']
+  setnames(demos, 'subject', 'sID')
+  setnames(demos, 'event_age', 'age')
+  setnames(demos, 'M/F', 'gender')
   
-  demos <- data.table::fread('HCPD_COMBINED20200608.csv',
-                             select = c('id', 'age', 'gender', 'site', 'RACE', 'SES_PLVL', 'SES_RLVL', 'income'))
-  staged <- data.table::fread('ccf_hcd_stg_2020-06-09.csv', 
+  staged <- data.table::fread('HCP_Staged_20230314.csv', 
                               select = 'Subject')
-  public_release <- data.table::fread('HCD_V1_Release_Struct+fMRI_Merged_Adj.txt', header = FALSE, col.names = 'sID')
   
-  long <- data.table::fread('HCPD_LONGITUDINAL20200608.csv',
-                            select = c('id', 'LONG_AGE'))
+  # long <- data.table::fread('HCPD_LONGITUDINAL20200608.csv',
+  #                           select = c('id', 'LONG_AGE'))
   staged_dlmri <- data.table(sessionID = dir('/ncf/hcp/data/intradb_multiprocfix/', pattern = "HCD.*"))
   
   staged_dlmri[, 'has_task_scan'] <-  unlist(lapply(staged_dlmri$sessionID, function(sess){
@@ -106,10 +119,11 @@ if(!file.exists(workspace_fname)){
                          '/MNINonLinear/Results/'), pattern = 'tfMRI_GUESSING.*')) > 0
   }))
   
-  staged_dlmri[, sID := gsub('.*(HCD[A-Za-z0-9]+)_V1_MR.*', '\\1', sessionID)]
-  setnames(demos, 'id', 'sID')
+  staged_dlmri[, c('sID', 'wave') := 
+                 list(gsub('.*(HCD[A-Za-z0-9]+)_V[123]_MR.*', '\\1', sessionID),
+                      gsub('.*HCD[A-Za-z0-9]+_V([123])_MR.*', '\\1', sessionID))]
   setnames(staged, 'Subject', 'sID')
-  setnames(long, 'id', 'sID')
+  #setnames(long, 'id', 'sID')
   
   #Some columns should be factors
   factor_vars <- c('sessionID',
@@ -122,16 +136,14 @@ if(!file.exists(workspace_fname)){
                    'corrRespMsg',
                    'corrRespTrialType')
   d[, (factor_vars) := lapply(.SD, as.factor), .SDcols = factor_vars]
-  d_intake[, (factor_vars) := lapply(.SD, as.factor), .SDcols = factor_vars]
+  #d_intake[, (factor_vars) := lapply(.SD, as.factor), .SDcols = factor_vars]
   
-  d_combined <- data.table::rbindlist(list(staged = d, intake = d_intake), idcol = "data_source")
+  #d_combined <- data.table::rbindlist(list(staged = d, intake = d_intake), idcol = "data_source")
+  
+  d_combined <- d
   
   #Integrate demographic variables
   carit <- demos[d_combined, on = 'sID']
-  
-  #use the condition file name to figure out the run number
-  setnames(carit, 'condFile', 'runN')
-  carit[, runN := as.numeric(gsub('.*/scan([12])\\.csv', '\\1', runN))]
   
   #rename corrAns to trialType
   setnames(carit, 'corrAns', 'trialType')
@@ -146,7 +158,7 @@ if(!file.exists(workspace_fname)){
   carit[, RT.shape := trialResp.firstRt - shapeStartTime]
   
   carit[
-    stringi::stri_cmp_eq(filename, '/ncf/hcp/data/CCF_HCD_STG_PsychoPy_files//HCD0197045/tfMRI_CARIT_AP/CARIT_HCD0197045_V1_A_run1_wide.csv'),
+    stringi::stri_cmp_eq(filename, '/ncf/hcp/data/intradb_multiprocfix//HCD0197045_V1_MR/tfMRI_CARIT_AP/LINKED_DATA/PSYCHOPY/CARIT_HCD0197045_V1_A_run1_wide.csv'),
     runN := 2]
   carit[, wave := stringi::stri_match(sessionID, regex = '.*_V([123]{1})_\\w$')[,2]]
   setorder(carit, sID, wave, runN, trialNum)
@@ -154,7 +166,7 @@ if(!file.exists(workspace_fname)){
   carit[, chunkID := cumsum(corrRespTrialType_diff)]
   carit[, N_of_corrRespTrialType := 1:.N, by = c('sID', 'runN', 'chunkID')]
   carit[, prev_corrRespTrialType := shift(corrRespTrialType, type = 'lag'), by = c('sID', 'runN')]
-  carit[corrRespTrialType == 'Hit', exact_prepotency := shift(N_of_corrRespTrialType, type = 'lag', fill = 0), by = c('sID', 'runN', 'chunkID')]
+  carit[corrRespTrialType == 'Hit', exact_prepotency := shift(N_of_corrRespTrialType, type = 'lag', fill = 0), by = c('sID', 'runN', 'chunkID', 'wave')]
   carit[, lag_N_of_corrRespTrialType := shift(N_of_corrRespTrialType, type = 'lag'), by = c('sID', 'runN')]
   carit[trialType == 'nogo' & prev_corrRespTrialType == 'Miss', exact_prepotency := 0]
   carit[trialType == 'nogo' & prev_corrRespTrialType == 'Hit', exact_prepotency := lag_N_of_corrRespTrialType]
@@ -171,3 +183,4 @@ if(!file.exists(workspace_fname)){
 } else {
   load(workspace_fname)
 }
+saveRDS(carit, 'carit_data.rds')

@@ -40,6 +40,8 @@ carit <- carit[!grepl('_V[2-9]_', filename),]
 duplicate_run_ids <- unique(carit[, .N, by = c('sID', 'runN')][N > 92, sID])
 carit <- carit[!sID %in% duplicate_run_ids]
 carit_pr_scan <- copy(carit) #[public_release, on = 'sID', nomatch = 0]
+staged_dlmri <- staged_dlmri[!grepl('_V[2-9]_', sessionID),]
+
 carit_pr_scan <- staged_dlmri[carit_pr_scan, on = 'sID'][has_carit == TRUE]
 #Account for 10 dropped volumes at TR=0.8
 carit_pr_scan[, evtime := round(shapeStartTime - 8, 6)]

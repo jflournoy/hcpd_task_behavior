@@ -1,12 +1,16 @@
 library(data.table)
 data.table::setDTthreads(1)
 
+#simply lifted from the CARIT script
 read_carit_dir <- function(data_path, pattern = "*GUESSING.*run[12]_wide.csv"){
   #List all of the CARIT task files in the data directory
-  fnames <- dir(data_path, 
-                pattern = pattern, 
-                recursive = TRUE, 
-                full.names = TRUE)
+  hcd_dirs <- dir(data_path, pattern = '^HCD.*', full.names = TRUE)
+  carit_dirs <- unlist(lapply(hcd_dirs, dir, pattern = '^tfMRI_GUESSING_(AP|PA)$', full.names = TRUE))
+  fnames <- unlist(lapply(carit_dirs, 
+                          dir,
+                          pattern = pattern, 
+                          recursive = TRUE, 
+                          full.names = TRUE))
   names(fnames) <- 1:length(fnames)
   
   #Set the column names we want from each csv file
@@ -42,7 +46,7 @@ read_carit_dir <- function(data_path, pattern = "*GUESSING.*run[12]_wide.csv"){
 workspace_fname <- 'process_guessing.rda'
 if(!file.exists(workspace_fname)){
   
-  data_path <- '/ncf/hcp/data/CCF_HCD_STG_PsychoPy_files/'
+  data_path <- '/ncf/hcp/data/intradb_multiprocfix/'
   
   guessing_data <- read_carit_dir(data_path)
   
@@ -52,3 +56,5 @@ if(!file.exists(workspace_fname)){
 }
 
 saveRDS(guessing_data, '/ncf/hcp/data/analyses/mayalrosen/guessing_data.rds')
+saveRDS(guessing_data, '/ncf/hcp/data/analyses/taylor/guessing_data.rds')
+saveRDS(guessing_data, 'guessing_data.rds')
