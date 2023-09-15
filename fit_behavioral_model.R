@@ -18,18 +18,16 @@ parser$add_argument(
   "--model", type = "character", default = 'rt_age',
   help = sprintf("Which model to fit. Valid options are: %s", 
                  paste(get_model_options(model_name = NULL, names = TRUE), collapse = ', ')))
-parser$add_argument('--id', type = "integer", default = '1', help = 'Chain ID')
+parser$add_argument('--id', type = "integer", default = 1, help = 'Chain ID')
 parser$add_argument("--test", action = "store_true", 
                     help = "Run on subset of data.")
-parser$add_argument('--testprop', type = "double", default = '.0125', help = 'Proportion sample to use in test')
+parser$add_argument('--testprop', type = "double", default = .0125, help = 'Proportion sample to use in test')
 parser$add_argument("--refit", action = "store_true", 
                     help = "Overwrite existing model.")
 parser$add_argument("--kfold", action = "store_true", 
                     help = "Run k-fold CV using participant clusters.")
-parser$add_argument('--nfolds', type = "integer", default = '5', help = 'Number of folds')
-parser$add_argument('--foldid', type = "integer", default = '1', help = 'Fold ID')
-parser$add_argument("--rerun_kfold", action = "store_true", 
-                    help = "Run k-fold (10-fold) CV using participant clusters.")
+parser$add_argument('--nfolds', type = "integer", default = 5, help = 'Number of folds')
+parser$add_argument('--foldid', type = "integer", default = 1, help = 'Fold ID')
 parser$add_argument("--par_chains", action = "store_true", 
                     help = "Ignore `--id` and run 4 parallel chains.")
 parser$add_argument("--long", action = "store_true", 
@@ -38,7 +36,7 @@ parser$add_argument("--onlylong", action = "store_true",
                     help = "Use _only_ longitudinal data.")
 if(interactive()){
   #parser$parse_args('--help')
-  args <- parser$parse_args(c('--model', 'rt_age_prepotofac', '--refit', '--test', '--id', '1', '--kfold', '--foldid', '1'))
+  args <- parser$parse_args(c('--model', 'acc_prevcond', '--test', '--testprop', '.05','--id', '1', '--kfold', '--foldid', '1'))
   CPUS <- 16
 } else {
   args <- parser$parse_args()
@@ -51,7 +49,6 @@ TESTPROP <- args$testprop
 CHAINID <- args$id
 REFIT <- args$refit
 PARCHAINS <- args$par_chains
-REKFOLD <- args$rerun_kfold
 KFOLD <- args$kfold
 FOLDID <- args$foldid
 NFOLDS <- args$nfolds
@@ -67,10 +64,15 @@ model_data <- get_model_data(MODEL = MODEL,
                              TEST = TEST, 
                              TESTPROP = TESTPROP, 
                              LONG = LONG, 
-                             ONLYLONG = ONLYLONG, 
-                             KFOLD = KFOLD, 
-                             NFOLDS = NFOLDS,
-                             FOLDID = FOLDID)
+                             ONLYLONG = ONLYLONG)
+
+if(KFOLD){
+  set.seed(92104)
+  folds <- loo::kfold_split_grouped(K = NFOLDS, x = as.character(model_data$sID_factor))
+  omitted <- predicted <- which(folds == FOLDID)
+  full_data <- model_data
+  model_data <- model_data[-omitted]
+}
 
 if ('exact_prepotency_ofactor' %in% names(model_data)){
   message("Unique values of exact prepotency ordered factor: ", 
@@ -118,8 +120,14 @@ if(file.exists(sprintf('%s.rds', brm_options$file))){
                   ifelse(REFIT, 
                          'Refitting and overwriting...',
                          'Will refit only if model has changed...')))
+
 }
 fit <- do.call(brm, brm_options)
+
+if(KFOLD){
+  fit$manual_kfold <- brms:::nlist(full_data, omitted, predicted, folds)
+  saveRDS(fit, sprintf('%s.rds', brm_options$file))
+}
 
 summary(fit)
 

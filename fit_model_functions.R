@@ -63,10 +63,11 @@ get_model_options <- function(model_name, fit_dir = 'fits', names = FALSE){
                                   prior = c(default_prior, default_cor_prior),
                                   file = NULL),
     #2. How does sensitivity to prepotency vary across age? Distributional model.
-    rt_age_prepotofac_null_sigma = list(formula = bf(RT.shape | trunc(ub = .8) ~ time + exact_prepotency_ofactor + s(age) + 
-                                                       (1 + time | sID_factor:runN_factor) + 
-                                                       (1 + time + exact_prepotency_ofactor | sID_factor),
-                                                     sigma ~ 1 + time + exact_prepotency_ofactor + s(age) + (1 | sID_factor/runN_factor)),
+    rt_age_prepotofac_sigma = list(formula = bf(RT.shape | trunc(ub = .8) ~ time + mo(exact_prepotency_ofactor) + 
+                                                  t2(age, exact_prepotency_ofactor, bs = c('tp', 're')) +
+                                                  (1 + time | sID_factor:runN_factor) + 
+                                                  (1 + time + mo(exact_prepotency_ofactor) | sID_factor),
+                                                sigma ~ 1 + mo(exact_prepotency_ofactor) + s(age) + (1 | sID_factor)),
                                         prior = distmodel_prior,
                                         family = brms::lognormal(), 
                                         file = NULL),
@@ -174,15 +175,17 @@ get_model_options <- function(model_name, fit_dir = 'fits', names = FALSE){
                                       prior = c(rt_acc_age_prepotofac_prior, default_cor_prior),
                                       file = NULL),
     rt_acc_age_prepotofac_prevcond = list(formula = bf(RT.shape | trunc(ub = .8) + subset(subsetRT) ~ time + 
-                                                         exact_prepotency_ofactor + s(age) + s(age, by = exact_prepotency_ofactor) +
+                                                         mo(exact_prepotency_ofactor) + 
+                                                         t2(age, exact_prepotency, bs = c('tp', 're')) +
                                                          (1 + time | sID_factor:runN_factor) + 
-                                                         (1 + time + exact_prepotency_ofactor |ID1| sID_factor),
+                                                         (1 + time + mo(exact_prepotency_ofactor) |ID1| sID_factor),
                                                        family = brms::lognormal()) + 
                                             bf(correct | subset(subsetACC) ~ time + 
-                                                 exact_prepotency_ofactor + s(age, k = 10) + s(age, by = exact_prepotency_ofactor, k = 10) + 
-                                                 nogoCondition + s(age, by = nogoCondition) + 
+                                                 mo(exact_prepotency_ofactor) + 
+                                                 nogoCondition +
+                                               t2(age, exact_prepotency, nogoCondition, bs = c('tp', 're', 're')) +
                                                  (1 + time | sID_factor:runN_factor) +
-                                                 (1 + time + exact_prepotency_ofactor |ID1| sID_factor),
+                                                 (1 + time + mo(exact_prepotency_ofactor) |ID1| sID_factor),
                                                family = brms::bernoulli()) + 
                                             set_rescor(rescor = FALSE), 
                                           prior = c(rt_acc_age_prepotofac_prior, default_cor_prior),
@@ -208,7 +211,7 @@ get_model_options <- function(model_name, fit_dir = 'fits', names = FALSE){
   }
 }
 
-get_model_data <- function(MODEL, TEST = FALSE, TESTPROP = .0125, LONG = FALSE, ONLYLONG = FALSE, KFOLD = FALSE, NFOLDS = NA, FOLDID = NA){
+get_model_data <- function(MODEL, TEST = FALSE, TESTPROP = .0125, LONG = FALSE, ONLYLONG = FALSE){
   if(!file.exists('carit_data.rds')){
     source('process_carit.R')
   } else {
@@ -252,13 +255,7 @@ get_model_data <- function(MODEL, TEST = FALSE, TESTPROP = .0125, LONG = FALSE, 
     traintest.sID.g <- unique(guessing_data[, 'sID'])[, train := rbinom(length(sID), 1, TESTPROP)]
     guessing_data <- merge(guessing_data, traintest.sID.g, by = "sID")[train==1]
   }
-  if(KFOLD){
-    set.seed(11)
-    carit_data$fold <- loo::kfold_split_grouped(K = NFOLDS, x = carit_data$sID)
-    carit_data <- carit_data[fold == FOLDID]
-    guessing_data$fold <- loo::kfold_split_grouped(K = NFOLDS, x = guessing_data$sID)
-    guessing_data <- guessing_data[fold == FOLDID]
-  }
+
   
   #Different models require different ways of formatting the data.
   
@@ -356,5 +353,8 @@ get_model_data <- function(MODEL, TEST = FALSE, TESTPROP = .0125, LONG = FALSE, 
     warning('Model name not found, defaulting to carit.hits')
     model_data_name <- 'carit.hits'
   }
-  return(get(model_data_name))
+  
+  model_data <- get(model_data_name)
+  
+  return(model_data)
 }

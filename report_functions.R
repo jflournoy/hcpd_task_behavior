@@ -1,23 +1,87 @@
 #----functions----
 
-combine_kfold <- function(klist){
-  #klist = lapply(models, \(x) x$criteria$kfold)
-  lapply(klist, \(x) x$estimate['elpd_kfold', 'Estimate'])
-  
-  kfold_elpd_composite <- kfold1$estimates["elpd_kfold","Estimate"] + kfold2$estimates["elpd_kfold","Estimate"]
-  kfold_elpd_se_composite <- sqrt(kfold1$estimates["elpd_kfold","SE"]^2+kfold2$estimates["elpd_kfold","SE"]^2)
-  
+save_model_with_kfold <- function(model_full_name, kfold_model_name_pattern, resp = NULL, nfolds = 5, model_dir = 'fits', save_fits = TRUE){
+  kfold <- process_kfold_fits(model_name_pattern = kfold_model_name_pattern, 
+                              model_full_name = model_full_name, 
+                              resp = resp, 
+                              nfolds = nfolds, 
+                              model_dir = model_dir, 
+                              save_fits = save_fits)
+  fit <- read_fit_models(model_full_name)
+  fit$criteria$kfold <- kfold
+  newfn <- gsub('_c\\d{2}\\.rds', '.rds', fit$file)
+  saveRDS(fit, newfn)
 }
 
-read_fit_models <- function(model_name, model_dir = 'fits'){
+process_kfold_fits <- function(model_name_pattern, model_full_name, resp = NULL, nfolds = 5, model_dir = 'fits', save_fits = TRUE){
+  Ksub <- 1:nfolds
+  model_names <- sprintf(model_name_pattern, 1:nfolds)
+  model_saves <- lapply(model_names, read_fit_models, kfold = TRUE)
+  model_full <- read_fit_models(model_full_name)
+  lppds <- obs_order <- vector("list", length(Ksub))
+  if (save_fits) {
+    fits <- array(list(), dim = c(length(Ksub), 3))
+    dimnames(fits) <- list(NULL, c("fit", "omitted", "predicted"))
+  }
+  ll_args <- list()
+  ll_args$allow_new_levels <- TRUE
+  ll_args$resp <- resp
+  ll_args$combine <- TRUE
+  for (k in 1:nfolds) {
+    ks <- match(k, Ksub)
+    tmp <- model_saves[[ks]]
+    ll_args$object <- tmp$fit
+    ll_args$newdata <- tmp$manual_kfold_info$full_data[tmp$manual_kfold_info$predicted, , drop = FALSE]
+    if (save_fits) {
+      fits[ks, ] <- c(tmp[c("fit")], tmp$manual_kfold_info[c("omitted", "predicted")])
+    }
+    obs_order[[ks]] <- tmp$manual_kfold_info$predicted
+    lppds[[ks]] <- brms:::do_call(log_lik, ll_args)
+  }
+  lppds <- do_call(cbind, lppds)
+  elpds <- apply(lppds, 2, brms:::log_mean_exp)
+  obs_order <- unlist(obs_order)
+  elpds <- elpds[order(obs_order)]
+  ######
+  ll_args$object <- model_full
+  ll_args$newdata <- model_full$data
+  ll_args$newdata2 <- model_full$data2
+  ll_full <- do_call(log_lik, ll_args)
+  lpds <- apply(ll_full, 2, brms:::log_mean_exp)
+  ps <- lpds - elpds
+  pointwise <- cbind(elpd_kfold = elpds, p_kfold = ps, kfoldic = -2 * 
+                       elpds)
+  est <- colSums(pointwise)
+  se_est <- sqrt(nrow(pointwise) * apply(pointwise, 2, var))
+  estimates <- cbind(Estimate = est, SE = se_est)
+  rownames(estimates) <- colnames(pointwise)
+  out <- brms:::nlist(estimates, pointwise)
+  atts <- brms:::nlist(K = nfolds, Ksub, group = 'sID_factor', folds = 'NULL', fold_type = 'grouped')
+  attributes(out)[names(atts)] <- atts
+  if (save_fits) {
+    out$fits <- fits
+    out$data <- model_full$data
+  }
+  return(structure(out, class = c("kfold", "loo")))
+}
+
+read_fit_models <- function(model_name, model_dir = 'fits', kfold = FALSE){
   require(brms)
   fnames <- file.path(model_dir, sprintf('%s_c%02d.rds', model_name, 1:4))
   fnames <- fnames[unlist(lapply(fnames, file.exists))]
   models <- lapply(fnames, readRDS)
   fit <- combine_models(mlist = models)
-  models[[1]][['criteria']]$kfold
   
-  return(fit)
+  if(kfold){
+    manual_kfold_info <- lapply(models, `[[`, 'manual_kfold')
+    assertthat::assert_that(all(unlist(lapply(manual_kfold_info[-1], identical, y = manual_kfold_info[[1]]))),
+                            msg = 'Manual Kfold traces not the same across models')
+    out <- list(fit = fit, manual_kfold_info = manual_kfold_info[[1]])
+  } else {
+    out <- fit
+  }
+  
+  return(out)
 }
 
 plot_cond_eff <- function(fit, xvar, xname, yname, conditions = NULL, condition_title = NULL, ribbon_color = '#bc5090', line_color = '#003f5c', mean_center_y = FALSE, method = 'posterior_epred', points = FALSE, points_size = .5, points_alpha = .5, hex = FALSE, hex_args = list(alpha = .8, binwidth = c(.5, .025)), hex_log = FALSE, breaks = NULL, labels = NULL) {
